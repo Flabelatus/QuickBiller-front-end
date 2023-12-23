@@ -15,7 +15,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 60vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,7 +32,85 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.btn-submit-light-small {
+  background-color: #99FFCC;
+  color: #00994C;
+  font-size: 20px;
+  width: 150px;
+}
+
+.btn-submit-light-small:hover {
+  background-color: hsl(150, 56%, 60%);
+  color: #fbfffd;
+}
+
+.btn-submit-dark-small {
+  color: #99FFCC;
+  background-color: #00994C;
+  font-size: 20px;
+  width: 150px;
+}
+
+.btn-submit-dark-small:hover {
+  background-color: #99FFCC;
+  color: #12442b;
+}
+
+.btn-submit-light-large {
+  background-color: #99FFCC;
+  color: #00994C;
+  font-size: 30px;
+  width: 250px;
+}
+
+.btn-submit-light-large:hover {
+  background-color: #60d299;
+  color: #fbfffd;
+}
+
+.btn-submit-dark-large {
+  color: #99FFCC;
+  background-color: #00994C;
+  font-size: 30px;
+  width: 250px;
+}
+
+.btn-submit-dark-large:hover {
+  background-color: #99FFCC;
+  color: #12442b;
+}
+
+.container {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 10px;
+
+}
+
+.container-invoice {
+  background-color: #c2dd9940;
+  border-radius: 16px;
+  padding: 10px;
+
+}
+
+.checkbox-custom {
+  scale: 1.2;
+  background-color: white;
+  border-color: #00994C;
+}
+
+.checkbox-custom:checked {
+  background-color: #41c482;
+  border-color: #00994C;
+}
+
+.form-text-fields {
+  border: #00994C solid 2px;
 }
