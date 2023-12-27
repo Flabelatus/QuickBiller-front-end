@@ -50,6 +50,11 @@
   color: #fbfffd;
 }
 
+.btn-submit-light-small::selection {
+  background-color: hsl(150, 56%, 60%);
+  color: #fbfffd;
+}
+
 .btn-submit-dark-small {
   color: #99FFCC;
   background-color: #00994C;
@@ -58,6 +63,11 @@
 }
 
 .btn-submit-dark-small:hover {
+  background-color: #99FFCC;
+  color: #12442b;
+}
+
+.btn-submit-dark-small::selection {
   background-color: #99FFCC;
   color: #12442b;
 }
