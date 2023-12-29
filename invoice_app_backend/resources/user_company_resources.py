@@ -15,8 +15,9 @@ class UserCompany(MethodView):
 
     @jwt_required()
     @user_company_blp.response(200, UserCompanySchema)
-    def post(self, parsed_data: dict) -> UserCompanyModel:
-        company_data = UserCompanyModel.query.filter_by(user_id=parsed_data['user_id']).first()
+    def get(self) -> UserCompanyModel:
+        user_id = get_jwt_identity()
+        company_data = UserCompanyModel.query.filter_by(user_id=user_id).first()
         if company_data:
             return company_data
         else:
@@ -39,7 +40,8 @@ class UserCompany(MethodView):
     @user_company_blp.arguments(UserCompanySchema)
     @user_company_blp.response(200, UserCompanySchema)
     def patch(self, parsed_data: dict):
-        company_data = UserCompanyModel.query.filter_by(user_id=parsed_data['user_id']).first()
+        user_id = get_jwt_identity()
+        company_data = UserCompanyModel.query.filter_by(user_id=user_id).first()
         if company_data:
             company_data.company_name = parsed_data.get("company_name", "")
             company_data.contact_name = parsed_data.get("contact_name", "")
@@ -58,8 +60,9 @@ class UserCompany(MethodView):
         return company_data
 
     @jwt_required()
-    def delete(self, parsed_data: dict):
-        company_data = UserCompanyModel.query.filter_by(user_id=parsed_data['user_id']).first()
+    def delete(self):
+        user_id = get_jwt_identity()
+        company_data = UserCompanyModel.query.filter_by(user_id=user_id).first()
         if company_data:
             db.session.delete(company_data)
             db.session.commit()

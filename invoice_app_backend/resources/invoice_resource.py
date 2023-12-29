@@ -73,12 +73,13 @@ class InvoiceByID(MethodView):
         }
 
 
-@invoice_blueprint.route("/invoices/user/<int:user_id>")
+@invoice_blueprint.route("/user/invoices")
 class InvoicesByUserID(MethodView):
 
     @jwt_required()
     @invoice_blueprint.response(200, InvoicePlainSchema(many=True))
-    def get(self, user_id: int) -> List[InvoiceModel]:
+    def get(self) -> List[InvoiceModel]:
+        user_id = get_jwt_identity()
         invoice = InvoiceModel.query.filter_by(user_id=user_id).order_by(InvoiceModel.created_at.desc()).all()
         if invoice:
             return invoice
@@ -86,12 +87,13 @@ class InvoicesByUserID(MethodView):
             abort(404, message="no invoices found with this user id")
 
 
-@invoice_blueprint.route("/invoice/user/<int:user_id>")
+@invoice_blueprint.route("user/invoice")
 class InvoiceByUserID(MethodView):
 
     @jwt_required()
     @invoice_blueprint.response(200, InvoicePlainSchema)
-    def get(self, user_id: int) -> InvoiceModel:
+    def get(self) -> InvoiceModel:
+        user_id = get_jwt_identity()
         invoice = InvoiceModel.query.filter_by(user_id=user_id).order_by(InvoiceModel.created_at.desc()).first()
         if invoice:
             return invoice

@@ -10,6 +10,7 @@ from load_dotenv import load_dotenv
 from db import db
 from blocklist import BLOCKLIST
 from resources.invoice_resource import invoice_blueprint
+from resources.quote_resources import quote_blueprint
 from resources.user_company_resources import user_company_blp
 from resources.user_resources import user_blp
 
@@ -114,6 +115,7 @@ def create_app(db_url="sqlite:///data.db"):
         db.create_all()
 
     api.register_blueprint(invoice_blueprint)
+    api.register_blueprint(quote_blueprint)
     api.register_blueprint(user_blp)
     api.register_blueprint(user_company_blp)
 

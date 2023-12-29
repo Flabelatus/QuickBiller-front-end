@@ -65,12 +65,13 @@ class QuoteByID(MethodView):
         return quote
 
 
-@quote_blueprint.route("/quotes/user/<int:user_id>")
+@quote_blueprint.route("/user/quotes")
 class QuotesByUserID(MethodView):
 
     @jwt_required()
     @quote_blueprint.response(200, QuotePlainSchema(many=True))
-    def get(self, user_id: int) -> List[QuoteModel]:
+    def get(self) -> List[QuoteModel]:
+        user_id = get_jwt_identity()
         quote = QuoteModel.query.filter_by(user_id=user_id).order_by(QuoteModel.created_at.desc()).all()
         if quote:
             return quote
@@ -78,12 +79,13 @@ class QuotesByUserID(MethodView):
             abort(404, message="no invoices found with this user id")
 
 
-@quote_blueprint.route("/quote/user/<int:user_id>")
+@quote_blueprint.route("/user/quote")
 class QuoteByUserID(MethodView):
 
     @jwt_required()
     @quote_blueprint.response(200, QuotePlainSchema)
-    def get(self, user_id: int) -> QuoteModel:
+    def get(self) -> QuoteModel:
+        user_id = get_jwt_identity()
         quote = QuoteModel.query.filter_by(user_id=user_id).order_by(QuoteModel.created_at.desc()).first()
         if quote:
             return quote
