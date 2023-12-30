@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 from flask.views import MethodView
@@ -6,7 +7,7 @@ from flask_smorest import abort, Blueprint
 from db import db
 from sqlalchemy.exc import SQLAlchemyError
 
-from models import InvoiceModel
+from models import InvoiceModel, UserCompanyModel
 from schema import InvoicePlainSchema
 
 invoice_blueprint = Blueprint("Invoices", "invoice", description="Operations on invoice")
@@ -18,15 +19,20 @@ class Invoices(MethodView):
     @jwt_required()
     @invoice_blueprint.arguments(InvoicePlainSchema)
     @invoice_blueprint.response(201, InvoicePlainSchema)
-    def post(self, parsed_data: dict):
+    def put(self, parsed_data: dict):
         invoice = InvoiceModel(**parsed_data)
-        invoice.user_id = get_jwt_identity()
-
+        user_id = get_jwt_identity()
+        invoice.user_id = user_id
+        sender_data = UserCompanyModel.query.filter_by(user_id=user_id).first()
+        invoice.sender_data = sender_data
+        invoice.created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         try:
             db.session.add(invoice)
             db.session.commit()
         except SQLAlchemyError as err:
             abort(500, message=str(err))
+
+        return invoice
 
     @jwt_required()
     @invoice_blueprint.response(200, InvoicePlainSchema(many=True))
@@ -81,13 +87,10 @@ class InvoicesByUserID(MethodView):
     def get(self) -> List[InvoiceModel]:
         user_id = get_jwt_identity()
         invoice = InvoiceModel.query.filter_by(user_id=user_id).order_by(InvoiceModel.created_at.desc()).all()
-        if invoice:
-            return invoice
-        else:
-            abort(404, message="no invoices found with this user id")
+        return invoice
 
 
-@invoice_blueprint.route("user/invoice")
+@invoice_blueprint.route("/user/invoice/last")
 class InvoiceByUserID(MethodView):
 
     @jwt_required()
@@ -95,9 +98,4 @@ class InvoiceByUserID(MethodView):
     def get(self) -> InvoiceModel:
         user_id = get_jwt_identity()
         invoice = InvoiceModel.query.filter_by(user_id=user_id).order_by(InvoiceModel.created_at.desc()).first()
-        if invoice:
-            return invoice
-        else:
-            abort(404, message="no invoices found with this user id")
-
-
+        return invoice
