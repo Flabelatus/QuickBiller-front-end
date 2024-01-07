@@ -2,15 +2,44 @@ import { useState } from "react";
 import Input from "./Inputs";
 import google from '.././images/google.png'
 import fb from '.././images/fb.png'
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { ShowAlert } from "./Alert";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { jwtToken, setJwtToken } = useOutletContext();
+    const [alertClassName, setAlertClassName] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("submitted!");
-    }
+    const navigate = useNavigate();
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        let payload = {
+            email: email,
+            password: password,
+        }
+
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify(payload),
+        }
+
+        fetch(`http://localhost:5005/login`, requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                setJwtToken(data.access_token);
+                navigate("/");
+            })
+            .catch(error => {
+                ShowAlert(setAlertClassName, setAlertMessage, error.message, "alert-danger", 3000);
+            })
+    };
 
     return (
         <div className=" mt-5">
@@ -38,7 +67,7 @@ const Login = () => {
                         <button type="submit" className="btn btn-submit-dark-small mt-2">Submit</button>
                     </form>
                     <div className="row justify-content-center">
-                        <a href="#!" style={{ textAlign: 'center' }}>Change y   our password</a>
+                        <a href="#!" style={{ textAlign: 'center' }}>Change your password</a>
                     </div>
                     <h4 className="mt-5 text-center">Or</h4>
                     <h5 className="text-center">Sign in using</h5>

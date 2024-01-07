@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import Input from "./Inputs";
+import { useOutletContext } from "react-router-dom";
 
 const InvoiceForms = () => {
-
+    const { jwtToken } = useOutletContext();
     const companyModel = {
         companyName: "",
         contactName: "",
@@ -100,23 +101,29 @@ const InvoiceForms = () => {
         <div className="justify-content-center">
             <hr className="mt-4" style={{ color: "#ccc", width: "50vw", margin: "0 auto" }} />
             <form onSubmit={handleSubmit} className="mb-5 mt-5">
-                <h1 className="mb-5" style={{ color: '#ccc', fontWeight: 700 }}>Document Data</h1>
-                <div >
-                    <select
 
-                        className="btn btn-light mb-2"
-                        style={{ width: 'fit-content' }}
-                        onChange={handleSelectChange}
-                        value={selectedOption}
-                    >
-                        <option value="">Select an option</option>
-                        {testOptions.map((opt) => (
-                            <option key={opt.id} value={opt.id}>{opt.data}</option>
-                        ))}
-                    </select>
-                </div>
-                <a className="btn btn-secondary mt-3" style={{ fontSize: 20, width: 150 }}>Select</a>
-                <hr className="mt-5 mb-5" style={{ color: "#ccc", width: "50vw", margin: "0 auto" }} />
+                {jwtToken !== "" &&
+                    <div>
+                        <h1 className="mb-5" style={{ color: '#ccc', fontWeight: 700 }}>Document Data</h1>
+                        <div >
+                            <select
+
+                                className="btn btn-light mb-2"
+                                style={{ width: 'fit-content' }}
+                                onChange={handleSelectChange}
+                                value={selectedOption}
+                            >
+                                <option value="">Select an option</option>
+                                {testOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>{opt.data}</option>
+                                ))}
+                            </select>
+
+                        </div>
+                        <a className="btn btn-secondary mt-3" style={{ fontSize: 20, width: 150 }}>Select</a>
+                        <hr className="mt-5 mb-5" style={{ color: "#ccc", width: "50vw", margin: "0 auto" }} />
+                    </div>
+                }
 
                 <div className="row- mt-5 justify-content-center container py-4">
                     <div className="row justify-content-center">

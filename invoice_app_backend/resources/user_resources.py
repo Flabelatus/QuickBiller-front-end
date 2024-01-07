@@ -1,6 +1,8 @@
 from flask.views import MethodView
+from flask_cors import cross_origin
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
+from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt, create_refresh_token, get_jwt_identity
 
 from db import db
@@ -14,6 +16,7 @@ user_blp = Blueprint("Users", "users", description='Operations on users')
 @user_blp.route('/login')
 class UserLogin(MethodView):
 
+    @cross_origin()
     @user_blp.arguments(UserSchema)
     def post(self, parsed_data):
         user = UserModel.query.filter(UserModel.email == parsed_data['email']).first()

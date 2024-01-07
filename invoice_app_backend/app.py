@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, Response
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_smorest import Api
@@ -17,10 +17,24 @@ from resources.user_resources import user_blp
 
 def create_app(db_url="sqlite:///data.db"):
     app = Flask(__name__)
-    cors = CORS(app, supports_credentials=True)
+
+    cors = CORS(
+        app,
+        origins="http://localhost:3000",
+        allow_headers=[
+            "Accept", "Content-Type", "X-Auth-Email", "X-Auth-Key", "X-CSRF-Token", "Origin", "X-Requested-With",
+            "Authorization"
+        ]
+    )
+
+    @app.after_request
+    def creds(response):
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response
 
     load_dotenv()
-    app.config['CORS_HEADERS'] = 'Content-Type'
+    app.config['CORS_HEADERS'] = "application/json"
+
     app.config['PROPAGATE_EXCEPTIONS'] = True
     app.config['API_TITLE'] = "QuickBiller REST API"
     app.config['API_VERSION'] = "v1"
@@ -38,6 +52,13 @@ def create_app(db_url="sqlite:///data.db"):
 
     app.config["JWT_SECRET_KEY"] = "QUICKBILLER_118944794548470618589981863246285508728"
     jwt = JWTManager(app)
+
+    @app.before_request
+    def handle_preflight():
+        if request.method == "OPTIONS":
+            res = Response()
+            res.headers['X-Content-Type-Options'] = '*'
+            return res
 
     @jwt.needs_fresh_token_loader
     def token_not_fresh_callback(jwt_header, jwt_payload):

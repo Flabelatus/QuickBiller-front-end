@@ -51,21 +51,6 @@ class QuotePlainSchema(Schema):
     created_at = fields.Str()
 
 
-class UserCompanySchema(Schema):
-    id = fields.Int(dump_only=True)
-    company_name = fields.Str()
-    contact_name = fields.Str()
-    email = fields.Str()
-    street = fields.Str()
-    postcode = fields.Str()
-    city = fields.Str()
-    country = fields.Str()
-    iban = fields.Str()
-    vat_number = fields.Str()
-    coc_number = fields.Str()
-    user_id = fields.Int()
-
-
 class UserSchema(UserPlainSchema):
     invoices = fields.List(fields.Nested(InvoicePlainSchema(), load_instance=True))
     quotes = fields.List(fields.Nested(QuotePlainSchema(), load_instance=True))

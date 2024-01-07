@@ -18,16 +18,15 @@ class UserCompany(MethodView):
     def get(self) -> UserCompanyModel:
         user_id = get_jwt_identity()
         company_data = UserCompanyModel.query.filter_by(user_id=user_id).first()
-        if company_data:
-            return company_data
-        else:
-            abort(404)
+
+        return company_data
 
     @jwt_required()
     @user_company_blp.arguments(UserCompanySchema)
     @user_company_blp.response(201, UserCompanySchema)
     def put(self, parsed_data: dict):
         user_company_info = UserCompanyModel(**parsed_data)
+        user_company_info.user_id = get_jwt_identity()
         try:
             db.session.add(user_company_info)
             db.session.commit()
