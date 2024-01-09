@@ -9,7 +9,7 @@ import (
 )
 
 // InsertClient inserts a new Client record into the database.
-func (r *GORMRepo) InsertClient(client *models.Client) (int, error) {
+func (r *GORMRepo) InsertClientInvoice(client *models.ClientInvoice) (int, error) {
 	result := r.DB.Create(&client)
 	if result.Error != nil {
 		return 0, result.Error
@@ -18,8 +18,8 @@ func (r *GORMRepo) InsertClient(client *models.Client) (int, error) {
 }
 
 // GetClientByID retrieves a Client by its ID.
-func (r *GORMRepo) GetClientByID(id int) (*models.Client, error) {
-	var client *models.Client
+func (r *GORMRepo) GetClientInvoiceByID(id int) (*models.ClientInvoice, error) {
+	var client *models.ClientInvoice
 	if err := r.DB.First(&client, id).Error; err != nil {
 		return nil, err
 	}
@@ -27,8 +27,8 @@ func (r *GORMRepo) GetClientByID(id int) (*models.Client, error) {
 }
 
 // GetClientByUserID retrieves a Client by its associated User ID.
-func (r *GORMRepo) GetClientByUserID(userID int) (*models.Client, error) {
-	var client *models.Client
+func (r *GORMRepo) GetClientByUserID(userID int) (*models.ClientInvoice, error) {
+	var client *models.ClientInvoice
 	if err := r.DB.Where("user_id = ?", userID).Find(&client).Error; err != nil {
 		return nil, err
 	}
@@ -36,8 +36,8 @@ func (r *GORMRepo) GetClientByUserID(userID int) (*models.Client, error) {
 }
 
 // DeleteClientByID deletes a Client record by its ID.
-func (r *GORMRepo) DeleteClientByID(id int) error {
-	client := &models.Client{}
+func (r *GORMRepo) DeleteClientInvoiceByID(id int) error {
+	client := &models.ClientInvoice{}
 	if err := r.DB.Where("id = ?", id).First(&client).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return fmt.Errorf("client not found")
@@ -51,8 +51,8 @@ func (r *GORMRepo) DeleteClientByID(id int) error {
 }
 
 // UpdateClientByID updates a Client record by its ID.
-func (r *GORMRepo) UpdateClientByID(id int, client *models.Client) (int, error) {
-	var existingClient *models.Client
+func (r *GORMRepo) UpdateClientInvoiceByID(id int, client *models.ClientInvoice) (int, error) {
+	var existingClient *models.ClientInvoice
 	if err := r.DB.Where("id = ?", id).Find(&existingClient).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return 0, fmt.Errorf("client not found")
@@ -67,8 +67,8 @@ func (r *GORMRepo) UpdateClientByID(id int, client *models.Client) (int, error) 
 	return int(client.ID), nil
 }
 
-func (r *GORMRepo) GetClientByName(name string) (*models.Client, error) {
-	var client *models.Client
+func (r *GORMRepo) GetClientInvoiceByName(name string) (*models.ClientInvoice, error) {
+	var client *models.ClientInvoice
 	if err := r.DB.Where("company_name = ?", name).First(&client).Error; err != nil {
 		return nil, err
 	}

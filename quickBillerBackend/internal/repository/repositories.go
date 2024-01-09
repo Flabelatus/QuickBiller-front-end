@@ -15,10 +15,12 @@ type GORMRepo struct {
 func (r *GORMRepo) Migrate() error {
 	err := r.DB.AutoMigrate(
 		models.User{},
+		models.Mode{},
 		models.Invoice{},
-		models.Client{},
-		models.Sender{},
 		models.Quote{},
+		models.ClientInvoice{},
+		models.ClientQuote{},
+		models.Sender{},
 	)
 	if err != nil {
 		return err

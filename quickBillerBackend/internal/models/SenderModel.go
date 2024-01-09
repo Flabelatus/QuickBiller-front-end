@@ -14,5 +14,5 @@ type Sender struct {
 	Iban        string `json:"iban"`
 	VatNo       string `json:"vat_no"`
 	CocNo       string `json:"coc_no"`
-	UserId      int    `json:"user_id"`
+	UserID      int    `json:"user_id"`
 }

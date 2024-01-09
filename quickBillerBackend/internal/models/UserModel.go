@@ -9,11 +9,14 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	Mode      Mode   `gorm:"foreignKey:UserID" json:"mode"`
+	FirstName string     `json:"first_name"`
+	LastName  string     `json:"last_name"`
+	Email     string     `json:"email"`
+	Password  string     `json:"password"`
+	Mode      Mode       `gorm:"foreignKey:UserID" json:"mode"`
+	Invoices  []*Invoice `gorm:"foreignKey:UserID" json:"invoices"`
+	Quotes    []*Quote   `gorm:"foreignKey:UserID" json:"quotes"`
+	Sender    Sender     `gorm:"foreignKey:UserID" json:"sender"`
 }
 
 type Mode struct {
