@@ -36,12 +36,11 @@ const Login = () => {
             body: JSON.stringify(payload),
         }
 
-        fetch(`http://localhost:5005/login`, requestOptions)
+        fetch(`http://localhost:8082/login`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 if (data.access_token) {
                     setJwtToken(data.access_token);
-                    setRefreshToken(data.refresh_token);
                     navigate("/");
                 } else {
                     showAlert(data.message, "alert-danger", 3000);

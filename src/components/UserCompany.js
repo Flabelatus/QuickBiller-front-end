@@ -25,7 +25,7 @@ const UserCompany = () => {
             method: "GET",
             headers: { "Authorization": "Bearer " + jwtToken, "Content-Type": "application/json" },
         }
-        fetch(`http://localhost:5005/user_company`, requestOptions)
+        fetch(`http://localhost:8082/user_company`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 setCompanyName(data.company_name);

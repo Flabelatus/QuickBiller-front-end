@@ -7,55 +7,60 @@ import Alert from './components/Alert'
 
 export const AppContext = React.createContext();
 
-
 function App() {
 
   AppContext.defaultProps = {
     jwtToken: "",
-    refreshToken: ""
+    userMode: "",
   };
 
   const [jwtToken, setJwtToken] = useState("");
-  const [refreshToken, setRefreshToken] = useState("");
 
   const [tickInterval, setTickInterval] = useState();
-
   const [alertMessage, setAlertMessage] = useState("");
   const [alertClassName, setAlertClassName] = useState("d-none");
 
   const toggleRefresh = useCallback((status) => {
- 
+    console.log("clicked");
+    
     if (status) {
+      console.log("turning on ticking");
       let i = setInterval(() => {
 
-        fetch(`http://localhost:5005/refresh`, {
+        const requestOptions = {
           method: "POST",
           credentials: "include",
-        })
+        }
+
+        fetch(`http://localhost:8082/refresh`, requestOptions)
           .then((response) => response.json())
           .then((data) => {
             if (data.access_token) {
               setJwtToken(data.access_token);
             }
           })
-          .catch(err => {
-            console.log("user is not logged-in")
+          .catch(error => {
+            console.error(error.message);
           })
-      }, 720000);
+      }, 600000);
       setTickInterval(i);
+      console.log("setting tick interval to", i);
     } else {
+      console.log("turning off ticking");
+      console.log("turning off tickInterval", tickInterval);
       setTickInterval(null);
       clearInterval(tickInterval);
     }
-  }, [tickInterval]);
+  }, [tickInterval])
 
   useEffect(() => {
     if (jwtToken === "") {
-
-      fetch(`http://localhost:5005/refresh`, {
+      const requestOptions = {
         method: "POST",
-        credentials: 'include',
-      })
+        credentials: "include",
+      }
+
+      fetch(`http://localhost:8082/refresh`, requestOptions)
         .then((response) => response.json())
         .then((data) => {
           if (data.access_token) {
@@ -63,11 +68,11 @@ function App() {
             toggleRefresh(true);
           }
         })
-        .catch(err => {
-          console.log("user is not logged-in", err)
+        .catch(error => {
+          console.error(error.message);
         })
     }
-  }, [jwtToken, toggleRefresh]);
+  }, [jwtToken, toggleRefresh])
 
   return (
     <>
@@ -82,7 +87,7 @@ function App() {
                   className={alertClassName}
                 />
               )}
-              <Outlet context={{ jwtToken, setJwtToken, setAlertClassName, setAlertMessage, refreshToken, setRefreshToken }}></Outlet>
+              <Outlet context={{ jwtToken, setJwtToken, setAlertClassName, setAlertMessage }}></Outlet>
               <Footer />
             </div>
           </div>

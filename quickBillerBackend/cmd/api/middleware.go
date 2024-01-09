@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 )
 
 func (app *application) enableCORS(h http.Handler) http.Handler {
@@ -31,38 +32,38 @@ func (app *application) authRequired(next http.Handler) http.Handler {
 	})
 }
 
-// func (app *application) adminRequired(next http.Handler) http.Handler {
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		_, claims, err := app.auth.GetTokenFromHeaderAndVerify(w, r)
-// 		if err != nil {
-// 			w.WriteHeader(http.StatusUnauthorized)
-// 			return
-// 		}
+func (app *application) adminRequired(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, claims, err := app.auth.GetTokenFromHeaderAndVerify(w, r)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 
-// 		isAdmin, err := app.isUserAdmin(claims.Subject)
-// 		if err != nil {
-// 			w.WriteHeader(http.StatusInternalServerError)
-// 			return
-// 		}
+		isAdmin, err := app.isUserAdmin(claims.Subject)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
-// 		if !isAdmin {
-// 			w.WriteHeader(http.StatusForbidden)
-// 			return
-// 		}
+		if !isAdmin {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
 
-// 		next.ServeHTTP(w, r)
-// 	})
-// }
+		next.ServeHTTP(w, r)
+	})
+}
 
-// // Helper function to check if the user is an admin
-// func (app *application) isUserAdmin(userID string) (bool, error) {
-// 	IntegerUserID, err := strconv.Atoi(userID)
-// 	if err != nil {
-// 		return false, err
-// 	}
-// 	user, err := app.Repository.GetUserByID(uint(IntegerUserID))
-// 	if err != nil {
-// 		return false, err
-// 	}
-// 	return user.Mode.Name == "admin", nil
-// }
+// Helper function to check if the user is an admin
+func (app *application) isUserAdmin(userID string) (bool, error) {
+	IntegerUserID, err := strconv.Atoi(userID)
+	if err != nil {
+		return false, err
+	}
+	user, err := app.Repository.GetUserByID(uint(IntegerUserID))
+	if err != nil {
+		return false, err
+	}
+	return user.Mode.Name == "admin", nil
+}

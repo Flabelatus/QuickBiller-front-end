@@ -13,14 +13,17 @@ func (app *application) routes() http.Handler {
 	mux.Use(middleware.Logger)
 	mux.Use(app.enableCORS)
 
+	mux.Post("/login", app.authenticate)
+	mux.Post("/refresh", app.refreshToken)
+
 	// Protected routes
 	mux.Route("/logged_in", func(mux chi.Router) {
 		mux.Use(app.authRequired)
-
+		mux.Post("/logout", app.logout)
 	})
 
 	mux.Route("/admin", func(mux chi.Router) {
-		// mux.Use(app.adminRequired)
+		mux.Use(app.adminRequired)
 
 	})
 

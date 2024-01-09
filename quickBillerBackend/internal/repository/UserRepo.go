@@ -91,7 +91,7 @@ func (r *GORMRepo) GetAllUsers() ([]models.User, error) {
 
 func (r *GORMRepo) GetUserByID(id uint) (*models.User, error) {
 	var currentUser *models.User
-	err := r.DB.Preload("Mode").Preload("Cart").First(&currentUser, id).Error
+	err := r.DB.Preload("Mode").First(&currentUser, id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, fmt.Errorf("user not found")
