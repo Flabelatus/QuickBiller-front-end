@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask, jsonify, request, Response
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate

@@ -3,16 +3,23 @@ import Input from "./Inputs";
 import google from '.././images/google.png'
 import fb from '.././images/fb.png'
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { ShowAlert } from "./Alert";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { jwtToken, setJwtToken } = useOutletContext();
-    const [alertClassName, setAlertClassName] = useState("");
-    const [alertMessage, setAlertMessage] = useState("");
-
+    const { setJwtToken, setAlertClassName, setAlertMessage, setRefreshToken } = useOutletContext();
+    
     const navigate = useNavigate();
+
+    const showAlert = (message, className, timeout = 5000) => {
+        setAlertMessage(message);
+        setAlertClassName(className);
+
+        setTimeout(() => {
+            setAlertMessage("");
+            setAlertClassName("");
+        }, timeout);
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -32,12 +39,16 @@ const Login = () => {
         fetch(`http://localhost:5005/login`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
-                setJwtToken(data.access_token);
-                navigate("/");
+                if (data.access_token) {
+                    setJwtToken(data.access_token);
+                    setRefreshToken(data.refresh_token);
+                    navigate("/");
+                } else {
+                    showAlert(data.message, "alert-danger", 3000);
+                }
             })
             .catch(error => {
-                ShowAlert(setAlertClassName, setAlertMessage, error.message, "alert-danger", 3000);
+                console.error(error);
             })
     };
 

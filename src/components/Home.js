@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 const Home = () => {
     const [open, setOpen] = useState(false);
+    const { jwtToken } = useOutletContext();
 
     const toggelOpen = () => {
         if (open) {
@@ -35,19 +36,22 @@ const Home = () => {
                     }
                 </div>
             </div>
-            <div>
-                <div className="App">
-                    <div className='mt-2 px-5 py-5 row justify-content-center'>
-                        <h1 style={{ fontWeight: 600 }}>Streamline Invoicing</h1>
-                        <h5 className=' mt-5 px-5 me-5 ms-5'>Create an account to seamlessly include your company information in every invoice, saving you time
-                        </h5>
-                        <h5 className='mb-4 px-5 me-5 ms-5'>Also,
-                            track your sent invoices and earnings
-                        </h5>
-                        <Link to="/register" className='btn btn-submit-dark-large text-center mt-4 mb-4' >Join</Link>
+            {jwtToken === "" &&
+                <div>
+                    <div className="App">
+                        <div className='mt-2 px-5 py-5 row justify-content-center'>
+                            <h1 style={{ fontWeight: 600 }}>Streamline Invoicing</h1>
+                            <h5 className=' mt-5 px-5 me-5 ms-5'>Create an account to seamlessly include your company information in every invoice, saving you time
+                            </h5>
+                            <h5 className='mb-4 px-5 me-5 ms-5'>Also,
+                                track your sent invoices and earnings
+                            </h5>
+                            <Link to="/register" className='btn btn-submit-dark-large text-center mt-4 mb-4' >Join</Link>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
+
         </>
 
     );

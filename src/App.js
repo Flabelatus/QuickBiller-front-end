@@ -1,8 +1,9 @@
 import './App.css';
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { AppBar } from './components/AppBar';
 import Footer from './components/Footer';
 import React, { useCallback, useEffect, useState } from 'react';
+import Alert from './components/Alert'
 
 export const AppContext = React.createContext();
 
@@ -11,37 +12,26 @@ function App() {
 
   AppContext.defaultProps = {
     jwtToken: "",
+    refreshToken: ""
   };
 
   const [jwtToken, setJwtToken] = useState("");
+  const [refreshToken, setRefreshToken] = useState("");
+
   const [tickInterval, setTickInterval] = useState();
 
-  const navigate = useNavigate();
-
-  const logOut = () => {
-    const requestOptions = {
-      method: "GET",
-      credentials: "include",
-    }
-    fetch(`http://localhost:5005/logout`, requestOptions)
-      .catch(error => {
-        console.log("error logging out", error);
-      })
-      .finally(() => {
-        setJwtToken("");
-        navigate("/");
-      });
-  };
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertClassName, setAlertClassName] = useState("d-none");
 
   const toggleRefresh = useCallback((status) => {
-    const requestOptions = {
-      method: "POST",
-      credentials: "include",
-    }
+ 
     if (status) {
       let i = setInterval(() => {
 
-        fetch(`http://localhost:5005/refresh`, requestOptions)
+        fetch(`http://localhost:5005/refresh`, {
+          method: "POST",
+          credentials: "include",
+        })
           .then((response) => response.json())
           .then((data) => {
             if (data.access_token) {
@@ -61,11 +51,11 @@ function App() {
 
   useEffect(() => {
     if (jwtToken === "") {
-      const requestOptions = {
+
+      fetch(`http://localhost:5005/refresh`, {
         method: "POST",
-        credentials: "include",
-      }
-      fetch(`http://localhost:5005/refresh`, requestOptions)
+        credentials: 'include',
+      })
         .then((response) => response.json())
         .then((data) => {
           if (data.access_token) {
@@ -81,16 +71,22 @@ function App() {
 
   return (
     <>
-      <AppContext.Provider value={{ jwtToken, setJwtToken }}>
-      <div >
-        <div>
-          <AppBar></AppBar>
-          <div className='justify-content-center'>
-            <Outlet context={{ jwtToken, setJwtToken }}></Outlet>
-            <Footer />
+      <AppContext.Provider value={{ jwtToken, setJwtToken, toggleRefresh }}>
+        <div >
+          <div>
+            <AppBar></AppBar>
+            <div className='justify-content-center'>
+              {alertMessage && (
+                <Alert
+                  message={alertMessage}
+                  className={alertClassName}
+                />
+              )}
+              <Outlet context={{ jwtToken, setJwtToken, setAlertClassName, setAlertMessage, refreshToken, setRefreshToken }}></Outlet>
+              <Footer />
+            </div>
           </div>
         </div>
-      </div>
       </AppContext.Provider>
     </>
   );

@@ -45,7 +45,7 @@ const UserCompany = () => {
             })
     })
     return (
-        <div className="row justify-content-center mt-4">
+        <div className="row justify-content-center mt-4 mb-5">
             <div className="col-md-4 offset-md-3 px-4 py-4" style={{backgroundColor: "#EEE", borderRadius: 8}}>
                 <p style={{fontWeight: 600, fontSize: 16}}>Contact Name: {contactName}</p>
                 <p style={{fontWeight: 600, fontSize: 16}}>Email: {email}</p>
