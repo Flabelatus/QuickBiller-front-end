@@ -99,17 +99,16 @@ const InvoiceForms = () => {
 
     return (
         <div className="justify-content-center">
-            <hr className="mt-4" style={{ color: "#ccc", width: "50vw", margin: "0 auto" }} />
+            <hr className="mt-4" style={{ color: "#061868", width: "50vw", margin: "0 auto" }} />
             <form onSubmit={handleSubmit} className="mb-5 mt-5">
 
                 {jwtToken !== "" &&
                     <div>
-                        <h1 className="mb-5" style={{ color: '#ccc', fontWeight: 700 }}>Document Data</h1>
+                        <h1 className="mb-5" style={{ color: '#061868', fontWeight: 700 }}>Document Data</h1>
                         <div >
                             <select
-
                                 className="btn btn-light mb-2"
-                                style={{ width: 'fit-content' }}
+                                style={{ width: 'fit-content', fontSize: 20, border: "1px solid #ccc", height: 50 }}
                                 onChange={handleSelectChange}
                                 value={selectedOption}
                             >
@@ -120,14 +119,13 @@ const InvoiceForms = () => {
                             </select>
 
                         </div>
-                        <a className="btn btn-secondary mt-3" style={{ fontSize: 20, width: 150 }}>Select</a>
-                        <hr className="mt-5 mb-5" style={{ color: "#ccc", width: "50vw", margin: "0 auto" }} />
+                        <a className="btn btn-submit-dark-small mt-3" style={{ fontSize: 20, width: 150 }}>Select</a>
                     </div>
                 }
 
                 <div className="row- mt-5 justify-content-center container py-4">
                     <div className="row justify-content-center">
-                        <h3 className="mb-5" style={{ color: '#00994C' }}>Company Information</h3>
+                        <h3 className="mb-5" style={{ color: '#e56259' }}>Company Information</h3>
                         <div className="col-md-3">
                             <Input
                                 title="Company Name"
@@ -209,7 +207,7 @@ const InvoiceForms = () => {
                 </div>
                 <div className=" mt-5 justify-content-center d-flex container py-4">
                     <div className="row justify-content-center d-flex">
-                        <h3 className="mb-4" style={{ color: '#00994C' }}>Job Information</h3>
+                        <h3 className="mb-4" style={{ color: '#e56259' }}>Job Information</h3>
 
                         <div className="col-md-4">
                             {jobs.map((job, index) => (
@@ -251,7 +249,7 @@ const InvoiceForms = () => {
 
                 <div className=" mt-5 justify-content-center container py-4">
                     <div className="row justify-content-center">
-                        <h3 className="mb-4" style={{ color: '#00994C' }}>VAT Information</h3>
+                        <h3 className="mb-4" style={{ color: '#e56259' }}>VAT Information</h3>
                         <div className="col">
 
                             <input
@@ -277,7 +275,7 @@ const InvoiceForms = () => {
                             <input
                                 className="ms-4"
                                 type="text"
-                                style={{ width: 40, fontWeight: 400, color: "#00000090", border: "2px solid #00994C70", borderRadius: 4 }}
+                                style={{ width: 40, fontWeight: 400, color: "#00000090", border: "2px solid #ccc", borderRadius: 4 }}
                                 value={21}
                             ></input>
                             <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>
@@ -287,7 +285,7 @@ const InvoiceForms = () => {
 
                 <div className="mt-5 justify-content-center d-flex container py-4">
                     <div className="row justify-content-center">
-                        <h3 className="mb-4" style={{ color: '#00994C' }}>Costs Items</h3>
+                        <h3 className="mb-4" style={{ color: '#e56259' }}>Costs Items</h3>
 
                         <div className="col-md-4">
                             {costs.map((cost, index) => (
@@ -318,7 +316,7 @@ const InvoiceForms = () => {
                     </div>
 
                 </div>
-                {!isSubmitted && <button type="submit" className="btn btn-light mt-5" style={{ fontSize: 20, width: 150 }}>Submit</button>}
+                {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ fontSize: 20, width: 150 }}>Submit</button>}
                 {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleClearForm}>Make Invoice</button>}
                 {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleClearForm}>Make Quote</button>}
                 {isSubmitted && <button className="btn btn-secondary mt-5 ms-4" style={{ fontSize: 20, width: 150 }} onClick={handleRefreshPage}>Refresh</button>}

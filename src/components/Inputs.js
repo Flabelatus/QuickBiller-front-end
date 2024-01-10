@@ -8,7 +8,7 @@ const Input = forwardRef((props, ref) => {
       </label>
       <div className="">
         <input
-          style={{ color: "#00224C", border: "2px solid #00994C60", borderRadius: 4, height: 40, fontSize: 18, width: 250 }}
+          style={{ color: "#00224C", border: "2px solid #00000060", borderRadius: 8, height: 40, fontSize: 18, width: 250 }}
           type={props.type}
           className={props.className}
           ref={ref}

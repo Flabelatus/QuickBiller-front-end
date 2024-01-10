@@ -15,6 +15,7 @@ func (app *application) routes() http.Handler {
 
 	mux.Post("/login", app.authenticate)
 	mux.Post("/refresh", app.refreshToken)
+	mux.Post("/register", app.RegisterNewUser)
 
 	// Protected routes
 	mux.Route("/logged_in", func(mux chi.Router) {

@@ -14,7 +14,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #ffffff;
   min-height: 10vh;
   display: flex;
   flex-direction: column;
@@ -39,68 +39,84 @@
 }
 
 .btn-submit-light-small {
-  background-color: #99FFCC;
-  color: #00994C;
+  background-color: #061868;
+  color: #ffffff;
   font-size: 20px;
   width: 150px;
 }
 
 .btn-submit-light-small:hover {
-  background-color: hsl(150, 56%, 60%);
+  background-color: #06186880;
   color: #fbfffd;
 }
 
 .btn-submit-light-small::selection {
-  background-color: hsl(150, 56%, 60%);
+  background-color: #06186880;
   color: #fbfffd;
 }
 
+.btn-submit-light-small-2 {
+  background-color: #ffffff;
+  color: #3e3e3e;
+  font-size: 20px;
+  width: 150px;
+  border: #8a8a8a solid 1px ;
+}
+
+.btn-submit-light-small-2:hover {
+  background-color: #9d9d9d;
+  color: #3e3e3e;
+  font-size: 20px;
+  width: 150px;
+  border: #8a8a8a solid 1px ;
+}
+
 .btn-submit-dark-small {
-  color: #99FFCC;
-  background-color: #00994C;
+  color: #ffffff;
+  background-color: #e56259;
   font-size: 20px;
   width: 150px;
 }
 
 .btn-submit-dark-small:hover {
-  background-color: #99FFCC;
-  color: #12442b;
+  background-color: #a8554f;
+  color: #ffffff;
 }
 
 .btn-submit-dark-small::selection {
-  background-color: #99FFCC;
-  color: #12442b;
+  background-color: #a8554f;
+  color: #ffffff;
 }
 
 .btn-submit-light-large {
-  background-color: #99FFCC;
-  color: #00994C;
+  background-color: #061868;
+  color: #ffffff;
   font-size: 30px;
   width: 250px;
 }
 
 .btn-submit-light-large:hover {
-  background-color: #60d299;
-  color: #fbfffd;
+  background-color: #06186880;
+  color: #ffffff;
 }
 
 .btn-submit-dark-large {
-  color: #99FFCC;
-  background-color: #00994C;
+  color: #ffffff;
+  background-color: #e56259;
   font-size: 30px;
   width: 250px;
 }
 
 .btn-submit-dark-large:hover {
-  background-color: #99FFCC;
-  color: #12442b;
+  background-color: #98423c;
+  color: #ffffff;
 }
 
 .container {
-  background-color: #d7ffea;
+  background-color: hsl(0, 0%, 100%);
   border-radius: 16px;
   padding: 10px;
-
+  box-shadow: 1px 1px 10px #e5e5e5;
 }
 
 .container-invoice {
@@ -112,12 +128,12 @@
 .checkbox-custom {
   scale: 1.2;
   background-color: white;
-  border-color: #00994C;
+  border-color: #8d3c37;
 }
 
 .checkbox-custom:checked {
-  background-color: #41c482;
-  border-color: #00994C;
+  background-color: #e2605a;
+  border-color: #8d3c37;
 }
 
 .form-text-fields {

@@ -56,9 +56,8 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 
 	// create a jwt user
 	u := jwtUser{
-		ID:        int(user.ID),
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
+		ID:       int(user.ID),
+		UserName: user.UserName,
 	}
 
 	// generate tokens
@@ -101,9 +100,8 @@ func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
 			}
 
 			u := jwtUser{
-				ID:        int(user.ID),
-				FirstName: user.FirstName,
-				LastName:  user.LastName,
+				ID:       int(user.ID),
+				UserName: user.UserName,
 			}
 
 			tokenPairs, err := app.auth.GenerateTokenPair(&u)

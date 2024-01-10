@@ -1,23 +1,72 @@
 import { useState } from "react";
 import Input from "./Inputs";
 import Invoice from '.././images/invoice.png'
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 const Register = () => {
     const [userName, setUserName] = useState("");
+    const { setAlertClassName, setAlertMessage } = useOutletContext();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmationPassword, setConfirmatioinPassword] = useState("");
 
+
+    const navigate = useNavigate();
+
+    const showAlert = (message, className, timeout = 5000) => {
+        setAlertMessage(message);
+        setAlertClassName(className);
+
+        setTimeout(() => {
+            setAlertMessage("");
+            setAlertClassName("");
+        }, timeout);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('submitted');
+        if (confirmationPassword == password) {
+            let payload = {
+                username: userName,
+                email: email,
+                password: password
+            };
+
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload)
+            }
+            fetch(`http://localhost:8082/register`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (!data.error) {
+                        navigate("/login");
+                    } else {
+                        showAlert(data.message, "alert-danger", 3000);
+                    }
+                })
+                .catch((err) => {
+                    console.error(err.message);
+                })
+        } else {
+            showAlert("Password does not match", "alert-danger", 3000);
+        }
+
     }
 
     return (
-        <div className="container mt-5 px-5">
+        <div className="container mt-5 px-5 mb-5">
             <div className="row justify-content-center">
                 <div className="col">
-                    <h1 className="text-center mt-4">Register</h1>
+                    <img
+                        src={Invoice} style={{ width: 500, borderRadius: 16, marginTop: 50 }}>
+                    </img>
+                </div>
+                <div className="col">
+                    <h1 className="text-start mt-4 ms-5">Register</h1>
 
                     <form onSubmit={handleSubmit} className="mt-3 mb-4 ms-5" >
                         <Input
@@ -55,12 +104,7 @@ const Register = () => {
                         <button type="submit" className="btn btn-submit-dark-small mt-3">Submit</button>
                     </form>
                 </div>
-                <div className="col">
-                    <img
-                        src={Invoice} style={{ height: 450, borderRadius: 16, marginTop: 50 }}>
-                    </img>
 
-                </div>
             </div>
         </div>
     );

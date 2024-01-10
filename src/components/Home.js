@@ -20,9 +20,9 @@ const Home = () => {
 
     return (
         <>
-            <div className="row justify-content-center" style={{ backgroundColor: "#282c34" }}>
-                <h1 style={{ color: '#99FFCC', fontFamily: 'revert', fontSize: 70, fontWeight: 800, textAlign: 'center' }}>QuickBiller</h1>
-                <h5 style={{ textAlign: 'center', color: "white" }}>Simplify Your Billing Process</h5>
+            <div className="row justify-content-center" style={{ backgroundColor: "#ffffff" }}>
+                <h1 style={{ color: '#e56259', fontFamily: 'revert', fontSize: 70, fontWeight: 800, textAlign: 'center' }}>QuickBiller</h1>
+                <h5 style={{ textAlign: 'center', color: "black" }}>Simplify Your Billing Process</h5>
                 <Link
                     className='btn btn-submit-light-large text-center mt-5'
                     onClick={toggelOpen}>
@@ -38,12 +38,12 @@ const Home = () => {
             </div>
             {jwtToken === "" &&
                 <div>
-                    <div className="App">
+                    <div className="App" style={{ backgroundColor: "#d2d6db" }}>
                         <div className='mt-2 px-5 py-5 row justify-content-center'>
-                            <h1 style={{ fontWeight: 600 }}>Streamline Invoicing</h1>
-                            <h5 className=' mt-5 px-5 me-5 ms-5'>Create an account to seamlessly include your company information in every invoice, saving you time
+                            <h1 style={{ fontSize: 50, fontWeight: 800, color: "#061868" }}>Streamline Invoicing</h1>
+                            <h5 className=' mt-5 px-5 me-5 ms-5' style={{ color: "#061868" }}>Create an account to seamlessly include your company information in every invoice, saving you time
                             </h5>
-                            <h5 className='mb-4 px-5 me-5 ms-5'>Also,
+                            <h5 className='mb-4 px-5 me-5 ms-5' style={{ color: "#061868" }}>Also,
                                 track your sent invoices and earnings
                             </h5>
                             <Link to="/register" className='btn btn-submit-dark-large text-center mt-4 mb-4' >Join</Link>

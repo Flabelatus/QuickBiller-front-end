@@ -249,8 +249,7 @@ func (app *application) UpdateUser(w http.ResponseWriter, r *http.Request) {
 			errChan <- err
 		}
 
-		u.FirstName = payload.FirstName
-		u.LastName = payload.LastName
+		u.UserName = payload.UserName
 		u.Email = payload.Email
 		u.UpdatedAt = time.Now()
 

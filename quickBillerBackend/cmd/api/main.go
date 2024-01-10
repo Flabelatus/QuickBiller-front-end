@@ -82,10 +82,9 @@ func main() {
 	}
 
 	admin := models.User{
-		FirstName: "Admin",
-		LastName:  "User_1",
-		Email:     "admin@example.com",
-		Password:  hashedPassword,
+		UserName: "Admin",
+		Email:    "admin@example.com",
+		Password: hashedPassword,
 	}
 	mode := models.Mode{
 		Name:   "admin",
