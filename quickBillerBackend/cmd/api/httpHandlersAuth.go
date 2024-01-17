@@ -170,6 +170,7 @@ func (app *application) RegisterNewUser(w http.ResponseWriter, r *http.Request) 
 
 func (app *application) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	idParam := chi.URLParam(r, "user_id")
+	fmt.Println(idParam)
 
 	errChan := make(chan error)
 	userChan := make(chan *models.User)

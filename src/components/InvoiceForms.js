@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Input from "./Inputs";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 
 const InvoiceForms = () => {
@@ -19,26 +19,22 @@ const InvoiceForms = () => {
     const [vatPercentage, setVatPercentage] = useState(0);
     const [discount, setDiscount] = useState(0);
 
-    const [userID, setUserID] = useState(0);
+    const [user, setUser] = useState(0);
     const [companyList, setCompanyList] = useState([]);
 
+    const navigate = useNavigate();
+
     const getComapnyDataList = (user_id) => {
-        if (jwtToken !== "") {
-            let userID = jwt_decode.jwtDecode(jwtToken).sub;
-            setUserID(userID)
-        };
+
         const requestOptions = {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + jwtToken,
-            },
-            body: JSON.stringify({
-                "user_id": user_id
-            })
+            }
         };
 
-        fetch(`http://localhost:8082/logged_in/client_list`, requestOptions)
+        fetch(`http://localhost:8082/logged_in/client_list/${user_id}`, requestOptions)
             .then(response => response.json())
             .then((data) => {
                 console.log(data);
@@ -48,17 +44,52 @@ const InvoiceForms = () => {
                 console.error(error.message);
             })
 
-        // set the companyList 
     };
-    const testOptions = [
-        { id: 1, data: "company 1" },
-        { id: 2, data: "company 2" },
-        { id: 3, data: "company 3" }
-    ]
 
+    const populateData = () => {
+        // Set all the client data from the selected data from the companyList
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwtToken
+            }
+        };
+
+        fetch(`http://localhost:8082/logged_in/client/${selectedOption}`, requestOptions)
+            .then((resp) => resp.json())
+            .then((data) => {
+                console.log(data);
+                setCompany(data.data);
+            })
+            .catch(err => {
+                console.error(err.message);
+            })
+    }
+ 
     useEffect(() => {
-        getComapnyDataList(1);
-    }, [company, refresh, jwtToken]);
+        if (jwtToken === "") {
+            navigate("/login");
+            return;
+        };
+
+        const requestOptions = {
+            method: "GET",
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+            credentials: "include"
+        };
+
+        fetch(`http://localhost:8082/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                setUser(data);
+                getComapnyDataList(data.ID);
+            })
+            .catch((error) => {
+                console.error(error.message);
+            })
+
+    }, [ refresh, jwtToken]);
 
     const handleRefreshPage = () => {
         if (!refresh) {
@@ -66,7 +97,6 @@ const InvoiceForms = () => {
         } else {
             setRefresh(false);
         }
-
         setIsSubmitted(false);
         handleClearForm();
     }
@@ -150,8 +180,6 @@ const InvoiceForms = () => {
         // otherwise do nothing
     }
 
-    console.log(userID);
-
     return (
         <div className="justify-content-center">
             <hr className="mt-4" style={{ color: "#061868", width: "100vw", margin: "0 auto" }} />
@@ -170,12 +198,12 @@ const InvoiceForms = () => {
                             >
                                 <option value="">Select an option</option>
                                 {companyList.map((opt) => (
-                                    <option key={opt.id} value={opt.id}>{opt.company_name}</option>
+                                    <option key={opt.ID} value={opt.ID}>{opt.company_name}</option>
                                 ))}
                             </select>
 
                         </div>
-                        <a className="btn btn-submit-dark-small mt-3" style={{ fontSize: 20, width: 150 }}>Select</a>
+                        <a className="btn btn-submit-dark-small mt-3" style={{ fontSize: 20, width: 150 }} onClick={populateData}>Select</a>
                     </div>
                 }
                 

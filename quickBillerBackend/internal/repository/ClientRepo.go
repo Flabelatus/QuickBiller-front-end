@@ -27,7 +27,7 @@ func (r *GORMRepo) GetClientByID(id int) (*models.Client, error) {
 }
 
 // GetClientByUserID retrieves Clients by its associated User ID.
-func (r *GORMRepo) GetClientsByUserID(userID int) ([]*models.Client, error) {
+func (r *GORMRepo) GetClientsByUserID(userID string) ([]*models.Client, error) {
 	var clients []*models.Client
 	if err := r.DB.Where("user_id = ?", userID).Find(&clients).Error; err != nil {
 		return nil, err
