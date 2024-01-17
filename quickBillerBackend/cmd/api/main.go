@@ -9,9 +9,14 @@ import (
 	repositories "quickBiller/internal/repository"
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+func init() {
+
+}
 
 const port = 8082
 
@@ -82,13 +87,15 @@ func main() {
 	}
 
 	admin := models.User{
+		ID:       uuid.NewString(),
 		UserName: "Admin",
 		Email:    "admin@example.com",
 		Password: hashedPassword,
 	}
+
 	mode := models.Mode{
 		Name:   "admin",
-		UserID: 1,
+		UserID: admin.ID,
 	}
 
 	adminUser, _ := app.Repository.GetUserByEmail("admin@example.com")

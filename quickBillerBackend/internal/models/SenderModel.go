@@ -1,6 +1,8 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Sender struct {
 	gorm.Model
@@ -14,5 +16,5 @@ type Sender struct {
 	Iban        string `json:"iban"`
 	VatNo       string `json:"vat_no"`
 	CocNo       string `json:"coc_no"`
-	UserID      int    `json:"user_id"`
+	UserID      string `json:"user_id"`
 }

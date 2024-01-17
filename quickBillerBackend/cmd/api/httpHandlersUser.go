@@ -32,18 +32,13 @@ func (app *application) GetAllUserModes(w http.ResponseWriter, r *http.Request) 
 }
 
 func (app *application) GetUsersModeByUserID(w http.ResponseWriter, r *http.Request) {
-	urlParam := chi.URLParam(r, "user_id")
-	userID, err := strconv.Atoi(urlParam)
-	if err != nil {
-		app.errorJSON(w, fmt.Errorf("error getting user by id - %v", err))
-		return
-	}
+	IDParam := chi.URLParam(r, "user_id")
 
 	errChan := make(chan error)
 	userChan := make(chan *models.User)
 
 	go func() {
-		user, err := app.Repository.GetUserByID(uint(userID))
+		user, err := app.Repository.GetUserByID(IDParam)
 		if err != nil {
 			errChan <- err
 		} else {
@@ -227,14 +222,9 @@ func (app *application) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	IDParam := chi.URLParam(r, "user_id")
-	userID, err := strconv.Atoi(IDParam)
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
 
 	var payload *models.User
-	err = app.readJSON(w, r, &payload)
+	err := app.readJSON(w, r, &payload)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
@@ -244,16 +234,15 @@ func (app *application) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	uChan := make(chan *models.User)
 
 	go func() {
-		u, err := app.Repository.GetUserByID(uint(userID))
+		u, err := app.Repository.GetUserByID(IDParam)
 		if err != nil {
 			errChan <- err
 		}
 
 		u.UserName = payload.UserName
 		u.Email = payload.Email
-		u.UpdatedAt = time.Now()
 
-		err = app.Repository.UpdateUser(uint(userID), u)
+		err = app.Repository.UpdateUser(IDParam, u)
 		if err != nil {
 			errChan <- err
 		} else {
@@ -276,16 +265,11 @@ func (app *application) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	IDParam := chi.URLParam(r, "user_id")
-	userID, err := strconv.Atoi(IDParam)
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
 
 	errChan := make(chan error)
 
 	go func() {
-		err := app.Repository.DeleteUserByID(uint(userID))
+		err := app.Repository.DeleteUserByID(IDParam)
 		if err != nil {
 			errChan <- err
 		} else {
@@ -293,7 +277,7 @@ func (app *application) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	err = <-errChan
+	err := <-errChan
 	if err != nil {
 		app.errorJSON(w, err)
 	}

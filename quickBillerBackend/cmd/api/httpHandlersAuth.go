@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"quickBiller/internal/models"
-	"strconv"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 // Request/Response Handlers
@@ -56,7 +55,7 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 
 	// create a jwt user
 	u := jwtUser{
-		ID:       int(user.ID),
+		ID:       user.ID,
 		UserName: user.UserName,
 	}
 
@@ -89,18 +88,18 @@ func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// get the User ID from the token claims
-			userID, err := strconv.Atoi(claims.Subject)
+			userID := claims.Subject
 			if err != nil {
 				app.errorJSON(w, fmt.Errorf("unknown user - %v", err), http.StatusUnauthorized)
 			}
-			user, err := app.Repository.GetUserByID(uint(userID))
+			user, err := app.Repository.GetUserByID(userID)
 			if err != nil {
 				app.errorJSON(w, fmt.Errorf("unknown user - %v", err), http.StatusUnauthorized)
 				return
 			}
 
 			u := jwtUser{
-				ID:       int(user.ID),
+				ID:       user.ID,
 				UserName: user.UserName,
 			}
 
@@ -131,7 +130,7 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) RegisterNewUser(w http.ResponseWriter, r *http.Request) {
 
-	var newUser models.User
+	newUser := models.User{ID: uuid.NewString()}
 	err := app.readJSON(w, r, &newUser)
 	if err != nil {
 		app.errorJSON(w, err)
@@ -144,8 +143,6 @@ func (app *application) RegisterNewUser(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	newUser.CreatedAt = time.Now()
-	newUser.UpdatedAt = time.Now()
 	newUser.Password = hashedPassword
 
 	err = app.Repository.CreateUser(&newUser)
@@ -162,7 +159,7 @@ func (app *application) RegisterNewUser(w http.ResponseWriter, r *http.Request) 
 
 	userMode := models.Mode{
 		Name:   "1212",
-		UserID: int(newUser.ID),
+		UserID: newUser.ID,
 	}
 	err = app.Repository.CreateMode(&userMode)
 	if err != nil {
@@ -173,18 +170,12 @@ func (app *application) RegisterNewUser(w http.ResponseWriter, r *http.Request) 
 
 func (app *application) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	idParam := chi.URLParam(r, "user_id")
-	userID, err := strconv.Atoi(idParam)
-
-	if err != nil {
-		app.errorJSON(w, fmt.Errorf("error converting strings to integer - %v", err))
-		return
-	}
 
 	errChan := make(chan error)
 	userChan := make(chan *models.User)
 
 	go func() {
-		user, err := app.Repository.GetUserByID(uint(userID))
+		user, err := app.Repository.GetUserByID(idParam)
 		if err != nil {
 			errChan <- err
 		} else {

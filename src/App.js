@@ -21,8 +21,7 @@ function App() {
   const [alertClassName, setAlertClassName] = useState("d-none");
 
   const toggleRefresh = useCallback((status) => {
-    console.log("clicked");
-    
+
     if (status) {
       console.log("turning on ticking");
       let i = setInterval(() => {
@@ -44,10 +43,8 @@ function App() {
           })
       }, 600000);
       setTickInterval(i);
-      console.log("setting tick interval to", i);
     } else {
-      console.log("turning off ticking");
-      console.log("turning off tickInterval", tickInterval);
+
       setTickInterval(null);
       clearInterval(tickInterval);
     }
@@ -77,7 +74,7 @@ function App() {
   return (
     <>
       <AppContext.Provider value={{ jwtToken, setJwtToken, toggleRefresh }}>
-        <div >
+        <div style={{ maxWidth: '100%' }}>
           <div>
             <AppBar></AppBar>
             <div className='justify-content-center'>

@@ -21,6 +21,8 @@ func (app *application) routes() http.Handler {
 	mux.Route("/logged_in", func(mux chi.Router) {
 		mux.Use(app.authRequired)
 		mux.Post("/logout", app.logout)
+		mux.Post("/client_list", app.GetCompanyDataListByUserID)
+		mux.Post("/add_client", app.InsertClient)
 	})
 
 	mux.Route("/admin", func(mux chi.Router) {

@@ -18,8 +18,7 @@ func (r *GORMRepo) Migrate() error {
 		models.Mode{},
 		models.Invoice{},
 		models.Quote{},
-		models.ClientInvoice{},
-		models.ClientQuote{},
+		models.Client{},
 		models.Sender{},
 	)
 	if err != nil {

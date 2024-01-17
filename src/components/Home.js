@@ -40,11 +40,9 @@ const Home = () => {
                 <div>
                     <div className="App" style={{ backgroundColor: "#d2d6db" }}>
                         <div className='mt-2 px-5 py-5 row justify-content-center'>
-                            <h1 style={{ fontSize: 50, fontWeight: 800, color: "#061868" }}>Streamline Invoicing</h1>
-                            <h5 className=' mt-5 px-5 me-5 ms-5' style={{ color: "#061868" }}>Create an account to seamlessly include your company information in every invoice, saving you time
-                            </h5>
-                            <h5 className='mb-4 px-5 me-5 ms-5' style={{ color: "#061868" }}>Also,
-                                track your sent invoices and earnings
+                            <h1 style={{ fontSize: 40, fontWeight: 600, fontFamily: "revert", color: "#061868" }}>Streamline Invoicing</h1>
+                            <h5 className=' mt-5 px-5 me-5 ms-5' style={{ color: "#061868" }}>
+                                Create an account to seamlessly include your company information in every invoice, saving you time
                             </h5>
                             <Link to="/register" className='btn btn-submit-dark-large text-center mt-4 mb-4' >Join</Link>
                         </div>

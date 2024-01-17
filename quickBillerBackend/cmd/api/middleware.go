@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"strconv"
 )
 
 func (app *application) enableCORS(h http.Handler) http.Handler {
@@ -57,11 +56,8 @@ func (app *application) adminRequired(next http.Handler) http.Handler {
 
 // Helper function to check if the user is an admin
 func (app *application) isUserAdmin(userID string) (bool, error) {
-	IntegerUserID, err := strconv.Atoi(userID)
-	if err != nil {
-		return false, err
-	}
-	user, err := app.Repository.GetUserByID(uint(IntegerUserID))
+
+	user, err := app.Repository.GetUserByID(userID)
 	if err != nil {
 		return false, err
 	}

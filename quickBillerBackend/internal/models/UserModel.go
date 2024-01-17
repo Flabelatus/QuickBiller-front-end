@@ -8,7 +8,7 @@ import (
 )
 
 type User struct {
-	gorm.Model
+	ID       string     `gorm:"type:uuid;primary_key"`
 	UserName string     `json:"username"`
 	Email    string     `json:"email"`
 	Password string     `json:"password"`
@@ -16,12 +16,13 @@ type User struct {
 	Invoices []*Invoice `gorm:"foreignKey:UserID" json:"invoices"`
 	Quotes   []*Quote   `gorm:"foreignKey:UserID" json:"quotes"`
 	Sender   Sender     `gorm:"foreignKey:UserID" json:"sender"`
+	Client   Client     `gorm:"foreignKey:UserID" json:"user_id"`
 }
 
 type Mode struct {
 	gorm.Model
 	Name   string `json:"mode_name"`
-	UserID int    `json:"user_id"`
+	UserID string `json:"user_id"`
 }
 
 func (u *User) PasswordMatches(plainText string) (bool, error) {

@@ -89,7 +89,7 @@ func (r *GORMRepo) GetAllUsers() ([]models.User, error) {
 	return users, nil
 }
 
-func (r *GORMRepo) GetUserByID(id uint) (*models.User, error) {
+func (r *GORMRepo) GetUserByID(id string) (*models.User, error) {
 	var currentUser *models.User
 	err := r.DB.Preload("Mode").First(&currentUser, id).Error
 	if err != nil {
@@ -141,7 +141,7 @@ func (r *GORMRepo) CreateUser(user *models.User) error {
 	return fmt.Errorf("user already exists")
 }
 
-func (r *GORMRepo) DeleteUserByID(id uint) error {
+func (r *GORMRepo) DeleteUserByID(id string) error {
 	user := &models.User{}
 
 	if err := r.DB.Where("id = ?", id).First(&user).Error; err != nil {
@@ -161,7 +161,7 @@ func (r *GORMRepo) DeleteUserByID(id uint) error {
 }
 
 // UPDATE USER
-func (r *GORMRepo) UpdateUser(id uint, user *models.User) error {
+func (r *GORMRepo) UpdateUser(id string, user *models.User) error {
 	var existingUser *models.User
 	err := r.DB.First(&existingUser, id).Error
 	if err != nil {

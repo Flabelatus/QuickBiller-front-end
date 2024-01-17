@@ -1,27 +1,55 @@
 import { useEffect, useState } from "react";
 import Input from "./Inputs";
 import { useOutletContext } from "react-router-dom";
+import * as jwt_decode from 'jwt-decode';
 
 const InvoiceForms = () => {
     const { jwtToken } = useOutletContext();
-    const companyModel = {
-        companyName: "",
-        contactName: "",
-        email: "",
-        phone: "",
-        street: "",
-        postCode: "",
-        city: "",
-        country: ""
-    }
 
-    const [company, setCompany] = useState(companyModel);
+    const [company, setCompany] = useState({});
     const [jobs, setJobs] = useState([{ jobItem: "", hourRate: 0, numberOfHours: 0 }]);
     const [costs, setCosts] = useState([{ costs: 0, info: "" }])
     const [selectedOption, setSelectedOption] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [refresh, setRefresh] = useState(false);
 
+    const [inEU, setInEU] = useState(true);
+    const [isZeroVat, setIsZeroVat] = useState(false);
+    const [inCountry, setInCountry] = useState(true);
+    const [vatPercentage, setVatPercentage] = useState(0);
+    const [discount, setDiscount] = useState(0);
+
+    const [userID, setUserID] = useState(0);
+    const [companyList, setCompanyList] = useState([]);
+
+    const getComapnyDataList = (user_id) => {
+        if (jwtToken !== "") {
+            let userID = jwt_decode.jwtDecode(jwtToken).sub;
+            setUserID(userID)
+        };
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwtToken,
+            },
+            body: JSON.stringify({
+                "user_id": user_id
+            })
+        };
+
+        fetch(`http://localhost:8082/logged_in/client_list`, requestOptions)
+            .then(response => response.json())
+            .then((data) => {
+                console.log(data);
+                setCompanyList(data.data);
+            })
+            .catch((error) => {
+                console.error(error.message);
+            })
+
+        // set the companyList 
+    };
     const testOptions = [
         { id: 1, data: "company 1" },
         { id: 2, data: "company 2" },
@@ -29,7 +57,8 @@ const InvoiceForms = () => {
     ]
 
     useEffect(() => {
-    }, [company, refresh]);
+        getComapnyDataList(1);
+    }, [company, refresh, jwtToken]);
 
     const handleRefreshPage = () => {
         if (!refresh) {
@@ -43,7 +72,7 @@ const InvoiceForms = () => {
     }
 
     const handleClearForm = () => {
-        setCompany({ companyModel });
+        setCompany({});
         document.querySelectorAll('input').forEach(input => {
             input.value = ''; // Resets input fields directly
         });
@@ -52,6 +81,7 @@ const InvoiceForms = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         setIsSubmitted(true);
+        serializeDocument();
     };
 
     const handleAddJob = () => {
@@ -97,11 +127,37 @@ const InvoiceForms = () => {
         }));
     };
 
+    const serializeDocument = () => {
+
+        const invoicePayload = {
+            jobs: jobs,
+            costs: costs,
+            vat_free: isZeroVat,
+            in_eu: inEU,
+            in_country: inCountry,
+            vat_percent: vatPercentage,
+            company: company,
+            discount: discount
+        };
+
+        console.log(invoicePayload);
+    };
+
+    const inserNewCompany = () => {
+        // check to see if jwt is not none and if is none, do nothing
+        // search company by name from backend
+        // if comany not in the list insert it in the backend
+        // otherwise do nothing
+    }
+
+    console.log(userID);
+
     return (
         <div className="justify-content-center">
-            <hr className="mt-4" style={{ color: "#061868", width: "50vw", margin: "0 auto" }} />
+            <hr className="mt-4" style={{ color: "#061868", width: "100vw", margin: "0 auto" }} />
             <form onSubmit={handleSubmit} className="mb-5 mt-5">
 
+                {/* company data selection */}
                 {jwtToken !== "" &&
                     <div>
                         <h1 className="mb-5" style={{ color: '#061868', fontWeight: 700 }}>Document Data</h1>
@@ -113,8 +169,8 @@ const InvoiceForms = () => {
                                 value={selectedOption}
                             >
                                 <option value="">Select an option</option>
-                                {testOptions.map((opt) => (
-                                    <option key={opt.id} value={opt.id}>{opt.data}</option>
+                                {companyList.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>{opt.company_name}</option>
                                 ))}
                             </select>
 
@@ -122,11 +178,12 @@ const InvoiceForms = () => {
                         <a className="btn btn-submit-dark-small mt-3" style={{ fontSize: 20, width: 150 }}>Select</a>
                     </div>
                 }
-
-                <div className="row- mt-5 justify-content-center container py-4">
-                    <div className="row justify-content-center">
+                
+                {/* company info */}
+                <div className="row mt-5 justify-content-center container-fluid py-4">
+                    <div className="row justify-content-center" style={{ width: 'fit-content' }}>
                         <h3 className="mb-5" style={{ color: '#e56259' }}>Company Information</h3>
-                        <div className="col-md-3">
+                        <div className="col-md-4">
                             <Input
                                 title="Company Name"
                                 id="company-name"
@@ -204,57 +261,67 @@ const InvoiceForms = () => {
                         </div>
                     </div>
 
+                {/* jobs */}
                 </div>
-                <div className=" mt-5 justify-content-center d-flex container py-4">
-                    <div className="row justify-content-center d-flex">
+                <div className="mt-3 container-fluid py-4">
+                    <div className="row justify-content-center">
                         <h3 className="mb-4" style={{ color: '#e56259' }}>Job Information</h3>
 
-                        <div className="col-md-4">
+                        <div className="col-md-8" style={{ width: 'fit-content' }}>
                             {jobs.map((job, index) => (
-                                <div key={index} className="d-flex justify-content-center">
-                                    <Input
-                                        title={`Job Item Description ${index + 1}`}
-                                        type="text"
-                                        className="me-4"
-                                        value={job.jobItem}
-                                        onChange={(e) => handleJobInputChange(index, "jobItem", e.target.value)}
-                                    />
-                                    <Input
-                                        title={`Hour Rate for Job ${index + 1}`}
-                                        type="number"
-                                        className=""
-                                        value={job.hourRate}
-                                        onChange={(e) => handleJobInputChange(index, "hourRate", e.target.value)}
-                                    />
-                                    <Input
-                                        title={`Number of Hours`}
-                                        type="number"
-                                        className="ms-4"
-                                        value={job.hourRate}
-                                        onChange={(e) => handleJobInputChange(index, "hourRate", e.target.value)}
-                                    />
-
-                                    <a className="btn btn-submit-light-small mt-2 mb-2 ms-4 mr-4" style={{ width: 40, height: 40 }} onClick={() => handleRemoveJob(index)}>
-                                        -
-                                    </a>
+                                <div key={index} className="row mb-2">
+                                    <div className="col-md-4 col-sm-12 mb-2">
+                                        <Input
+                                            title={`Job Item Description ${index + 1}`}
+                                            type="text"
+                                            value={job.jobItem}
+                                            onChange={(e) => handleJobInputChange(index, "jobItem", e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="col-md-4 col-sm-12 mb-2">
+                                        <Input
+                                            title={`Hour Rate for Job ${index + 1}`}
+                                            type="number"
+                                            value={job.hourRate}
+                                            onChange={(e) => handleJobInputChange(index, "hourRate", e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="col-md-4 col-sm-12 mb-2">
+                                        <Input
+                                            title={`Number of Hours`}
+                                            type="number"
+                                            value={job.numberOfHours}
+                                            onChange={(e) => handleJobInputChange(index, "numberOfHours", e.target.value)}
+                                        />
+                                    </div>
                                 </div>
                             ))}
-                            <a className="btn btn-submit-light-small mt-2" style={{ width: 40 }} onClick={handleAddJob}>
-                                +
-                            </a>
+                            <div className="row">
+                                <div className="col-md-12 col-sm-12">
+                                    <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddJob}>
+                                        +
+                                    </a>
+                                    {jobs.length > 0 && (
+                                        <a className="btn btn-submit-light-small ms-2" style={{ width: 45 }} onClick={() => handleRemoveJob(jobs.length - 1)}>
+                                            -
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                 </div>
-
-                <div className=" mt-5 justify-content-center container py-4">
-                    <div className="row justify-content-center">
+                
+                {/* checkboxes */}
+                <div className=" mt-5 container-fluid py-4" style={{ width: 'fit-content' }}>
+                    <div className="row justify-content-center"  >
                         <h3 className="mb-4" style={{ color: '#e56259' }}>VAT Information</h3>
                         <div className="col">
 
                             <input
                                 className="form-check-input checkbox-custom"
                                 type="checkbox"
+                                onChange={(e) => setIsZeroVat(e.target.checked)}
                             ></input>
                             <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>VAT Free</label>
 
@@ -262,6 +329,7 @@ const InvoiceForms = () => {
                                 className="form-check-input checkbox-custom ms-4"
                                 type="checkbox"
                                 defaultChecked={true}
+                                onChange={(e) => setInEU(e.target.checked)}
                             ></input>
                             <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within EU</label>
 
@@ -269,6 +337,7 @@ const InvoiceForms = () => {
                                 className="form-check-input checkbox-custom ms-4"
                                 type="checkbox"
                                 defaultChecked={true}
+                                onChange={(e) => setInCountry(e.target.checked)}
                             ></input>
                             <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within Country</label>
 
@@ -277,45 +346,64 @@ const InvoiceForms = () => {
                                 type="text"
                                 style={{ width: 40, fontWeight: 400, color: "#00000090", border: "2px solid #ccc", borderRadius: 4 }}
                                 value={21}
+                                onChange={(e) => setVatPercentage(e.target.value)}
                             ></input>
                             <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>
                         </div>
                     </div>
                 </div>
-
-                <div className="mt-5 justify-content-center d-flex container py-4">
-                    <div className="row justify-content-center">
+                
+                {/* costs and discount */}
+                <div className="mt-5 d-flex justify-content-center">
+                    <div className="col-md-8" style={{ width: 'fit-content' }}>
                         <h3 className="mb-4" style={{ color: '#e56259' }}>Costs Items</h3>
-
-                        <div className="col-md-4">
-                            {costs.map((cost, index) => (
-                                <div key={index} className="justify-content-center d-flex">
+                        {costs.map((cost, index) => (
+                            <div key={index} className="row">
+                                <div className="col-md-6 col-sm-12 mb-2">
                                     <Input
                                         title={`Item ${index + 1}`}
                                         type="text"
-                                        className="me-4"
                                         value={cost.info}
                                         onChange={(e) => handleCostInputChange(index, "info", e.target.value)}
                                     />
+                                </div>
+                                <div className="col-md-6 col-sm-12 mb-2">
                                     <Input
                                         title={`Cost ${index + 1}`}
                                         type="number"
-                                        className=""
                                         value={cost.costs}
                                         onChange={(e) => handleCostInputChange(index, "costs", e.target.value)}
                                     />
-                                    <a className="btn btn-submit-light-small mt-2 mb-2 ms-4 mr-4" style={{ width: 40, height: 40 }} onClick={() => handleRemoveCost(index)}>
+                                </div>
+                            </div>
+                        ))}
+                        <div className="row justify-content-center mt-4">
+                            <div className="col-md-6 col-sm-12">
+                                <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddCost}>
+                                    +
+                                </a>
+                                {costs.length > 0 && (
+                                    <a className="btn btn-submit-light-small ms-2" style={{ width: 45 }} onClick={() => handleRemoveCost(costs.length - 1)}>
                                         -
                                     </a>
+                                )}
+                            </div>
+                        </div>
+                        <div>
+                        <div className="row mt-5">
+                                    <Input
+                                        title="Discount"
+                                        type="number"
+                                        name="discount"
+                                        value={0}
+                                        onChange={(e) => setDiscount(e.target.value)}
+                                    />
                                 </div>
-                            ))}
-                            <a className="btn btn-submit-light-small mt-2 mb-2 ms-4 mr-4" style={{ width: 40 }} onClick={handleAddCost}>
-                                +
-                            </a>
                         </div>
                     </div>
-
                 </div>
+                
+                {/* buttons */}
                 {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ fontSize: 20, width: 150 }}>Submit</button>}
                 {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleClearForm}>Make Invoice</button>}
                 {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleClearForm}>Make Quote</button>}
