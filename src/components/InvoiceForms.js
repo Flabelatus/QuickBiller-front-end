@@ -37,13 +37,11 @@ const InvoiceForms = () => {
         fetch(`http://localhost:8082/logged_in/client_list/${user_id}`, requestOptions)
             .then(response => response.json())
             .then((data) => {
-                console.log(data);
                 setCompanyList(data.data);
             })
             .catch((error) => {
                 console.error(error.message);
             })
-
     };
 
     const populateData = () => {
@@ -59,14 +57,13 @@ const InvoiceForms = () => {
         fetch(`http://localhost:8082/logged_in/client/${selectedOption}`, requestOptions)
             .then((resp) => resp.json())
             .then((data) => {
-                console.log(data);
                 setCompany(data.data);
             })
             .catch(err => {
                 console.error(err.message);
             })
     }
- 
+
     useEffect(() => {
         if (jwtToken === "") {
             navigate("/login");
@@ -89,7 +86,7 @@ const InvoiceForms = () => {
                 console.error(error.message);
             })
 
-    }, [ refresh, jwtToken]);
+    }, [refresh, jwtToken, company]);
 
     const handleRefreshPage = () => {
         if (!refresh) {
@@ -103,13 +100,15 @@ const InvoiceForms = () => {
 
     const handleClearForm = () => {
         setCompany({});
-        document.querySelectorAll('input').forEach(input => {
-            input.value = ''; // Resets input fields directly
-        });
+        setJobs([{ jobItem: "", hourRate: 0, numberOfHours: 0 }]);
+        setCosts([{ costs: 0, info: "" }]);
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (event.nativeEvent.submitter && event.nativeEvent.submitter.name === 'clearFormButton') {
+            return;
+        }
         setIsSubmitted(true);
         serializeDocument();
     };
@@ -178,7 +177,7 @@ const InvoiceForms = () => {
         // search company by name from backend
         // if comany not in the list insert it in the backend
         // otherwise do nothing
-    }
+    };
 
     return (
         <div className="justify-content-center">
@@ -206,7 +205,7 @@ const InvoiceForms = () => {
                         <a className="btn btn-submit-dark-small mt-3" style={{ fontSize: 20, width: 150 }} onClick={populateData}>Select</a>
                     </div>
                 }
-                
+
                 {/* company info */}
                 <div className="row mt-5 justify-content-center container-fluid py-4">
                     <div className="row justify-content-center" style={{ width: 'fit-content' }}>
@@ -218,8 +217,8 @@ const InvoiceForms = () => {
                                 type="text"
                                 className="me-4"
                                 name="company-name"
-                                onChange={(e) => handleCompanyChange("companyName", e.target.value)}
-                                value={company.companyName}
+                                onChange={(e) => handleCompanyChange("company_name", e.target.value)}
+                                value={company.company_name}
                             />
                             <Input
                                 title="Email Address"
@@ -236,8 +235,8 @@ const InvoiceForms = () => {
                                 type="text"
                                 className="me-4"
                                 name="contact-name"
-                                onChange={(e) => handleCompanyChange("contactName", e.target.value)}
-                                value={company.contactName}
+                                onChange={(e) => handleCompanyChange("contact_name", e.target.value)}
+                                value={company.contact_name}
                             />
                             <Input
                                 title="Phone"
@@ -265,8 +264,8 @@ const InvoiceForms = () => {
                                 type="text"
                                 className="me-4"
                                 name="postcode"
-                                onChange={(e) => handleCompanyChange("postCode", e.target.value)}
-                                value={company.postCode}
+                                onChange={(e) => handleCompanyChange("postcode", e.target.value)}
+                                value={company.postcode}
                             />
                             <Input
                                 title="City"
@@ -288,9 +287,9 @@ const InvoiceForms = () => {
                             />
                         </div>
                     </div>
+                </div>
 
                 {/* jobs */}
-                </div>
                 <div className="mt-3 container-fluid py-4">
                     <div className="row justify-content-center">
                         <h3 className="mb-4" style={{ color: '#e56259' }}>Job Information</h3>
@@ -339,7 +338,7 @@ const InvoiceForms = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 {/* checkboxes */}
                 <div className=" mt-5 container-fluid py-4" style={{ width: 'fit-content' }}>
                     <div className="row justify-content-center"  >
@@ -380,7 +379,7 @@ const InvoiceForms = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 {/* costs and discount */}
                 <div className="mt-5 d-flex justify-content-center">
                     <div className="col-md-8" style={{ width: 'fit-content' }}>
@@ -418,25 +417,25 @@ const InvoiceForms = () => {
                             </div>
                         </div>
                         <div>
-                        <div className="row mt-5">
-                                    <Input
-                                        title="Discount"
-                                        type="number"
-                                        name="discount"
-                                        value={0}
-                                        onChange={(e) => setDiscount(e.target.value)}
-                                    />
-                                </div>
+                            <div className="row mt-5">
+                                <Input
+                                    title="Discount"
+                                    type="number"
+                                    name="discount"
+                                    value={0}
+                                    onChange={(e) => setDiscount(e.target.value)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 {/* buttons */}
                 {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ fontSize: 20, width: 150 }}>Submit</button>}
                 {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleClearForm}>Make Invoice</button>}
                 {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleClearForm}>Make Quote</button>}
                 {isSubmitted && <button className="btn btn-secondary mt-5 ms-4" style={{ fontSize: 20, width: 150 }} onClick={handleRefreshPage}>Refresh</button>}
-                {!isSubmitted && <button className="btn btn-secondary mt-5 ms-4" style={{ fontSize: 20, width: 150 }} onClick={handleClearForm}>Clear Forms</button>}
+                {!isSubmitted && <button className="btn btn-secondary mt-5 ms-4" name="clearFormButton" style={{ fontSize: 20, width: 150 }} onClick={handleClearForm}>Clear Forms</button>}
             </form >
         </div >
     );

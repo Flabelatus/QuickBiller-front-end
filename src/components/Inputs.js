@@ -15,7 +15,7 @@ const Input = forwardRef((props, ref) => {
           id={props.name}
           autoComplete={props.autoComplete}
           onChange={props.onChange}
-          defaultValue={props.defaultValue}
+          defaultValue={props.value}
         />
       </div>
     </div>
