@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 const Footer = () => {
     return (
         <>
-            <div className="row">
-                <footer className="text-center container-fluid py-5" style={{ backgroundColor: "#282c34  " }}>
+            <div className="row mt-5">
+                <footer className="text-center container-fluid py-5 mt-5" style={{ backgroundColor: "#282c34  " }}>
                     <hr />
                     <div className="row">
                         <div className="col mt-3">

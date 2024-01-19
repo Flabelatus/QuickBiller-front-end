@@ -24,7 +24,7 @@ const Home = () => {
                 <h1 style={{ color: '#e56259', fontFamily: 'revert', fontSize: 70, fontWeight: 800, textAlign: 'center' }}>QuickBiller</h1>
                 <h5 style={{ textAlign: 'center', color: "black" }}>Simplify Your Billing Process</h5>
                 <Link
-                    className='btn btn-submit-light-large text-center mt-5'
+                    className='btn btn-submit-light-large text-center mt-5 mb-5'
                     onClick={toggelOpen}>
                     Create Invoice
                 </Link>
@@ -48,8 +48,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            }
-
+            };
         </>
 
     );

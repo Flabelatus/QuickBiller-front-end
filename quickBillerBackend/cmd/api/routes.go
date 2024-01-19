@@ -25,6 +25,7 @@ func (app *application) routes() http.Handler {
 		mux.Get("/client/{client_id}", app.GetClientByID)
 		mux.Post("/add_client", app.InsertClient)
 		mux.Get("/user/{user_id}", app.GetUserByID)
+		mux.Get("/client-name/{client_name}", app.GetClientByName)
 	})
 
 	mux.Route("/admin", func(mux chi.Router) {

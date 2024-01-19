@@ -7,8 +7,8 @@ const InvoiceForms = () => {
     const { jwtToken } = useOutletContext();
 
     const [company, setCompany] = useState({});
-    const [jobs, setJobs] = useState([{ jobItem: "", hourRate: 0, numberOfHours: 0 }]);
-    const [costs, setCosts] = useState([{ costs: 0, info: "" }])
+    const [jobs, setJobs] = useState([]);
+    const [costs, setCosts] = useState([]);
     const [selectedOption, setSelectedOption] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [refresh, setRefresh] = useState(false);
@@ -25,7 +25,6 @@ const InvoiceForms = () => {
     const navigate = useNavigate();
 
     const getComapnyDataList = (user_id) => {
-
         const requestOptions = {
             method: "GET",
             headers: {
@@ -45,7 +44,6 @@ const InvoiceForms = () => {
     };
 
     const populateData = () => {
-        // Set all the client data from the selected data from the companyList
         const requestOptions = {
             method: "GET",
             headers: {
@@ -65,28 +63,25 @@ const InvoiceForms = () => {
     }
 
     useEffect(() => {
-        if (jwtToken === "") {
-            navigate("/login");
-            return;
+        if (jwtToken !== "") {
+            const requestOptions = {
+                method: "GET",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+                credentials: "include"
+            };
+
+            fetch(`http://localhost:8082/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    setUser(data);
+                    getComapnyDataList(data.ID);
+                })
+                .catch((error) => {
+                    console.error(error.message);
+                })
         };
 
-        const requestOptions = {
-            method: "GET",
-            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
-            credentials: "include"
-        };
-
-        fetch(`http://localhost:8082/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                setUser(data);
-                getComapnyDataList(data.ID);
-            })
-            .catch((error) => {
-                console.error(error.message);
-            })
-
-    }, [refresh, jwtToken, company]);
+    }, [refresh, jwtToken, company, jobs, costs]);
 
     const handleRefreshPage = () => {
         if (!refresh) {
@@ -95,13 +90,25 @@ const InvoiceForms = () => {
             setRefresh(false);
         }
         setIsSubmitted(false);
+        setSelectedOption("");
         handleClearForm();
     }
 
     const handleClearForm = () => {
+        if (jwtToken === "") {
+            document.querySelectorAll('input').forEach(input => {
+                input.value = ''; // Resets input fields directly
+            });
+        };
+
         setCompany({});
-        setJobs([{ jobItem: "", hourRate: 0, numberOfHours: 0 }]);
-        setCosts([{ costs: 0, info: "" }]);
+        setJobs([]);
+        setCosts([]);
+        setIsZeroVat(false);
+        setInEU(true);
+        setInCountry(true);
+        setVatPercentage(0);
+        setDiscount(0);
     };
 
     const handleSubmit = (event) => {
@@ -109,7 +116,7 @@ const InvoiceForms = () => {
         if (event.nativeEvent.submitter && event.nativeEvent.submitter.name === 'clearFormButton') {
             return;
         }
-        setIsSubmitted(true);
+        inserNewCompany(company.company_name);
         serializeDocument();
     };
 
@@ -157,26 +164,57 @@ const InvoiceForms = () => {
     };
 
     const serializeDocument = () => {
-
-        const invoicePayload = {
-            jobs: jobs,
-            costs: costs,
-            vat_free: isZeroVat,
-            in_eu: inEU,
-            in_country: inCountry,
-            vat_percent: vatPercentage,
-            company: company,
-            discount: discount
+        if (company.company_name !== undefined && jobs.length !== 0) {
+            jobs.map((job) => {
+                if (job.jobItem !== "") {
+                    const invoicePayload = {
+                        jobs: jobs,
+                        costs: costs,
+                        vat_free: isZeroVat,
+                        in_eu: inEU,
+                        in_country: inCountry,
+                        vat_percent: vatPercentage,
+                        company: company,
+                        discount: discount
+                    };
+                    setIsSubmitted(true);
+                } else {
+                    let msg = `Form Incomplete\nJob data incomplete`
+                    alert(msg);
+                };
+            });
+        } else {
+            let msg = `Form Incomplete\nEither client data or job data or both are incomplete`
+            alert(msg);
         };
-
-        console.log(invoicePayload);
     };
 
-    const inserNewCompany = () => {
-        // check to see if jwt is not none and if is none, do nothing
-        // search company by name from backend
-        // if comany not in the list insert it in the backend
-        // otherwise do nothing
+    const inserNewCompany = (name) => {
+        if (jwtToken !== "") {
+            const exists = companyList.some(item => item.company_name === name);
+
+            let payload = {
+                company_name: company.company_name,
+                contact_name: company.contact_name,
+                email: company.email,
+                street: company.street,
+                postcode: company.postcode,
+                city: company.city,
+                country: company.country,
+                user_id: user.ID
+            };
+
+            if (!exists && payload.company_name !== undefined) {
+                const requestOpts = {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+                    body: JSON.stringify(payload)
+                };
+
+                fetch(`http://localhost:8082/logged_in/add_client`, requestOpts)
+                    .catch((error) => console.error(error.message))
+            };
+        };
     };
 
     return (
@@ -239,13 +277,13 @@ const InvoiceForms = () => {
                                 value={company.contact_name}
                             />
                             <Input
-                                title="Phone"
-                                id="phone"
-                                type="phone"
+                                title="Project Specific Info"
+                                id="project"
+                                type="text"
                                 className="me-4"
-                                name="phone"
-                                onChange={(e) => handleCompanyChange("phone", e.target.value)}
-                                value={company.phone}
+                                name="project"
+                                onChange={(e) => handleCompanyChange("project", e.target.value)}
+                                value={company.project}
                             />
                         </div>
                         <div className="col-md-3 justify-content-end">
@@ -292,7 +330,7 @@ const InvoiceForms = () => {
                 {/* jobs */}
                 <div className="mt-3 container-fluid py-4">
                     <div className="row justify-content-center">
-                        <h3 className="mb-4" style={{ color: '#e56259' }}>Job Information</h3>
+                        <h3 className="mb-4" style={{ color: '#e56259' }}>Add Job Items</h3>
 
                         <div className="col-md-8" style={{ width: 'fit-content' }}>
                             {jobs.map((job, index) => (
@@ -325,6 +363,7 @@ const InvoiceForms = () => {
                             ))}
                             <div className="row">
                                 <div className="col-md-12 col-sm-12">
+                                    {jobs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Job field</p>}
                                     <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddJob}>
                                         +
                                     </a>
@@ -340,7 +379,7 @@ const InvoiceForms = () => {
                 </div>
 
                 {/* checkboxes */}
-                <div className=" mt-5 container-fluid py-4" style={{ width: 'fit-content' }}>
+                <div className=" mt-5 container-fluid py-4" style={{ width: 'fit-content', border: 'solid 1px #ccc', borderRadius: 16 }}>
                     <div className="row justify-content-center"  >
                         <h3 className="mb-4" style={{ color: '#e56259' }}>VAT Information</h3>
                         <div className="col">
@@ -383,7 +422,7 @@ const InvoiceForms = () => {
                 {/* costs and discount */}
                 <div className="mt-5 d-flex justify-content-center">
                     <div className="col-md-8" style={{ width: 'fit-content' }}>
-                        <h3 className="mb-4" style={{ color: '#e56259' }}>Costs Items</h3>
+                        <h3 className="mb-4" style={{ color: '#e56259' }}>Add Costs Items</h3>
                         {costs.map((cost, index) => (
                             <div key={index} className="row">
                                 <div className="col-md-6 col-sm-12 mb-2">
@@ -405,7 +444,9 @@ const InvoiceForms = () => {
                             </div>
                         ))}
                         <div className="row justify-content-center mt-4">
-                            <div className="col-md-6 col-sm-12">
+                            <div className="col-md-12 col-sm-12">
+                                {costs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Cost field</p>}
+
                                 <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddCost}>
                                     +
                                 </a>

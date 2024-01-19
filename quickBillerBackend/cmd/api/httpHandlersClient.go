@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"net/url"
 	"quickBiller/internal/models"
 	"strconv"
 
@@ -64,5 +65,26 @@ func (app *application) GetClientByID(w http.ResponseWriter, r *http.Request) {
 		Data: client,
 	}
 
+	_ = app.writeJSON(w, http.StatusOK, response)
+}
+
+func (app *application) GetClientByName(w http.ResponseWriter, r *http.Request) {
+	// Retrieve the client_name parameter from the URL
+	companyName := chi.URLParam(r, "client_name")
+
+	// Decode URL-encoded characters (e.g., %20 to space)
+	decodedCompanyName, err := url.QueryUnescape(companyName)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	company, err := app.Repository.GetClientByName(decodedCompanyName)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	response := JSONResponse{Data: company}
 	_ = app.writeJSON(w, http.StatusOK, response)
 }
