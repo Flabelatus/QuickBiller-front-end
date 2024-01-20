@@ -3,7 +3,7 @@ import { ForwardedRef, forwardRef } from "react";
 const Input = forwardRef((props, ref) => {
   return (
     <div className="mb-3 ">
-      <label htmlFor={props.name} className="form-label" style={{ fontSize: 20, color: "#00000090", fontWeight: 400}}>
+      <label htmlFor={props.name} className="form-label" style={{ fontSize: 20, color: "#00000090", fontWeight: 400 }}>
         {props.title}
       </label>
       <div className="">

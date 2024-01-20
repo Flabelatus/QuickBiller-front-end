@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Input from "./Inputs";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 
 const InvoiceForms = () => {
@@ -12,6 +12,7 @@ const InvoiceForms = () => {
     const [selectedOption, setSelectedOption] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [refresh, setRefresh] = useState(false);
+    const [jobType, setJobType] = useState('Service');
 
     const [inEU, setInEU] = useState(true);
     const [isZeroVat, setIsZeroVat] = useState(false);
@@ -22,7 +23,9 @@ const InvoiceForms = () => {
     const [user, setUser] = useState(0);
     const [companyList, setCompanyList] = useState([]);
 
-    const navigate = useNavigate();
+    const handleOptionChange = (event) => {
+        setJobType(event.target.value);
+      };
 
     const getComapnyDataList = (user_id) => {
         const requestOptions = {
@@ -109,6 +112,7 @@ const InvoiceForms = () => {
         setInCountry(true);
         setVatPercentage(0);
         setDiscount(0);
+        setJobType("Service");
     };
 
     const handleSubmit = (event) => {
@@ -327,48 +331,153 @@ const InvoiceForms = () => {
                     </div>
                 </div>
 
-                {/* jobs */}
-                <div className="mt-3 container-fluid py-4">
-                    <div className="row justify-content-center">
-                        <h3 className="mb-4" style={{ color: '#e56259' }}>Add Job Items</h3>
+                <div className="mt-3 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #ddd', borderRadius: 16 }}>
+                    {/* jobs */}
+                    <div className="mt-3 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #fff', borderRadius: 16 }}>
+                        <div className="row justify-content-center">
+                            <div className="mb-4 radio-container">
+                                <label className="me-5 radio-label" style={{fontSize: 20}}>
+                                    <input
+                                        type="radio"
+                                        className="me-2 form-check-input"
+                                        value="Product"
+                                        checked={jobType === 'Product'}
+                                        onChange={handleOptionChange}
+                                    />
+                                    <span className="radio-text">Product</span>
+                                </label>
+                                <label className="radio-label" style={{fontSize: 20}}>
+                                    <input
+                                        type="radio"
+                                        className="me-2 form-check-input" 
+                                        value="Service"
+                                        checked={jobType === 'Service'}
+                                        onChange={handleOptionChange}
+                                    />
+                                    <span className="radio-text">Service</span>
+                                </label>
+                            </div>
+                            <h3 className="mb-4" style={{ color: '#e56259' }}>Add Job Items</h3>
+                            <div className="col-md-8" style={{ width: 'fit-content' }}>
+                                {jobs.map((job, index) => (
+                                    <div key={index} className="row">
+                                        <div className="col-md-4 col-sm-12 mb-2">
+                                            <Input
+                                                title={`Description ${index + 1}`}
+                                                type="text"
+                                                value={job.jobItem}
+                                                onChange={(e) => handleJobInputChange(index, "jobItem", e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-4 col-sm-12 mb-2">
+                                            <Input
+                                                title={`Tarief`}
+                                                type="number"
+                                                value={job.hourRate}
+                                                onChange={(e) => handleJobInputChange(index, "hourRate", e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-4 col-sm-12 mb-2">
+                                            <Input
+                                                title={`Amount`}
+                                                type="number"
+                                                value={job.numberOfHours}
+                                                onChange={(e) => handleJobInputChange(index, "numberOfHours", e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                                <div className="row">
+                                    <div className="col-md-12 col-sm-12 mt-4">
+                                        {jobs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Job field</p>}
+                                        <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddJob}>
+                                            +
+                                        </a>
+                                        {jobs.length > 0 && (
+                                            <a className="btn btn-submit-light-small ms-2" style={{ width: 45 }} onClick={() => handleRemoveJob(jobs.length - 1)}>
+                                                -
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    {/* checkboxes */}
+                    <div className=" mt-5 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #fff', borderRadius: 16 }}>
+                        <div className="row justify-content-center"  >
+                            <h3 className="mb-4" style={{ color: '#e56259' }}>VAT Information</h3>
+                            <div className="col">
 
+                                <input
+                                    className="form-check-input checkbox-custom"
+                                    type="checkbox"
+                                    onChange={(e) => setIsZeroVat(e.target.checked)}
+                                ></input>
+                                <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>VAT Free</label>
+
+                                <input
+                                    className="form-check-input checkbox-custom ms-4"
+                                    type="checkbox"
+                                    defaultChecked={true}
+                                    onChange={(e) => setInEU(e.target.checked)}
+                                ></input>
+                                <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within EU</label>
+
+                                <input
+                                    className="form-check-input checkbox-custom ms-4"
+                                    type="checkbox"
+                                    defaultChecked={true}
+                                    onChange={(e) => setInCountry(e.target.checked)}
+                                ></input>
+                                <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within Country</label>
+
+                                <input
+                                    className="ms-4"
+                                    type="text"
+                                    style={{ width: 40, fontWeight: 400, color: "#00000090", border: "2px solid #ccc", borderRadius: 4 }}
+                                    value={21}
+                                    onChange={(e) => setVatPercentage(e.target.value)}
+                                ></input>
+                                <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    {/* costs */}
+                    <div className="mt-5 container-fluid py-4 px-5 justify-content-center" style={{ width: 'fit-content', borderRadius: 16, boxShadow: '1px 1px 10px #fff' }}>
                         <div className="col-md-8" style={{ width: 'fit-content' }}>
-                            {jobs.map((job, index) => (
-                                <div key={index} className="row mb-2">
-                                    <div className="col-md-4 col-sm-12 mb-2">
+                            <h3 className="mb-4" style={{ color: '#e56259' }}>Add Costs Items</h3>
+                            {costs.map((cost, index) => (
+                                <div key={index} className="row">
+                                    <div className="col-md-6 col-sm-12 mb-2">
                                         <Input
-                                            title={`Job Item Description ${index + 1}`}
+                                            title={`Item ${index + 1}`}
                                             type="text"
-                                            value={job.jobItem}
-                                            onChange={(e) => handleJobInputChange(index, "jobItem", e.target.value)}
+                                            value={cost.info}
+                                            onChange={(e) => handleCostInputChange(index, "info", e.target.value)}
                                         />
                                     </div>
-                                    <div className="col-md-4 col-sm-12 mb-2">
+                                    <div className="col-md-6 col-sm-12 mb-2">
                                         <Input
-                                            title={`Hour Rate for Job ${index + 1}`}
+                                            title={`Cost ${index + 1}`}
                                             type="number"
-                                            value={job.hourRate}
-                                            onChange={(e) => handleJobInputChange(index, "hourRate", e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-md-4 col-sm-12 mb-2">
-                                        <Input
-                                            title={`Number of Hours`}
-                                            type="number"
-                                            value={job.numberOfHours}
-                                            onChange={(e) => handleJobInputChange(index, "numberOfHours", e.target.value)}
+                                            value={cost.costs}
+                                            onChange={(e) => handleCostInputChange(index, "costs", e.target.value)}
                                         />
                                     </div>
                                 </div>
                             ))}
-                            <div className="row">
+                            <div className="row justify-content-center mt-4">
                                 <div className="col-md-12 col-sm-12">
-                                    {jobs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Job field</p>}
-                                    <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddJob}>
+                                    {costs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Cost field</p>}
+
+                                    <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddCost}>
                                         +
                                     </a>
-                                    {jobs.length > 0 && (
-                                        <a className="btn btn-submit-light-small ms-2" style={{ width: 45 }} onClick={() => handleRemoveJob(jobs.length - 1)}>
+                                    {costs.length > 0 && (
+                                        <a className="btn btn-submit-light-small ms-2" style={{ width: 45 }} onClick={() => handleRemoveCost(costs.length - 1)}>
                                             -
                                         </a>
                                     )}
@@ -376,97 +485,17 @@ const InvoiceForms = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {/* checkboxes */}
-                <div className=" mt-5 container-fluid py-4" style={{ width: 'fit-content', border: 'solid 1px #ccc', borderRadius: 16 }}>
-                    <div className="row justify-content-center"  >
-                        <h3 className="mb-4" style={{ color: '#e56259' }}>VAT Information</h3>
-                        <div className="col">
-
-                            <input
-                                className="form-check-input checkbox-custom"
-                                type="checkbox"
-                                onChange={(e) => setIsZeroVat(e.target.checked)}
-                            ></input>
-                            <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>VAT Free</label>
-
-                            <input
-                                className="form-check-input checkbox-custom ms-4"
-                                type="checkbox"
-                                defaultChecked={true}
-                                onChange={(e) => setInEU(e.target.checked)}
-                            ></input>
-                            <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within EU</label>
-
-                            <input
-                                className="form-check-input checkbox-custom ms-4"
-                                type="checkbox"
-                                defaultChecked={true}
-                                onChange={(e) => setInCountry(e.target.checked)}
-                            ></input>
-                            <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within Country</label>
-
-                            <input
-                                className="ms-4"
-                                type="text"
-                                style={{ width: 40, fontWeight: 400, color: "#00000090", border: "2px solid #ccc", borderRadius: 4 }}
-                                value={21}
-                                onChange={(e) => setVatPercentage(e.target.value)}
-                            ></input>
-                            <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>
-                        </div>
-                    </div>
-                </div>
-
-                {/* costs and discount */}
-                <div className="mt-5 d-flex justify-content-center">
-                    <div className="col-md-8" style={{ width: 'fit-content' }}>
-                        <h3 className="mb-4" style={{ color: '#e56259' }}>Add Costs Items</h3>
-                        {costs.map((cost, index) => (
-                            <div key={index} className="row">
-                                <div className="col-md-6 col-sm-12 mb-2">
-                                    <Input
-                                        title={`Item ${index + 1}`}
-                                        type="text"
-                                        value={cost.info}
-                                        onChange={(e) => handleCostInputChange(index, "info", e.target.value)}
-                                    />
-                                </div>
-                                <div className="col-md-6 col-sm-12 mb-2">
-                                    <Input
-                                        title={`Cost ${index + 1}`}
-                                        type="number"
-                                        value={cost.costs}
-                                        onChange={(e) => handleCostInputChange(index, "costs", e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                        <div className="row justify-content-center mt-4">
-                            <div className="col-md-12 col-sm-12">
-                                {costs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Cost field</p>}
-
-                                <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddCost}>
-                                    +
-                                </a>
-                                {costs.length > 0 && (
-                                    <a className="btn btn-submit-light-small ms-2" style={{ width: 45 }} onClick={() => handleRemoveCost(costs.length - 1)}>
-                                        -
-                                    </a>
-                                )}
-                            </div>
-                        </div>
-                        <div>
-                            <div className="row mt-5">
-                                <Input
-                                    title="Discount"
-                                    type="number"
-                                    name="discount"
-                                    value={0}
-                                    onChange={(e) => setDiscount(e.target.value)}
-                                />
-                            </div>
+                    <hr />
+                    {/* discount */}
+                    <div>
+                        <div className="row mt-5">
+                            <Input
+                                title="Discount"
+                                type="number"
+                                name="discount"
+                                value={0}
+                                onChange={(e) => setDiscount(e.target.value)}
+                            />
                         </div>
                     </div>
                 </div>

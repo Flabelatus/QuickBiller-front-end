@@ -11,7 +11,6 @@ export const AppBar = () => {
     }, [jwtToken]);
 
     const handleLogout = () => {
-        console.log(jwtToken);
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },

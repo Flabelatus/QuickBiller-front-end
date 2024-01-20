@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Input from "./Inputs";
 import google from '.././images/google.png'
 import fb from '.././images/fb.png'
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { AppContext } from "../App";
+
 
 const Login = () => {
+    const { setLoggedOut } = useContext(AppContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { setJwtToken, setAlertClassName, setAlertMessage, setRefreshToken } = useOutletContext();
-    
+
     const navigate = useNavigate();
 
     const showAlert = (message, className, timeout = 5000) => {

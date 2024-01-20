@@ -55,7 +55,7 @@ function App() {
       const requestOptions = {
         method: "POST",
         credentials: "include",
-      }
+      };
 
       fetch(`http://localhost:8082/refresh`, requestOptions)
         .then((response) => response.json())
@@ -68,8 +68,9 @@ function App() {
         .catch(error => {
           console.error(error.message);
         })
-    }
-  }, [jwtToken, toggleRefresh])
+    };
+
+  }, [jwtToken, toggleRefresh]);
 
   return (
     <>
