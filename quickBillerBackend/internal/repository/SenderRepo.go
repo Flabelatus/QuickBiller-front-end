@@ -24,7 +24,7 @@ func (r *GORMRepo) GetSenderByID(id int) (*models.Sender, error) {
 	return sender, nil
 }
 
-func (r *GORMRepo) GetSenderByUserID(userID int) (*models.Sender, error) {
+func (r *GORMRepo) GetSenderByUserID(userID string) (*models.Sender, error) {
 	var sender *models.Sender
 	if err := r.DB.Where("user_id = ?", userID).Find(&sender).Error; err != nil {
 		return nil, err

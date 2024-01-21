@@ -2,22 +2,33 @@ import { useEffect, useState } from "react";
 import Input from "./Inputs";
 import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
+import { faDownload, faUser } from '@fortawesome/fontawesome-free';
+import { CreateForm } from "./PDFUtils";
+import { FontAwesomeIcon } from '@fortawesome/fontawesome-free';
+
 
 const InvoiceForms = () => {
+    const defaultVatValue = 21;
+
     const { jwtToken } = useOutletContext();
 
     const [company, setCompany] = useState({});
+    const [sender, setSender] = useState({});
+
     const [jobs, setJobs] = useState([]);
     const [costs, setCosts] = useState([]);
     const [selectedOption, setSelectedOption] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [refresh, setRefresh] = useState(false);
+    const [doc, setDoc] = useState({});
     const [jobType, setJobType] = useState('Service');
+    const [jobTariefTitle, setJobTariefTitle] = useState('');
+    const [jobNumberOfHoursTitle, setJobNumberOfHoursTitle] = useState('');
 
     const [inEU, setInEU] = useState(true);
     const [isZeroVat, setIsZeroVat] = useState(false);
     const [inCountry, setInCountry] = useState(true);
-    const [vatPercentage, setVatPercentage] = useState(0);
+    const [vatPercentage, setVatPercentage] = useState(defaultVatValue);
     const [discount, setDiscount] = useState(0);
 
     const [user, setUser] = useState(0);
@@ -25,7 +36,7 @@ const InvoiceForms = () => {
 
     const handleOptionChange = (event) => {
         setJobType(event.target.value);
-      };
+    };
 
     const getComapnyDataList = (user_id) => {
         const requestOptions = {
@@ -66,6 +77,14 @@ const InvoiceForms = () => {
     }
 
     useEffect(() => {
+        if (jobType !== "Service") {
+            setJobNumberOfHoursTitle("Amount");
+            setJobTariefTitle("Price");
+        } else {
+            setJobNumberOfHoursTitle("Number of Hours");
+            setJobTariefTitle("Hour rate");
+        }
+
         if (jwtToken !== "") {
             const requestOptions = {
                 method: "GET",
@@ -78,13 +97,17 @@ const InvoiceForms = () => {
                 .then((data) => {
                     setUser(data);
                     getComapnyDataList(data.ID);
+                    fetch(`http://localhost:8082/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                        .then((resp) => resp.json())
+                        .then((dat) => setSender(dat))
+                        .catch((err) => console.error(err.message))
                 })
                 .catch((error) => {
                     console.error(error.message);
                 })
         };
 
-    }, [refresh, jwtToken, company, jobs, costs]);
+    }, [refresh, jwtToken, company, jobs, costs, jobType, sender]);
 
     const handleRefreshPage = () => {
         if (!refresh) {
@@ -95,7 +118,7 @@ const InvoiceForms = () => {
         setIsSubmitted(false);
         setSelectedOption("");
         handleClearForm();
-    }
+    };
 
     const handleClearForm = () => {
         if (jwtToken === "") {
@@ -113,15 +136,7 @@ const InvoiceForms = () => {
         setVatPercentage(0);
         setDiscount(0);
         setJobType("Service");
-    };
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        if (event.nativeEvent.submitter && event.nativeEvent.submitter.name === 'clearFormButton') {
-            return;
-        }
-        inserNewCompany(company.company_name);
-        serializeDocument();
+        setSender({});
     };
 
     const handleAddJob = () => {
@@ -167,20 +182,22 @@ const InvoiceForms = () => {
         }));
     };
 
-    const serializeDocument = () => {
+    const handleSenderChange = (field, value) => {
+        setSender(senderData => ({
+            ...senderData,
+            [field]: value
+        }));
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (event.nativeEvent.submitter && event.nativeEvent.submitter.name === 'clearFormButton') {
+            return;
+        };
         if (company.company_name !== undefined && jobs.length !== 0) {
             jobs.map((job) => {
                 if (job.jobItem !== "") {
-                    const invoicePayload = {
-                        jobs: jobs,
-                        costs: costs,
-                        vat_free: isZeroVat,
-                        in_eu: inEU,
-                        in_country: inCountry,
-                        vat_percent: vatPercentage,
-                        company: company,
-                        discount: discount
-                    };
+                    inserNewCompany(company.company_name);
                     setIsSubmitted(true);
                 } else {
                     let msg = `Form Incomplete\nJob data incomplete`
@@ -191,6 +208,22 @@ const InvoiceForms = () => {
             let msg = `Form Incomplete\nEither client data or job data or both are incomplete`
             alert(msg);
         };
+
+    };
+
+    const serializeDocument = () => {
+        const invoicePayload = {
+            jobs: jobs,
+            costs: costs,
+            vat_free: isZeroVat,
+            in_eu: inEU,
+            in_country: inCountry,
+            vat_percent: vatPercentage,
+            company: company,
+            discount: discount,
+            sender: sender,
+        };
+        return invoicePayload;
     };
 
     const inserNewCompany = (name) => {
@@ -221,11 +254,123 @@ const InvoiceForms = () => {
         };
     };
 
+    const handleMakeInvoice = () => {
+        let docs = serializeDocument();
+        console.log(docs);
+        CreateForm(docs, "Invoice");
+    };
+
+    const handleMakeQuote = () => {
+        let docs = serializeDocument();
+        CreateForm(docs, "Quote");
+    };
+
     return (
         <div className="justify-content-center">
-            <hr className="mt-4" style={{ color: "#061868", width: "100vw", margin: "0 auto" }} />
-            <form onSubmit={handleSubmit} className="mb-5 mt-5">
-
+            {jwtToken !== "" && <hr className="mt-5 mb-5" style={{ color: "#061868", width: "100vw", margin: "0 auto" }} />}
+            <form onSubmit={handleSubmit} className="mb-5">
+                {/* sender data */}
+                {jwtToken === "" &&
+                    <div className="row mt- justify-content-center container-fluid py-5" style={{ backgroundColor: "#e5625930" }}>
+                        <div className="row justify-content-center" style={{ width: 'fit-content' }}>
+                            <h3 className="mb-5" style={{ color: '#061868' }}>Your Company Information</h3>
+                            <div className="col-md-4">
+                                <Input
+                                    title="Company Name"
+                                    id="company-name"
+                                    type="text"
+                                    className="me-4"
+                                    name="company-name"
+                                    onChange={(e) => handleSenderChange("company_name", e.target.value)}
+                                    value={sender.company_name}
+                                />
+                                <Input
+                                    title="Email Address"
+                                    id="company-email"
+                                    type="email"
+                                    className="me-4"
+                                    name="company-email"
+                                    onChange={(e) => handleSenderChange("email", e.target.value)}
+                                    value={sender.email}
+                                />
+                                <Input
+                                    title="Contact Name"
+                                    id="contact-name"
+                                    type="text"
+                                    className="me-4"
+                                    name="contact-name"
+                                    onChange={(e) => handleSenderChange("contact_name", e.target.value)}
+                                    value={sender.contact_name}
+                                />
+                                <Input
+                                    title="IBAN"
+                                    id="iban"
+                                    type="text"
+                                    className="me-4"
+                                    name="iban"
+                                    onChange={(e) => handleSenderChange("iban", e.target.value)}
+                                    value={sender.iban}
+                                />
+                                <Input
+                                    title="CoC No"
+                                    id="coc"
+                                    type="text"
+                                    className="me-4"
+                                    name="coc"
+                                    onChange={(e) => handleSenderChange("coc", e.target.value)}
+                                    value={sender.coc}
+                                />
+                            </div>
+                            <div className="col-md-3 justify-content-end">
+                                <Input
+                                    title="Street and House No."
+                                    id="street"
+                                    type="text"
+                                    className="me-4"
+                                    name="street"
+                                    onChange={(e) => handleSenderChange("street", e.target.value)}
+                                    value={sender.street}
+                                />
+                                <Input
+                                    title="Postcode"
+                                    id="postcode"
+                                    type="text"
+                                    className="me-4"
+                                    name="postcode"
+                                    onChange={(e) => handleSenderChange("postcode", e.target.value)}
+                                    value={sender.postcode}
+                                />
+                                <Input
+                                    title="City"
+                                    id="city"
+                                    type="text"
+                                    className="me-4"
+                                    name="city"
+                                    onChange={(e) => handleSenderChange("city", e.target.value)}
+                                    value={sender.city}
+                                />
+                                <Input
+                                    title="Country"
+                                    id="country"
+                                    type="text"
+                                    className="me-4"
+                                    name="country"
+                                    onChange={(e) => handleSenderChange("country", e.target.value)}
+                                    value={sender.country}
+                                />
+                                <Input
+                                    title="VAT No"
+                                    id="vat"
+                                    type="text"
+                                    className="me-4"
+                                    name="vat"
+                                    onChange={(e) => handleSenderChange("vat", e.target.value)}
+                                    value={sender.vat}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                }
                 {/* company data selection */}
                 {jwtToken !== "" &&
                     <div>
@@ -251,7 +396,7 @@ const InvoiceForms = () => {
                 {/* company info */}
                 <div className="row mt-5 justify-content-center container-fluid py-4">
                     <div className="row justify-content-center" style={{ width: 'fit-content' }}>
-                        <h3 className="mb-5" style={{ color: '#e56259' }}>Company Information</h3>
+                        <h3 className="mb-5" style={{ color: '#e56259' }}>Recipient Company Information</h3>
                         <div className="col-md-4">
                             <Input
                                 title="Company Name"
@@ -336,7 +481,7 @@ const InvoiceForms = () => {
                     <div className="mt-3 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #fff', borderRadius: 16 }}>
                         <div className="row justify-content-center">
                             <div className="mb-4 radio-container">
-                                <label className="me-5 radio-label" style={{fontSize: 20}}>
+                                <label className="me-5 radio-label" style={{ fontSize: 20 }}>
                                     <input
                                         type="radio"
                                         className="me-2 form-check-input"
@@ -346,10 +491,10 @@ const InvoiceForms = () => {
                                     />
                                     <span className="radio-text">Product</span>
                                 </label>
-                                <label className="radio-label" style={{fontSize: 20}}>
+                                <label className="radio-label" style={{ fontSize: 20 }}>
                                     <input
                                         type="radio"
-                                        className="me-2 form-check-input" 
+                                        className="me-2 form-check-input"
                                         value="Service"
                                         checked={jobType === 'Service'}
                                         onChange={handleOptionChange}
@@ -363,7 +508,7 @@ const InvoiceForms = () => {
                                     <div key={index} className="row">
                                         <div className="col-md-4 col-sm-12 mb-2">
                                             <Input
-                                                title={`Description ${index + 1}`}
+                                                title={`${index + 1}. Description`}
                                                 type="text"
                                                 value={job.jobItem}
                                                 onChange={(e) => handleJobInputChange(index, "jobItem", e.target.value)}
@@ -371,7 +516,7 @@ const InvoiceForms = () => {
                                         </div>
                                         <div className="col-md-4 col-sm-12 mb-2">
                                             <Input
-                                                title={`Tarief`}
+                                                title={jobTariefTitle}
                                                 type="number"
                                                 value={job.hourRate}
                                                 onChange={(e) => handleJobInputChange(index, "hourRate", e.target.value)}
@@ -379,7 +524,7 @@ const InvoiceForms = () => {
                                         </div>
                                         <div className="col-md-4 col-sm-12 mb-2">
                                             <Input
-                                                title={`Amount`}
+                                                title={jobNumberOfHoursTitle}
                                                 type="number"
                                                 value={job.numberOfHours}
                                                 onChange={(e) => handleJobInputChange(index, "numberOfHours", e.target.value)}
@@ -502,8 +647,8 @@ const InvoiceForms = () => {
 
                 {/* buttons */}
                 {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ fontSize: 20, width: 150 }}>Submit</button>}
-                {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleClearForm}>Make Invoice</button>}
-                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleClearForm}>Make Quote</button>}
+                {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleMakeInvoice} style={{ width: 250 }}>Download Invoice</button>}
+                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleMakeQuote} style={{ width: 250 }}>Download Quote</button>}
                 {isSubmitted && <button className="btn btn-secondary mt-5 ms-4" style={{ fontSize: 20, width: 150 }} onClick={handleRefreshPage}>Refresh</button>}
                 {!isSubmitted && <button className="btn btn-secondary mt-5 ms-4" name="clearFormButton" style={{ fontSize: 20, width: 150 }} onClick={handleClearForm}>Clear Forms</button>}
             </form >

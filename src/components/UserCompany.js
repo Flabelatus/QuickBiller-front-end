@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import * as jwt_decode from 'jwt-decode';
+import Loader from 'react-spinners/SyncLoader'
+import Input from "./Inputs";
+
 
 const UserCompany = () => {
-    const [companyName, setCompanyName] = useState("");
-    const [contactName, setContactName] = useState("");
-    const [email, setEmail] = useState("");
-    const [street, setStreet] = useState("");
-    const [postcode, setCpostcode] = useState("");
-    const [city, setCity] = useState("");
-    const [country, setCountry] = useState("");
-    const [iban, setIban] = useState("");
-    const [vat_number, setVatnumber] = useState("");
-    const [coc_number, setCocNumber] = useState("");
-
+    const [sender, setSender] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
+    const [editmode, setEditmode] = useState(false);
     const { jwtToken } = useOutletContext();
+    const [submitted, setSubmitted] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,41 +22,225 @@ const UserCompany = () => {
             method: "GET",
             headers: { "Authorization": "Bearer " + jwtToken, "Content-Type": "application/json" },
         }
-        fetch(`http://localhost:8082/user_company`, requestOptions)
+        if (!editmode) {
+            fetch(`http://localhost:8082/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    setSender(data.data);
+                    setIsLoading(false);
+                })
+                .catch((error) => {
+                    console.error(error.message);
+                })
+        }
+
+    }, [editmode, sender, submitted]);
+
+    const handleSwitchEditmode = () => {
+        setEditmode(true);
+    };
+
+    const handleSenderChange = (field, value) => {
+        setSender(senderData => ({
+            ...senderData,
+            [field]: value
+        }));
+    };
+
+    const handleClearForm = () => {
+        if (jwtToken === "") {
+            navigate("/login");
+        };
+        setSender({});
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (
+            !sender.company_name ||
+            !sender.email ||
+            !sender.contact_name ||
+            !sender.iban ||
+            !sender.coc_no ||
+            !sender.street ||
+            !sender.postcode ||
+            !sender.city ||
+            !sender.country ||
+            !sender.vat_no
+        ) {
+            alert('Please fill in all fields before submitting.');
+            return;
+        };
+
+        var payload = sender;
+        payload.user_id = jwt_decode.jwtDecode(jwtToken).sub;
+
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+            body: JSON.stringify(payload)
+        };
+
+        fetch(`http://localhost:8082/logged_in/sender_data`, requestOptions)
             .then((response) => response.json())
-            .then((data) => {
-                setCompanyName(data.company_name);
-                setContactName(data.contact_name);
-                setEmail(data.email);
-                setStreet(data.street);
-                setCpostcode(data.postcode);
-                setCity(data.city);
-                setCountry(data.country);
-                setIban(data.iban);
-                setVatnumber(data.vat_number);
-                setCocNumber(data.coc_number);
+            .then(data => console.log(data))
+            .catch(error => console.error(error.message))
 
-            })
-            .catch((error) => {
-                console.error(error.message);
-            })
-    })
-    return (
-        <div className="row justify-content-center mt-4 mb-5">
-            <div className="col-md-4 offset-md-3 px-4 py-4" style={{backgroundColor: "#EEE", borderRadius: 8}}>
-                <p style={{fontWeight: 600, fontSize: 16}}>Contact Name: {contactName}</p>
-                <p style={{fontWeight: 600, fontSize: 16}}>Email: {email}</p>
-                <p style={{fontWeight: 600, fontSize: 16}}>Street: {street}</p>
-                <p style={{fontWeight: 600, fontSize: 16}}>Postcode: {postcode}</p>
-                <p style={{fontWeight: 600, fontSize: 16}}>City: {city}</p>
-                <p style={{fontWeight: 600, fontSize: 16}}>Country: {country}</p>
-                <p style={{fontWeight: 600, fontSize: 16}}>IBAN: {iban}</p>
-                <p style={{fontWeight: 600, fontSize: 16}}>VAT No: {vat_number}</p>
-                <p style={{fontWeight: 600, fontSize: 16}}>CoC No: {coc_number}</p>
+        setSubmitted(true);
+        setEditmode(false);
+    };
+
+    if (isLoading) {
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+                <h1 className="h1 mt-4 mb-4" style={{ fontWeight: 700, color: '#06186860' }}>Loading Sender Data</h1>
+                <div className='row justify-content-center'>
+                    <Loader className='mt-4' color="#06186860" size={20} loading={isLoading}></Loader>
+                </div>
             </div>
+        )
+    } else {
+        return (
 
-        </div>
-    );
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {editmode &&
+                    <div className="container-fluid vh-100 d-flex justify-content-center align-items-center mt-5">
+                        <form className="form-container" onSubmit={handleSubmit}>
+                            <div className="d-flex flex-column align-items-center">
+                                <h3 className="mb-5 text-center" style={{ color: '#061868' }}>
+                                    Enter Your Company Information
+                                </h3>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <Input
+                                            title="Company Name"
+                                            id="company-name"
+                                            type="text"
+                                            name="company-name"
+                                            onChange={(e) => handleSenderChange("company_name", e.target.value)}
+                                            value={sender.company_name}
+                                        />
+                                        <Input
+                                            title="Email Address"
+                                            id="company-email"
+                                            type="email"
+                                            name="company-email"
+                                            onChange={(e) => handleSenderChange("email", e.target.value)}
+                                            value={sender.email}
+                                        />
+                                        <Input
+                                            title="Contact Name"
+                                            id="contact-name"
+                                            type="text"
+                                            name="contact-name"
+                                            onChange={(e) => handleSenderChange("contact_name", e.target.value)}
+                                            value={sender.contact_name}
+                                        />
+                                        <Input
+                                            title="IBAN"
+                                            id="iban"
+                                            type="text"
+                                            name="iban"
+                                            onChange={(e) => handleSenderChange("iban", e.target.value)}
+                                            value={sender.iban}
+                                        />
+                                        <Input
+                                            title="CoC No"
+                                            id="coc"
+                                            type="text"
+                                            name="coc"
+                                            onChange={(e) => handleSenderChange("coc_no", e.target.value)}
+                                            value={sender.coc_no}
+                                        />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <Input
+                                            title="Street and House No."
+                                            id="street"
+                                            type="text"
+                                            name="street"
+                                            onChange={(e) => handleSenderChange("street", e.target.value)}
+                                            value={sender.street}
+                                        />
+                                        <Input
+                                            title="Postcode"
+                                            id="postcode"
+                                            type="text"
+                                            name="postcode"
+                                            onChange={(e) => handleSenderChange("postcode", e.target.value)}
+                                            value={sender.postcode}
+                                        />
+                                        <Input
+                                            title="City"
+                                            id="city"
+                                            type="text"
+                                            name="city"
+                                            onChange={(e) => handleSenderChange("city", e.target.value)}
+                                            value={sender.city}
+                                        />
+                                        <Input
+                                            title="Country"
+                                            id="country"
+                                            type="text"
+                                            name="country"
+                                            onChange={(e) => handleSenderChange("country", e.target.value)}
+                                            value={sender.country}
+                                        />
+                                        <Input
+                                            title="VAT No"
+                                            id="vat"
+                                            type="text"
+                                            name="vat"
+                                            onChange={(e) => handleSenderChange("vat_no", e.target.value)}
+                                            value={sender.vat_no}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="row justify-content-center mt-4">
+                                    <button className="btn btn-submit-light-small">Submit</button>
+                                </div>
+                                <p className="text-center mb-4 mt-5" style={{ color: '#e56259', fontSize: 18 }}>
+                                    The information you enter will be used as the sender information in the documents
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+
+                }
+
+                {!editmode &&
+                    <div>
+                        {sender.company_name === ""
+                            ?
+                            <div className="row justify-content-center mt-4 mb-5">
+                                <div className="px-4 py-5 text-center">
+                                    <p className="mb-4 text-center mt-5" style={{ fontWeight: 700, fontSize: 22, color: "#e56259" }}>Looks like you have not yet entered your company data</p>
+                                </div>
+                                <button className="btn btn-submit-light-small mt-5" style={{ width: 'fit-content' }} onClick={handleSwitchEditmode}>Enter Your Company Information</button>
+                            </div>
+                            :
+                            <div className="row justify-content-center mt-4 mb-5">
+                                <div className="px-4 py-4" style={{ backgroundColor: "#FFF", borderRadius: 8, border: "1px solid #eee" }}>
+                                    <lable className="mt-2 mb-4 " style={{ fontWeight: 700, fontSize: 22, display: 'flex', color: "#e56259" }}><span>{sender.company_name}</span></lable>
+                                    <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.email}</span></lable>
+                                    <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.street}, {sender.postcode}</span></lable>
+                                    <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.city}, {sender.country}</span></lable>
+                                    <br />
+                                    <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>IBAN: <span className="ms-2">{sender.iban}</span></lable>
+                                    <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>VAT No: <span className="ms-2">{sender.vat_no}</span></lable>
+                                    <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>CoC No: <span className="ms-2">{sender.coc_no}</span></lable>
+                                </div>
+                                <button className="btn btn-submit-light-small mt-5">Modify</button>
+                            </div>
+                        }
+                    </div>
+                }
+
+            </div>
+        );
+    }
+
 }
 
 export default UserCompany;

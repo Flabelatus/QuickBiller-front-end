@@ -150,7 +150,7 @@
   -moz-appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid #7a7a7ab2;  
+  border: 2px solid #7a7a7ab2;
   border-radius: 50%;
   outline: none;
   margin-right: 5px;
@@ -182,4 +182,8 @@
 
 .form-check-input[type="radio"]:hover::before {
   transform: translate(-50%, -50%) scale(0.7);
+}
+
+.input-text-transition {
+  transition: transform 0.2s ease-in-out;
 }
