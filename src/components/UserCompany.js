@@ -11,6 +11,7 @@ const UserCompany = () => {
     const [editmode, setEditmode] = useState(false);
     const { jwtToken } = useOutletContext();
     const [submitted, setSubmitted] = useState(false);
+    const [modifying, setModifying] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,11 +35,16 @@ const UserCompany = () => {
                 })
         }
 
-    }, [editmode, sender, submitted]);
+    }, [editmode, submitted, modifying]);
 
     const handleSwitchEditmode = () => {
         setEditmode(true);
     };
+
+    const handleSwitchModifyingMode = () => {
+        setEditmode(true);
+        setModifying(true);
+    }
 
     const handleSenderChange = (field, value) => {
         setSender(senderData => ({
@@ -56,6 +62,10 @@ const UserCompany = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (e.nativeEvent.submitter && e.nativeEvent.submitter.name === 'modify') {
+            return;
+        };
 
         if (
             !sender.company_name ||
@@ -86,9 +96,32 @@ const UserCompany = () => {
             .then((response) => response.json())
             .then(data => console.log(data))
             .catch(error => console.error(error.message))
+            .finally(() => {
+                setSubmitted(true);
+                setEditmode(false);
+            });
+    };
 
-        setSubmitted(true);
-        setEditmode(false);
+    const handleModifyData = (e) => {
+        e.preventDefault();
+
+        var payload = sender;
+        payload.user_id = jwt_decode.jwtDecode(jwtToken).sub;
+        const requestOptions = {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+            body: JSON.stringify(payload)
+        };
+
+        fetch(`http://localhost:8082/logged_in/sender_data`, requestOptions)
+            .then((response) => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error.message))
+            .finally(() => {
+                setSender(sender);
+                setModifying(false);
+                setEditmode(false);
+            });
     };
 
     if (isLoading) {
@@ -198,7 +231,9 @@ const UserCompany = () => {
                                     </div>
                                 </div>
                                 <div className="row justify-content-center mt-4">
-                                    <button className="btn btn-submit-light-small">Submit</button>
+                                    {!modifying && <button className="btn btn-submit-light-small">Submit</button>}
+                                    {modifying && <button className="btn btn-submit-light-small" name='modify' onClick={handleModifyData}>Update</button>}
+                                    <button className="btn btn-submit-dark-small ms-4" onClick={() => setEditmode(false)}>Cancel</button>
                                 </div>
                                 <p className="text-center mb-4 mt-5" style={{ color: '#e56259', fontSize: 18 }}>
                                     The information you enter will be used as the sender information in the documents
@@ -222,7 +257,10 @@ const UserCompany = () => {
                             :
                             <div className="row justify-content-center mt-4 mb-5">
                                 <div className="px-4 py-4" style={{ backgroundColor: "#FFF", borderRadius: 8, border: "1px solid #eee" }}>
-                                    <lable className="mt-2 mb-4 " style={{ fontWeight: 700, fontSize: 22, display: 'flex', color: "#e56259" }}><span>{sender.company_name}</span></lable>
+                                    <lable className="mt-2" style={{ fontWeight: 700, fontSize: 22, display: 'flex', color: "#e56259" }}><span>{sender.company_name}</span></lable>
+                                    <br />
+                                    <lable className="mt-2" style={{ fontWeight: 700, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.contact_name}</span></lable>
+                                    <br />
                                     <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.email}</span></lable>
                                     <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.street}, {sender.postcode}</span></lable>
                                     <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.city}, {sender.country}</span></lable>
@@ -231,7 +269,7 @@ const UserCompany = () => {
                                     <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>VAT No: <span className="ms-2">{sender.vat_no}</span></lable>
                                     <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>CoC No: <span className="ms-2">{sender.coc_no}</span></lable>
                                 </div>
-                                <button className="btn btn-submit-light-small mt-5">Modify</button>
+                                <button className="btn btn-submit-light-small mt-5" onClick={handleSwitchModifyingMode}>Modify</button>
                             </div>
                         }
                     </div>

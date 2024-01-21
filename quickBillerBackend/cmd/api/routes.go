@@ -28,6 +28,7 @@ func (app *application) routes() http.Handler {
 		mux.Get("/client-name/{client_name}", app.GetClientByName)
 		mux.Get("/sender_data/user/{user_id}", app.GetSenderDataByUserID)
 		mux.Post("/sender_data", app.InsertSenderData)
+		mux.Patch("/sender_data", app.ModifySender)
 	})
 
 	mux.Route("/admin", func(mux chi.Router) {

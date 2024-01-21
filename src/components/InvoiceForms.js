@@ -20,7 +20,7 @@ const InvoiceForms = () => {
     const [selectedOption, setSelectedOption] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [refresh, setRefresh] = useState(false);
-    const [doc, setDoc] = useState({});
+
     const [jobType, setJobType] = useState('Service');
     const [jobTariefTitle, setJobTariefTitle] = useState('');
     const [jobNumberOfHoursTitle, setJobNumberOfHoursTitle] = useState('');
@@ -34,9 +34,19 @@ const InvoiceForms = () => {
     const [user, setUser] = useState(0);
     const [companyList, setCompanyList] = useState([]);
 
+    const [toggle, setToggle] = useState(true);
+
     const handleOptionChange = (event) => {
         setJobType(event.target.value);
     };
+
+    const flipToggle = () => {
+        if (toggle) {
+            setToggle(false);
+        } else {
+            setToggle(true);
+        }
+    }
 
     const getComapnyDataList = (user_id) => {
         const requestOptions = {
@@ -73,8 +83,8 @@ const InvoiceForms = () => {
             })
             .catch(err => {
                 console.error(err.message);
-            })
-    }
+            });
+    };
 
     useEffect(() => {
         if (jobType !== "Service") {
@@ -107,7 +117,7 @@ const InvoiceForms = () => {
                 })
         };
 
-    }, [refresh, jwtToken, company, jobs, costs, jobType, sender]);
+    }, [refresh, jwtToken, company, jobs, costs, jobType, toggle]);
 
     const handleRefreshPage = () => {
         if (!refresh) {
@@ -137,6 +147,7 @@ const InvoiceForms = () => {
         setDiscount(0);
         setJobType("Service");
         setSender({});
+        flipToggle();
     };
 
     const handleAddJob = () => {
@@ -208,7 +219,6 @@ const InvoiceForms = () => {
             let msg = `Form Incomplete\nEither client data or job data or both are incomplete`
             alert(msg);
         };
-
     };
 
     const serializeDocument = () => {

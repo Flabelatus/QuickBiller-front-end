@@ -59,5 +59,5 @@ func (r *GORMRepo) UpdateSenderByID(id int, sender *models.Sender) (int, error) 
 	if result.Error != nil {
 		return 0, result.Error
 	}
-	return int(sender.ID), nil
+	return int(existingSender.ID), nil
 }
