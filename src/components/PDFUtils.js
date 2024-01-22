@@ -2,15 +2,29 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 export const CreatePDFDoc = (data, docType, sender) => {
-    console.log(sender);
+
+    const updatedJobs = data.jobs.map((job) => ({
+        ...job,
+        totalAmount: job.hourRate * job.numberOfHours,
+    }));
+
+    const updatedCosts = data.costs.map((c) => ({
+        ...c,
+        numberOfCosts: "N/A",
+        totalAmout: c.costs
+    }));
+
+    let currencyFormat = "€"
+
     const docTable = {
-        header: ['Description', 'Hour Rate', "Number of Hours"],
-        jobs: data.jobs,
-        costs: data.costs,
+        header: ['Description', 'Hour Rate', "Number of Hours", "Subtotal"],
     };
 
-    const jobs = data.jobs.map((job) => Object.values(job));
-    const costs = data.costs.map((cost) => Object.values(cost));
+    console.log(updatedCosts);
+
+    const jobs = updatedJobs.map((job) => Object.values(job));
+    const costs = updatedCosts.map((cost) => Object.values(cost));
+
 
     const table = [
         ...jobs,
@@ -99,13 +113,35 @@ export const CreatePDFDoc = (data, docType, sender) => {
     const paddedLenOfDocs = lenOfDocs.padStart(2, "0");
 
     pdf.text(`Invoice number: ${yearAsString}${paddedMonthAsString}${paddedLenOfDocs}`, x, y, 'left');
-    y += mediumOffset
+
+    y += largeOffset;
+    y += smallOffset;
+
+    const formattedTable = table.map((row, rowIndex) => {
+        return row.map((cell, columnIndex) => {
+
+            if (columnIndex === 1 || columnIndex === 3) {
+                const currencyValue = parseFloat(cell);
+                if (!isNaN(currencyValue)) {
+                    return currencyFormat + currencyValue.toFixed(2);
+                };
+            };
+            return cell;
+        });
+    });
 
     pdf.autoTable({
         startY: y,
         head: [docTable.header],
-        body: table,
+        body: formattedTable,
         startY: y + 15, // Adjust the position after the table
+        headStyles: {
+            fillColor: [255, 255, 255], // Red background color for the header row
+            textColor: [0, 0, 0] // White text color for the header row
+        },
+        styles: {
+            fontSize: 11,
+        },
     });
 
     // Move down the page after the table
