@@ -4,6 +4,8 @@ import 'jspdf-autotable';
 
 export const CreatePDFDoc = (data, docType, sender) => {
 
+    const invoiceTerm = 14;
+
     function sumArray(arr) {
         let sum = 0;
         for (let i = 0; i < arr.length; i++) {
@@ -57,6 +59,7 @@ export const CreatePDFDoc = (data, docType, sender) => {
 
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
+    console.log(pageWidth);
 
     // Set up the initial position for content
     let y = 35;
@@ -112,7 +115,7 @@ export const CreatePDFDoc = (data, docType, sender) => {
 
     // Add a date
     const currentDate = new Date();
-    const dueDate = new Date(currentDate.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const dueDate = new Date(currentDate.getTime() + invoiceTerm * 24 * 60 * 60 * 1000);
 
     pdf.setFontSize(12);
     pdf.text(`Invoice date: `, x + 110, y, 'left');
@@ -146,48 +149,62 @@ export const CreatePDFDoc = (data, docType, sender) => {
         });
     });
 
-    var fixedColumnWidth = 50;
-
     pdf.autoTable({
         startY: y,
         head: [docTable.header],
         body: formattedTable,
-        startY: y + 15, // Adjust the position after the table
+        startY: y + 15,
         headStyles: {
-            fillColor: [255, 255, 255], // Red background color for the header row
-            textColor: [0, 0, 0] // White text color for the header row
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0]
         },
         styles: {
             fontSize: 11,
         },
-        columnStyles: { // Set individual column widths
-            0: { columnWidth: fixedColumnWidth + 5 },
-            1: { columnWidth: fixedColumnWidth },
-            2: { columnWidth: fixedColumnWidth }
-            // Add more columns if needed
+        columnStyles: {
+            0: { cellWidth: 60 },
         },
     });
 
-    y = pdf.autoTable.previous.finalY + 10;
+    y = pdf.autoTable.previous.finalY + 14;
 
     pdf.setFontSize(11);
     pdf.setFont("Helvetica", 'normal');
 
-    pdf.text("Subtotal", pageWidth - 55, y, 'right');
-    pdf.text(`${currencyFormat}${parseFloat(subTotal).toFixed(2)}`, pageWidth - 30, y, 'right');
+    pdf.text("Subtotal", pageWidth - 80, y, 'left');
+    pdf.text(`${currencyFormat}${parseFloat(subTotal).toFixed(2)}`, pageWidth - 43, y, 'left');
 
     y += 6;
-    pdf.text(`VAT %${data.vat_percent}`, pageWidth - 55, y, 'right');
-    pdf.text(`${currencyFormat}${parseFloat(leanVAT).toFixed(2)}`, pageWidth - 30, y, 'right');
+    pdf.text(`VAT %${data.vat_percent}`, pageWidth - 80, y, 'left');
+    pdf.text(`${currencyFormat}${parseFloat(leanVAT).toFixed(2)}`, pageWidth - 43, y, 'left');
 
-    y += 8;
+    y += 6;
+
+    const lineX1 = pageWidth - 95;
+    const lineX2 = pageWidth - 15;
+
+    pdf.line(lineX1, y, lineX2, y);
+
+    y += 5
 
     pdf.setFontSize(12);
     pdf.setFont("Helvetica", 'bold');
-    pdf.text(`Total to Pay`, pageWidth - 55, y, 'right');
-    pdf.text(`${currencyFormat}${parseFloat(totalInclVAT).toFixed(2)}`, pageWidth - 30, y, 'right');
-    // Move down the page after the table
-    y = + 15;
+    pdf.text(`Amount to Pay`, pageWidth - 80, y, 'left');
+    pdf.text(`${currencyFormat}${parseFloat(totalInclVAT).toFixed(2)}`, pageWidth - 43, y, 'left');
+    y += 15;
+
+    let message = `We kindly ask you to proceed with the payment within ${invoiceTerm} days after you have received the invoice to the following account number of ${sender.iban} under the name of ${sender.contact_name}`
+    let thankingMsg = `Thank you for your business! Should you have any questions do not hesitate to contact us.`
+
+    const maxWidth = 210; // Maximum width for the text block
+    const lines = pdf.splitTextToSize(message, maxWidth);
+    const thankingMsgLine = pdf.splitTextToSize(thankingMsg, maxWidth);
+
+    pdf.setFont("Helvetica", "normal");
+    pdf.setFontSize(11);
+    // pdf.text(x, pageHeight - 40, thankingMsgLine);
+    pdf.text(x, pageHeight - 18, lines);
+
     pdf.save('invoice.pdf');
 
     const pdfDataUri = pdf.output('datauristring');
