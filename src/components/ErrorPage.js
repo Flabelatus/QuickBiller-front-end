@@ -4,7 +4,7 @@ export default function ErrorPage() {
     const error = useRouteError();
 
     return (
-        <div className="container">
+        <div className="container mt-5">
             <div className="row">
                 <div className="col-md-6 offset-md-3">
                     <h1 className="mt-3">Oops!</h1>

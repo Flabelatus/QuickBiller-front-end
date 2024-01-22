@@ -1,7 +1,16 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
+
 export const CreatePDFDoc = (data, docType, sender) => {
+
+    function sumArray(arr) {
+        let sum = 0;
+        for (let i = 0; i < arr.length; i++) {
+            sum += arr[i];
+        }
+        return sum;
+    };
 
     const updatedJobs = data.jobs.map((job) => ({
         ...job,
@@ -11,13 +20,13 @@ export const CreatePDFDoc = (data, docType, sender) => {
     const updatedCosts = data.costs.map((c) => ({
         ...c,
         numberOfCosts: "N/A",
-        totalAmout: c.costs
+        totalAmout: parseFloat(c.costs)
     }));
 
     let currencyFormat = "€"
 
     const docTable = {
-        header: ['Description', 'Hour Rate', "Number of Hours", "Subtotal"],
+        header: ['Description', 'Hour Rate', "Number of Hours", "Total"],
     };
 
     console.log(updatedCosts);
@@ -25,6 +34,12 @@ export const CreatePDFDoc = (data, docType, sender) => {
     const jobs = updatedJobs.map((job) => Object.values(job));
     const costs = updatedCosts.map((cost) => Object.values(cost));
 
+    // Invoice number calculations
+    const totalJobs = sumArray(jobs.map((job) => job[job.length - 1]));
+    const totalCosts = sumArray(costs.map((c) => c[c.length - 1]));
+    const subTotal = totalJobs + totalCosts
+    const leanVAT = totalJobs * parseInt(data.vat_percent) / 100;
+    const totalInclVAT = subTotal + leanVAT;
 
     const table = [
         ...jobs,
@@ -44,7 +59,7 @@ export const CreatePDFDoc = (data, docType, sender) => {
     const pageHeight = pdf.internal.pageSize.getHeight();
 
     // Set up the initial position for content
-    let y = 20;
+    let y = 35;
     let x = 15;
 
     let smallOffset = 5;
@@ -57,9 +72,11 @@ export const CreatePDFDoc = (data, docType, sender) => {
     y += largeOffset;
 
     // Add recipient details
-    pdf.setFontSize(14);
+    pdf.setFont("Helvetica", 'bold');
+    pdf.setFontSize(12);
     pdf.text(data.company.company_name, x, y, 'left');
     y += mediumOffset;
+    pdf.setFont("Helvetica", 'normal');
     pdf.setFontSize(11);
     pdf.text(data.company.contact_name, x, y, 'left');
     y += smallOffset;
@@ -72,9 +89,11 @@ export const CreatePDFDoc = (data, docType, sender) => {
     y = 40;
 
     // Add sender details
-    pdf.setFontSize(14);
+    pdf.setFontSize(12);
+    pdf.setFont("Helvetica", 'bold');
     pdf.text(sender.company_name, x + 110, y, 'left');
     y += mediumOffset;
+    pdf.setFont("Helvetica", 'normal');
     pdf.setFontSize(11);
     pdf.text(sender.contact_name, x + 110, y, 'left');
     y += smallOffset;
@@ -102,9 +121,6 @@ export const CreatePDFDoc = (data, docType, sender) => {
     pdf.text(`Due date: `, x + 110, y, 'left');
     pdf.text(dueDate.toLocaleDateString(), pageWidth - 30, y, 'right');
 
-    y -= smallOffset;
-    y -= mediumOffset;
-
     const yearAsString = currentDate.getFullYear().toString();
     const month = currentDate.getMonth() + 1; // Returns a number (0-11) for the month
     const monthAsString = month.toString();
@@ -112,10 +128,10 @@ export const CreatePDFDoc = (data, docType, sender) => {
     const lenOfDocs = String(3);
     const paddedLenOfDocs = lenOfDocs.padStart(2, "0");
 
+    pdf.setFont("Helvetica", 'bold');
     pdf.text(`Invoice number: ${yearAsString}${paddedMonthAsString}${paddedLenOfDocs}`, x, y, 'left');
 
-    y += largeOffset;
-    y += smallOffset;
+    y += mediumOffset;
 
     const formattedTable = table.map((row, rowIndex) => {
         return row.map((cell, columnIndex) => {
@@ -130,6 +146,8 @@ export const CreatePDFDoc = (data, docType, sender) => {
         });
     });
 
+    var fixedColumnWidth = 50;
+
     pdf.autoTable({
         startY: y,
         head: [docTable.header],
@@ -142,11 +160,34 @@ export const CreatePDFDoc = (data, docType, sender) => {
         styles: {
             fontSize: 11,
         },
+        columnStyles: { // Set individual column widths
+            0: { columnWidth: fixedColumnWidth + 5 },
+            1: { columnWidth: fixedColumnWidth },
+            2: { columnWidth: fixedColumnWidth }
+            // Add more columns if needed
+        },
     });
 
-    // Move down the page after the table
-    y = pdf.autoTable.previous.finalY + 15;
+    y = pdf.autoTable.previous.finalY + 10;
 
+    pdf.setFontSize(11);
+    pdf.setFont("Helvetica", 'normal');
+
+    pdf.text("Subtotal", pageWidth - 55, y, 'right');
+    pdf.text(`${currencyFormat}${parseFloat(subTotal).toFixed(2)}`, pageWidth - 30, y, 'right');
+
+    y += 6;
+    pdf.text(`VAT %${data.vat_percent}`, pageWidth - 55, y, 'right');
+    pdf.text(`${currencyFormat}${parseFloat(leanVAT).toFixed(2)}`, pageWidth - 30, y, 'right');
+
+    y += 8;
+
+    pdf.setFontSize(12);
+    pdf.setFont("Helvetica", 'bold');
+    pdf.text(`Total to Pay`, pageWidth - 55, y, 'right');
+    pdf.text(`${currencyFormat}${parseFloat(totalInclVAT).toFixed(2)}`, pageWidth - 30, y, 'right');
+    // Move down the page after the table
+    y = + 15;
     pdf.save('invoice.pdf');
 
     const pdfDataUri = pdf.output('datauristring');

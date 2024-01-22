@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Input from "./Inputs";
 import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
-import { CreateForm, CreatePDFDoc } from "./PDFUtils";
+import { CreatePDFDoc } from "./PDFUtils";
 
 const InvoiceForms = () => {
     const vatDefault = 21;
@@ -225,7 +225,7 @@ const InvoiceForms = () => {
             vat_free: isZeroVat,
             in_eu: inEU,
             in_country: inCountry,
-            vat_percent: vatPercentage,
+            vat_percent: String(vatPercentage),
             company: company,
             discount: discount,
             sender: sender,
