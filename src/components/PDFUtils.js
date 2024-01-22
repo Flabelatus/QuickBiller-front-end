@@ -1,84 +1,129 @@
-import { PDFDocument, StandardFonts } from 'pdf-lib';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
-
-export async function CreateForm(data, docType) {
-
-    if (docType === "Quote") {
-
-    } else {
-
+export const CreatePDFDoc = (data, docType, sender) => {
+    console.log(sender);
+    const docTable = {
+        header: ['Description', 'Hour Rate', "Number of Hours"],
+        jobs: data.jobs,
+        costs: data.costs,
     };
 
-    const pdfDoc = await PDFDocument.create()
+    const jobs = data.jobs.map((job) => Object.values(job));
+    const costs = data.costs.map((cost) => Object.values(cost));
 
-    const y_pos = 650;
-    const selfYPose = 620;
-    const offset = 15;
+    const table = [
+        ...jobs,
+        ...costs
+    ];
 
-    const page = pdfDoc.addPage([550, 750])
-    const form = pdfDoc.getForm()
-    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const pdf = new jsPDF();
 
-    page.drawText(docType, { x: 50, y: 700, size: 35 })
+    pdf.setProperties({
+        title: docType,
+        subject: 'Invoice for services',
+        author: 'Your Name',
+        keywords: 'invoice, services',
+    });
 
-    const companyTitle = data.company.company_name;
-    const name = data.company.contact_name;
-    const addressStreet = data.company.street + ", " + data.company.postcode;
-    const addressCountry = data.company.city + ", " + data.company.country;
-    const textSize = 12;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
 
-    page.drawText(companyTitle, { x: 50, y: y_pos, size: textSize, font: boldFont })
-    page.drawText(name, { x: 50, y: y_pos - offset, size: 11 })
-    page.drawText(addressStreet, { x: 50, y: y_pos - offset * 2, size: 11 })
-    page.drawText(addressCountry, { x: 50, y: y_pos - offset * 3, size: 11 })
+    // Set up the initial position for content
+    let y = 20;
+    let x = 15;
 
-    const selfCompanyTitle = "Javid Jooshesh Studio";
-    const selfName = "Javid Jooshesh";
-    const selfAddressStreet = "Hooidrift 129B, 3023 KL";
-    const selfAddressCountry = "Rotterdam, Netherlands";
-    const selfKvKNo = "Coc No: 7654231";
-    const selfBTW = "VAT No: NL82843652";
-    const selfIBAN = "IBAN: NL 98 ABNA 0580990869";
+    let smallOffset = 5;
+    let mediumOffset = 10;
+    let largeOffset = 20;
 
-    page.drawText(selfCompanyTitle, { x: 350, y: selfYPose, size: textSize, font: boldFont })
-    page.drawText(selfName, { x: 350, y: selfYPose - offset, size: 11 })
-    page.drawText(selfAddressStreet, { x: 350, y: selfYPose - offset * 2, size: 11 })
-    page.drawText(selfAddressCountry, { x: 350, y: selfYPose - offset * 3, size: 11 })
-    page.drawText(selfKvKNo, { x: 350, y: selfYPose - ((offset * 4) + 10), size: 11 })
-    page.drawText(selfBTW, { x: 350, y: selfYPose - ((offset * 5) + 10), size: 11 })
-    page.drawText(selfIBAN, { x: 350, y: selfYPose - ((offset * 6) + 10), size: 11 })
+    // Add a title
+    pdf.setFontSize(30);
+    pdf.text(docType, 30, y, 'center');
+    y += largeOffset;
 
-    const docNo = "Invoice Number: 20240101";
-    page.drawText(docNo, { x: 50, y: selfYPose - ((offset * 9) + 10), size: 12, font: boldFont });
+    // Add recipient details
+    pdf.setFontSize(14);
+    pdf.text(data.company.company_name, x, y, 'left');
+    y += mediumOffset;
+    pdf.setFontSize(11);
+    pdf.text(data.company.contact_name, x, y, 'left');
+    y += smallOffset;
+    pdf.text(data.company.email, x, y, 'left');
+    y += smallOffset;
+    pdf.text(data.company.street + ", " + data.company.postcode, x, y, 'left');
+    y += smallOffset;
+    pdf.text(data.company.city + ", " + data.company.country, x, y, 'left');
 
-    const docDate = "Invoice date: 01-01-2024";
-    const dueDate = "Due date: 15-01-2024";
-    page.drawText(docDate, { x: 350, y: selfYPose - ((offset * 9) + 10), size: 12 });
-    page.drawText(dueDate, { x: 350, y: selfYPose - ((offset * 10) + 10), size: 12 });
+    y = 40;
 
-    // Meta data
-    pdfDoc.setTitle('20240101_Company');
-    pdfDoc.setAuthor('Javid Jooshesh');
-    pdfDoc.setSubject('Invoice document-Q1 2024');
-    pdfDoc.setProducer('QuickBiller');
-    pdfDoc.setCreator('Javid Jooshesh');
-    pdfDoc.setCreationDate(new Date('2024-01-01T01:58:37.228Z'));
+    // Add sender details
+    pdf.setFontSize(14);
+    pdf.text(sender.company_name, x + 110, y, 'left');
+    y += mediumOffset;
+    pdf.setFontSize(11);
+    pdf.text(sender.contact_name, x + 110, y, 'left');
+    y += smallOffset;
+    pdf.text(sender.email, x + 110, y, 'left');
+    y += smallOffset;
+    pdf.text(sender.street + ", " + sender.postcode, x + 110, y, 'left');
+    y += smallOffset;
+    pdf.text(sender.city + ", " + sender.country, x + 110, y, 'left');
+    y += mediumOffset;
+    pdf.text("CoC No: " + sender.coc_no, x + 110, y, 'left');
+    y += smallOffset;
+    pdf.text("VAT No: " + sender.vat_no, x + 110, y, 'left');
+    y += smallOffset;
+    pdf.text("IBAN: " + sender.iban, x + 110, y, 'left');
+    y += mediumOffset;
 
-    form.flatten();
-    const pdfBytes = await pdfDoc.save()
+    // Add a date
+    const currentDate = new Date();
+    const dueDate = new Date(currentDate.getTime() + 14 * 24 * 60 * 60 * 1000);
 
-    // Create a blob from the bytes
-    const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+    pdf.setFontSize(12);
+    pdf.text(`Invoice date: `, x + 110, y, 'left');
+    pdf.text(currentDate.toLocaleDateString(), pageWidth - 30, y, 'right');
+    y += smallOffset;
+    pdf.text(`Due date: `, x + 110, y, 'left');
+    pdf.text(dueDate.toLocaleDateString(), pageWidth - 30, y, 'right');
 
-    // Create a URL for the blob
-    const pdfUrl = URL.createObjectURL(pdfBlob);
+    y -= smallOffset;
+    y -= mediumOffset;
 
-    // Open the PDF in a new tab (optional)
-    window.open(pdfUrl, '_blank');
+    const yearAsString = currentDate.getFullYear().toString();
+    const month = currentDate.getMonth() + 1; // Returns a number (0-11) for the month
+    const monthAsString = month.toString();
+    const paddedMonthAsString = monthAsString.padStart(2, "0");
+    const lenOfDocs = String(3);
+    const paddedLenOfDocs = lenOfDocs.padStart(2, "0");
 
-    const anchor = document.createElement('a');
-    anchor.href = pdfUrl;
-    anchor.download = "Invoice_20240101_Company.pdf";
-    anchor.click();
+    pdf.text(`Invoice number: ${yearAsString}${paddedMonthAsString}${paddedLenOfDocs}`, x, y, 'left');
+    y += mediumOffset
+
+    pdf.autoTable({
+        startY: y,
+        head: [docTable.header],
+        body: table,
+        startY: y + 15, // Adjust the position after the table
+    });
+
+    // Move down the page after the table
+    y = pdf.autoTable.previous.finalY + 15;
+
+    pdf.save('invoice.pdf');
+
+    const pdfDataUri = pdf.output('datauristring');
+
+    // const iframe = document.createElement('iframe');
+    // iframe.src = pdfDataUri;
+    // iframe.style.width = '100%';
+    // iframe.style.height = '600px';
+    // document.body.appendChild(iframe);
+
+    // Open a new window or tab and set the PDF as its content
+    const newWindow = window.open();
+    newWindow.document.open();
+    newWindow.document.write(`<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`);
+    newWindow.document.close();
 };
-

@@ -2,14 +2,10 @@ import { useEffect, useState } from "react";
 import Input from "./Inputs";
 import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
-import { faDownload, faUser } from '@fortawesome/fontawesome-free';
-import { CreateForm } from "./PDFUtils";
-import { FontAwesomeIcon } from '@fortawesome/fontawesome-free';
-
+import { CreateForm, CreatePDFDoc } from "./PDFUtils";
 
 const InvoiceForms = () => {
-    const defaultVatValue = 21;
-
+    const vatDefault = 21;
     const { jwtToken } = useOutletContext();
 
     const [company, setCompany] = useState({});
@@ -28,7 +24,7 @@ const InvoiceForms = () => {
     const [inEU, setInEU] = useState(true);
     const [isZeroVat, setIsZeroVat] = useState(false);
     const [inCountry, setInCountry] = useState(true);
-    const [vatPercentage, setVatPercentage] = useState(defaultVatValue);
+    const [vatPercentage, setVatPercentage] = useState(vatDefault);
     const [discount, setDiscount] = useState(0);
 
     const [user, setUser] = useState(0);
@@ -143,7 +139,7 @@ const InvoiceForms = () => {
         setIsZeroVat(false);
         setInEU(true);
         setInCountry(true);
-        setVatPercentage(0);
+        setVatPercentage(vatDefault);
         setDiscount(0);
         setJobType("Service");
         setSender({});
@@ -161,7 +157,7 @@ const InvoiceForms = () => {
     };
 
     const handleAddCost = () => {
-        setCosts([...costs, { costs: 0, info: "" }])
+        setCosts([...costs, { info: "", costs: 0 }])
     };
 
     const handleRemoveCost = (index) => {
@@ -198,6 +194,7 @@ const InvoiceForms = () => {
             ...senderData,
             [field]: value
         }));
+        flipToggle();
     };
 
     const handleSubmit = (event) => {
@@ -265,14 +262,27 @@ const InvoiceForms = () => {
     };
 
     const handleMakeInvoice = () => {
+        let senderDoc;
+        if (jwtToken === "") {
+            senderDoc = sender;
+        } else {
+            senderDoc = sender.data;
+        };
+
         let docs = serializeDocument();
-        console.log(docs);
-        CreateForm(docs, "Invoice");
+        CreatePDFDoc(docs, "Invoice", senderDoc);
     };
 
     const handleMakeQuote = () => {
+        let senderDoc;
+        if (jwtToken === "") {
+            senderDoc = sender;
+        } else {
+            senderDoc = sender.data;
+        };
+
         let docs = serializeDocument();
-        CreateForm(docs, "Quote");
+        CreatePDFDoc(docs, "Quote", senderDoc);
     };
 
     return (
@@ -327,8 +337,8 @@ const InvoiceForms = () => {
                                     type="text"
                                     className="me-4"
                                     name="coc"
-                                    onChange={(e) => handleSenderChange("coc", e.target.value)}
-                                    value={sender.coc}
+                                    onChange={(e) => handleSenderChange("coc_no", e.target.value)}
+                                    value={sender.coc_no}
                                 />
                             </div>
                             <div className="col-md-3 justify-content-end">
@@ -374,8 +384,8 @@ const InvoiceForms = () => {
                                     type="text"
                                     className="me-4"
                                     name="vat"
-                                    onChange={(e) => handleSenderChange("vat", e.target.value)}
-                                    value={sender.vat}
+                                    onChange={(e) => handleSenderChange("vat_no", e.target.value)}
+                                    value={sender.vat_no}
                                 />
                             </div>
                         </div>
