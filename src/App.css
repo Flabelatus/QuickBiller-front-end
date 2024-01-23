@@ -187,3 +187,23 @@
 .input-text-transition {
   transition: transform 0.2s ease-in-out;
 }
+/* Define the custom styles for the file input */
+.custom-file-input {
+  display: none; /* Hide the default input element */
+  font-size: 16px; /* Set font size for the label text */
+  cursor: pointer; /* Change cursor to pointer when hovering */
+}
+
+/* Style the label to make it look like a button */
+.custom-file-input + label {
+  background-color: #007bff; /* Set background color */
+  color: #fff; /* Set text color */
+  padding: 10px 15px; /* Add padding to make it visually appealing */
+  border-radius: 5px; /* Add rounded corners */
+  cursor: pointer; /* Change cursor to pointer when hovering */
+}
+
+/* Style the label when hovering over it */
+.custom-file-input + label:hover {
+  background-color: #0056b3; /* Change background color on hover */
+}

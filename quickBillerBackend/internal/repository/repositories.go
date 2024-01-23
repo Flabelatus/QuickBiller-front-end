@@ -20,6 +20,7 @@ func (r *GORMRepo) Migrate() error {
 		models.Quote{},
 		models.Client{},
 		models.Sender{},
+		models.Image{},
 	)
 	if err != nil {
 		return err

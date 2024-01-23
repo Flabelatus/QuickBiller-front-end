@@ -3,7 +3,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 import Loader from 'react-spinners/SyncLoader'
 import Input from "./Inputs";
-
+import { UploadImage } from "./UploadImage";
 
 const UserCompany = () => {
     const [sender, setSender] = useState({});
@@ -12,6 +12,8 @@ const UserCompany = () => {
     const { jwtToken } = useOutletContext();
     const [submitted, setSubmitted] = useState(false);
     const [modifying, setModifying] = useState(false);
+
+    const [logo, setLogo] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,10 +31,18 @@ const UserCompany = () => {
                 .then((data) => {
                     setSender(data.data);
                     setIsLoading(false);
+                    fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                        .then((resp) => resp.json())
+                        .then((data) => {
+                            setLogo(data.data);
+                            console.log(data.data);
+                        })
+                        .catch((err) => console.log(err.message))
                 })
                 .catch((error) => {
                     console.error(error.message);
                 })
+
         }
 
     }, [editmode, submitted, modifying]);
@@ -258,6 +268,8 @@ const UserCompany = () => {
                             <div className="row justify-content-center mt-4 mb-5">
                                 <div className="px-4 py-4" style={{ backgroundColor: "#FFF", borderRadius: 8, border: "1px solid #eee" }}>
                                     <lable className="mt-2" style={{ fontWeight: 700, fontSize: 22, display: 'flex', color: "#e56259" }}><span>{sender.company_name}</span></lable>
+                                    <UploadImage />
+                                    {logo && logo.filename !== undefined && <img className="mt-5 mb-5" src={require(`./../uploads/${logo.filename}`)} style={{ height: 60}}></img>}
                                     <br />
                                     <lable className="mt-2" style={{ fontWeight: 700, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.contact_name}</span></lable>
                                     <br />

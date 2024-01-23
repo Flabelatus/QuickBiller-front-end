@@ -23,3 +23,25 @@ const Input = forwardRef((props, ref) => {
 });
 
 export default Input;
+
+export const TextFieldInput = forwardRef((props, ref) => {
+  return (
+    <div className="mb-3">
+      <label htmlFor={props.name} className="form-label input-text-transition" style={{ fontSize: 20, color: "#00000090", fontWeight: 400 }}>
+        {props.title}
+      </label>
+      <div className="">
+        <textarea
+          style={{ color: "#00224C", border: "2px solid #00000060", borderRadius: 8, fontSize: 18, width: '80%', color:'#777' }}
+          rows={5}
+          type={props.type}
+          className={props.className}
+          ref={ref}
+          id={props.name}
+          onChange={props.onChange}
+          defaultValue={props.value}
+        />
+      </div>
+    </div>
+  );
+});
