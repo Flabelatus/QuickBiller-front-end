@@ -8,7 +8,7 @@ const InvoiceForms = () => {
     const vatDefault = 21;
     const { jwtToken } = useOutletContext();
 
-    const [company, setCompany] = useState({});
+    const [company, setCompany] = useState({vat_percent: vatDefault});
     const [sender, setSender] = useState({});
     const [logo, setLogo] = useState({});
 
@@ -137,7 +137,7 @@ const InvoiceForms = () => {
             });
         };
 
-        setCompany({});
+        setCompany({vat_percent: vatDefault});
         setJobs([]);
         setCosts([]);
         setIsZeroVat(false);
@@ -606,7 +606,7 @@ const InvoiceForms = () => {
                                     className="ms-4"
                                     type="text"
                                     style={{ width: 40, fontWeight: 400, color: "#00000090", border: "2px solid #ccc", borderRadius: 4 }}
-                                    value={21}
+                                    value={company.vat_percent}
                                     onChange={(e) => setVatPercentage(e.target.value)}
                                 ></input>
                                 <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>

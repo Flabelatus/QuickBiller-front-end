@@ -81,7 +81,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo) => {
         imgY = imageSize.height;
 
         // Calculate new dimensions for the logo
-        const fixedSize = 28; // Adjust this value as needed
+        const fixedSize = 25; // Adjust this value as needed
         const newLogoWidth = imgX * (fixedSize / imgX);
         const newLogoHeight = imgY * (fixedSize / imgX); // Use the same scale for height
 
@@ -99,7 +99,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo) => {
     // Add a title
     pdf.setFontSize(45);
     pdf.setTextColor(120, 120, 120);
-    pdf.text(docType, pageWidth - 60, y, 'center');
+    pdf.text(docType, pageWidth - 60, 40, 'center');
     y += largeOffset;
 
     pdf.setTextColor(0, 0, 0);
