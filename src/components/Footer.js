@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const Footer = () => {
     return (
         <>
-            <div className="row mt-5">
+            <div className="row mt-5" id="footer">
                 <footer className="text-center container-fluid py-5 mt-5" style={{ backgroundColor: "#282c34  " }}>
                     <hr />
                     <div className="row">

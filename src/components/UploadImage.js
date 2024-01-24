@@ -13,7 +13,7 @@ export const UploadImage = () => {
 
     useEffect(() => {
 
-    }, [uploaded])
+    }, [uploaded]);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -44,7 +44,6 @@ export const UploadImage = () => {
                 body: formData
             }).then((response) => response.json()).then((data) => {
                 setUploaded(true);
-                console.log(data);
                 setLoading(false);
             }).catch(error => console.error(error.message))
         } else {
@@ -67,7 +66,7 @@ export const UploadImage = () => {
                 <input
                     className="custom-file-input"
                     type="file"
-                    style={{ fontSize: 18, color: '#888', display: 'flex', alignItems: 'center' }}
+                    style={{ fontSize: 16, color: '#888', display: 'flex', alignItems: 'center' }}
                     accept="image/*"
                     onChange={handleFileChange}
                 />

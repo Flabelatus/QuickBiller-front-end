@@ -35,7 +35,6 @@ const UserCompany = () => {
                         .then((resp) => resp.json())
                         .then((data) => {
                             setLogo(data.data);
-                            console.log(data.data);
                         })
                         .catch((err) => console.log(err.message))
                 })

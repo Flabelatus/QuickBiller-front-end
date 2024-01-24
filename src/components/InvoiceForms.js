@@ -10,6 +10,7 @@ const InvoiceForms = () => {
 
     const [company, setCompany] = useState({});
     const [sender, setSender] = useState({});
+    const [logo, setLogo] = useState({});
 
     const [jobs, setJobs] = useState([]);
     const [costs, setCosts] = useState([]);
@@ -107,6 +108,9 @@ const InvoiceForms = () => {
                         .then((resp) => resp.json())
                         .then((dat) => setSender(dat))
                         .catch((err) => console.error(err.message))
+                    
+                    fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                        .then(r => r.json()).then(dat => setLogo(dat.data)).catch(err => console.error(err.message))
                 })
                 .catch((error) => {
                     console.error(error.message);
@@ -270,7 +274,7 @@ const InvoiceForms = () => {
         };
 
         let docs = serializeDocument();
-        CreatePDFDoc(docs, "Invoice", senderDoc);
+        CreatePDFDoc(docs, "Invoice", senderDoc, logo);
     };
 
     const handleMakeQuote = () => {
@@ -282,7 +286,7 @@ const InvoiceForms = () => {
         };
 
         let docs = serializeDocument();
-        CreatePDFDoc(docs, "Quote", senderDoc);
+        CreatePDFDoc(docs, "Quote", senderDoc, logo);
     };
 
     return (

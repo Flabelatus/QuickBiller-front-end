@@ -2,7 +2,8 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 
-export const CreatePDFDoc = (data, docType, sender) => {
+
+export const CreatePDFDoc = async (data, docType, sender, logo) => {
 
     const invoiceTerm = 14;
 
@@ -25,13 +26,11 @@ export const CreatePDFDoc = (data, docType, sender) => {
         totalAmout: parseFloat(c.costs)
     }));
 
-    let currencyFormat = "€"
+    let currencyFormat = "€ "
 
     const docTable = {
         header: ['Description', 'Hour Rate', "Number of Hours", "Total"],
     };
-
-    console.log(updatedCosts);
 
     const jobs = updatedJobs.map((job) => Object.values(job));
     const costs = updatedCosts.map((cost) => Object.values(cost));
@@ -62,18 +61,48 @@ export const CreatePDFDoc = (data, docType, sender) => {
     console.log(pageWidth);
 
     // Set up the initial position for content
-    let y = 35;
+    let y = 20;
     let x = 15;
 
     let smallOffset = 5;
     let mediumOffset = 10;
     let largeOffset = 20;
 
+    // logo
+    var imagePath = require(`./../uploads/${logo.filename}`);
+
+    let imgX = 0;
+    let imgY = 0;
+
+    try {
+        const imgData = await fetchAndConvertToBase64(imagePath); // Convert image path to base64
+        const imageSize = await getImageSize(imagePath);
+        imgX = imageSize.width;
+        imgY = imageSize.height;
+
+        // Calculate new dimensions for the logo
+        const fixedSize = 28; // Adjust this value as needed
+        const newLogoWidth = imgX * (fixedSize / imgX);
+        const newLogoHeight = imgY * (fixedSize / imgX); // Use the same scale for height
+
+        // Add the image (logo) to the PDF with the calculated dimensions
+        if (imgData) {
+            pdf.addImage(imgData, 'JPEG', x, 30, newLogoWidth, newLogoHeight);
+            y += mediumOffset + newLogoHeight; // Adjust the y position accordingly
+        };
+
+        // ... continue with the rest of your code ...
+    } catch (error) {
+        console.error(error.message);
+    }
+
     // Add a title
-    pdf.setFontSize(30);
-    pdf.text(docType, 30, y, 'center');
+    pdf.setFontSize(45);
+    pdf.setTextColor(120, 120, 120);
+    pdf.text(docType, pageWidth - 60, y, 'center');
     y += largeOffset;
 
+    pdf.setTextColor(0, 0, 0);
     // Add recipient details
     pdf.setFont("Helvetica", 'bold');
     pdf.setFontSize(12);
@@ -89,7 +118,7 @@ export const CreatePDFDoc = (data, docType, sender) => {
     y += smallOffset;
     pdf.text(data.company.city + ", " + data.company.country, x, y, 'left');
 
-    y = 40;
+    y = 60;
 
     // Add sender details
     pdf.setFontSize(12);
@@ -207,17 +236,66 @@ export const CreatePDFDoc = (data, docType, sender) => {
 
     pdf.save('invoice.pdf');
 
-    const pdfDataUri = pdf.output('datauristring');
+    // const pdfDataUri = pdf.output('datauristring');
 
     // const iframe = document.createElement('iframe');
     // iframe.src = pdfDataUri;
     // iframe.style.width = '100%';
     // iframe.style.height = '600px';
-    // document.body.appendChild(iframe);
+
+    // const referenceElement = document.getElementById('footer');
+
+    // if (referenceElement && referenceElement.parentNode) {
+    //     referenceElement.parentNode.insertBefore(iframe, referenceElement);
+    // } else {
+    //     document.body.appendChild(iframe);
+    // };
 
     // Open a new window or tab and set the PDF as its content
-    const newWindow = window.open();
-    newWindow.document.open();
-    newWindow.document.write(`<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`);
-    newWindow.document.close();
+    // const newWindow = window.open();
+    // newWindow.document.open();
+    // newWindow.document.write(`<iframe width='100%' height='100%' src='${pdfDataUri}'></iframe>`);
+    // newWindow.document.close();
 };
+
+// Function to fetch the image and convert it to base64
+async function fetchAndConvertToBase64(imagePath) {
+    try {
+        const response = await fetch(imagePath);
+        if (!response.ok) {
+            console.error('Failed to fetch the image.');
+            return null;
+        }
+
+        const blob = await response.blob();
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+
+        return new Promise((resolve) => {
+            reader.onloadend = () => {
+                resolve(reader.result);
+            };
+        });
+    } catch (error) {
+        console.error('Error loading the image:', error);
+        return null;
+    }
+};
+
+function getImageSize(imagePath) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+
+        img.onload = () => {
+            const width = img.width;
+            const height = img.height;
+            resolve({ width, height });
+        };
+
+        img.onerror = () => {
+            reject(new Error('Failed to load image.'));
+        };
+
+        img.src = imagePath;
+    });
+}
