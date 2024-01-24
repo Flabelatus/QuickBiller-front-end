@@ -10,10 +10,18 @@ export const UploadImage = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploaded, setUploaded] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [canceled, setCanceled] = useState(false);
 
+    const toggleCancel = () => {
+        if (canceled) {
+            setCanceled(!canceled);
+        } else {
+            setCanceled(true);
+        };
+    }
     useEffect(() => {
 
-    }, [uploaded]);
+    }, [uploaded, canceled, selectedFile]);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -45,10 +53,20 @@ export const UploadImage = () => {
             }).then((response) => response.json()).then((data) => {
                 setUploaded(true);
                 setLoading(false);
+                setSelectedFile(false);
             }).catch(error => console.error(error.message))
         } else {
             alert('No file selected');
         };
+    };
+
+    const resetFileInput = () => {
+        // Set the selectedFile state to null to reset the input
+        setSelectedFile(null);
+        const fileInput = document.getElementById('file-input');
+        if (fileInput) {
+            fileInput.value = '';
+        }
     };
 
     if (loading) {
@@ -62,15 +80,21 @@ export const UploadImage = () => {
         )
     } else {
         return (
-            <div className="mt-5">
+            <div className="mt-5" st>
+                <p className=" mb-4 mt-5" style={{ color: '#061868', fontSize: 18, fontWeight: 600 }}>
+                    Upload your new logo
+                </p>
                 <input
                     className="custom-file-input"
                     type="file"
+                    id="file-input"
                     style={{ fontSize: 16, color: '#888', display: 'flex', alignItems: 'center' }}
                     accept="image/*"
                     onChange={handleFileChange}
                 />
-                <button className="btn btn-submit-dark-small mt-4" onClick={handleUpload}>Upload Logo</button>
+                {selectedFile && <button className="btn btn-submit-dark-small mt-4" onClick={handleUpload}>Submit</button>}
+                {selectedFile && <button className="btn btn-secondary mt-4 ms-3" style={{ fontSize: 18 }} onClick={resetFileInput}>Cancel</button>}
+
                 {uploaded ? <p className="mt-2">Logo successfully uploaded!</p> : ""}
             </div>
         );

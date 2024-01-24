@@ -267,8 +267,6 @@ const UserCompany = () => {
                             <div className="row justify-content-center mt-4 mb-5">
                                 <div className="px-4 py-4" style={{ backgroundColor: "#FFF", borderRadius: 8, border: "1px solid #eee" }}>
                                     <lable className="mt-2" style={{ fontWeight: 700, fontSize: 22, display: 'flex', color: "#e56259" }}><span>{sender.company_name}</span></lable>
-                                    <UploadImage />
-                                    {logo && logo.filename !== undefined && <img className="mt-5 mb-5" src={require(`./../uploads/${logo.filename}`)} style={{ height: 60}}></img>}
                                     <br />
                                     <lable className="mt-2" style={{ fontWeight: 700, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.contact_name}</span></lable>
                                     <br />
@@ -279,8 +277,13 @@ const UserCompany = () => {
                                     <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>IBAN: <span className="ms-2">{sender.iban}</span></lable>
                                     <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>VAT No: <span className="ms-2">{sender.vat_no}</span></lable>
                                     <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>CoC No: <span className="ms-2">{sender.coc_no}</span></lable>
+                                    
+                                    <button className="btn btn-submit-light-small mt-5" onClick={handleSwitchModifyingMode}>Modify</button>
+
+                                    <UploadImage />
+                                    {logo && logo.filename !== undefined && <img className="mt-3 mb-3" src={require(`./../uploads/${logo.filename}`)} style={{ height: 80 }}></img>}
+
                                 </div>
-                                <button className="btn btn-submit-light-small mt-5" onClick={handleSwitchModifyingMode}>Modify</button>
                             </div>
                         }
                     </div>
