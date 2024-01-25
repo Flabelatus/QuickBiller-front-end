@@ -24,9 +24,9 @@ func (r *GORMRepo) GetInvoiceByID(id int) (*models.Invoice, error) {
 	return invocie, nil
 }
 
-func (r *GORMRepo) GetInvoicesByUserID(userID int) ([]*models.Invoice, error) {
+func (r *GORMRepo) GetInvoicesByUserID(userID string) ([]*models.Invoice, error) {
 	var invoices []*models.Invoice
-	if err := r.DB.Where("user_id = ?", userID).Find(&invoices).Error; err != nil {
+	if err := r.DB.Where("user_id = ?", userID).Order("created_at DESC").Find(&invoices).Error; err != nil {
 		return nil, err
 	}
 	return invoices, nil

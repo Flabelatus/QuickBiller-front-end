@@ -69,7 +69,12 @@ export const CreatePDFDoc = async (data, docType, sender, logo) => {
     let largeOffset = 20;
 
     // logo
-    var imagePath = require(`./../uploads/${logo.filename}`);
+    try {
+        var imagePath = require(`./../uploads/${logo.filename}`);
+
+    } catch (error) {
+        console.log(error);
+    };
 
     let imgX = 0;
     let imgY = 0;

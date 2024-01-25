@@ -3,6 +3,7 @@ import Input from "./Inputs";
 import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 import { CreatePDFDoc } from "./PDFUtils";
+import { UploadImage } from "./UploadImage";
 
 const InvoiceForms = () => {
     const vatDefault = 21;
@@ -275,6 +276,7 @@ const InvoiceForms = () => {
 
         let docs = serializeDocument();
         CreatePDFDoc(docs, "Invoice", senderDoc, logo);
+        // add it to the db
     };
 
     const handleMakeQuote = () => {

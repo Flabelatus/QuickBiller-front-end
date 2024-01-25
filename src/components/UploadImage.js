@@ -80,7 +80,7 @@ export const UploadImage = () => {
         )
     } else {
         return (
-            <div className="mt-5" st>
+            <div className="mt-5 px-5   " st>
                 <p className=" mb-4 mt-5" style={{ color: '#061868', fontSize: 18, fontWeight: 600 }}>
                     Upload your new logo
                 </p>

@@ -24,9 +24,9 @@ func (r *GORMRepo) GetQuoteByID(id int) (*models.Quote, error) {
 	return quote, nil
 }
 
-func (r *GORMRepo) GetQuotesByUserID(userID int) ([]*models.Quote, error) {
+func (r *GORMRepo) GetQuotesByUserID(userID string) ([]*models.Quote, error) {
 	var quotes []*models.Quote
-	if err := r.DB.Where("user_id = ?", userID).Find(&quotes).Error; err != nil {
+	if err := r.DB.Where("user_id = ?", userID).Order("created_at DESC").Find(&quotes).Error; err != nil {
 		return nil, err
 	}
 	return quotes, nil
