@@ -9,7 +9,7 @@ const InvoiceForms = () => {
     const vatDefault = 21;
     const { jwtToken } = useOutletContext();
 
-    const [company, setCompany] = useState({vat_percent: vatDefault});
+    const [company, setCompany] = useState({ vat_percent: vatDefault });
     const [sender, setSender] = useState({});
     const [logo, setLogo] = useState({});
 
@@ -109,7 +109,7 @@ const InvoiceForms = () => {
                         .then((resp) => resp.json())
                         .then((dat) => setSender(dat))
                         .catch((err) => console.error(err.message))
-                    
+
                     fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                         .then(r => r.json()).then(dat => setLogo(dat.data)).catch(err => console.error(err.message))
                 })
@@ -138,7 +138,7 @@ const InvoiceForms = () => {
             });
         };
 
-        setCompany({vat_percent: vatDefault});
+        setCompany({ vat_percent: vatDefault });
         setJobs([]);
         setCosts([]);
         setIsZeroVat(false);
@@ -266,6 +266,14 @@ const InvoiceForms = () => {
         };
     };
 
+    function sumArray(arr) {
+        let sum = 0;
+        for (let i = 0; i < arr.length; i++) {
+            sum += arr[i];
+        }
+        return sum;
+    };
+
     const handleMakeInvoice = () => {
         let senderDoc;
         if (jwtToken === "") {
@@ -273,10 +281,52 @@ const InvoiceForms = () => {
         } else {
             senderDoc = sender.data;
         };
-
+        // Api call to the handler of the invoice name
+        // receieve the new name and add it in the doc creation
         let docs = serializeDocument();
-        CreatePDFDoc(docs, "Invoice", senderDoc, logo);
-        // add it to the db
+
+        const updatedJobs = docs.jobs.map((job) => ({
+            ...job,
+            totalAmount: job.hourRate * job.numberOfHours,
+        }));
+
+        const updatedCosts = docs.costs.map((c) => ({
+            ...c,
+            numberOfCosts: "N/A",
+            totalAmout: parseFloat(c.costs)
+        }));
+
+        const jobs = updatedJobs.map((job) => Object.values(job));
+        const costs = updatedCosts.map((cost) => Object.values(cost));
+
+        // Invoice number calculations
+        const totalJobs = sumArray(jobs.map((job) => job[job.length - 1]));
+        const totalCosts = sumArray(costs.map((c) => c[c.length - 1]));
+        const subTotal = totalJobs + totalCosts
+        const leanVAT = totalJobs * parseInt(company.vat_percent) / 100;
+        const totalInclVAT = subTotal + leanVAT;
+
+        let invoicePayload = {
+            user_id: jwt_decode.jwtDecode(jwtToken).sub,
+            total_inclusive: totalInclVAT,
+            total_exclusive: subTotal,
+            costs: totalCosts,
+            client_name: company.company_name,
+            vat_percent: parseInt(company.vat_percent)
+        }
+        // send Api call
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+            body: JSON.stringify(invoicePayload)
+        };
+        fetch(`http://localhost:8082/logged_in/create_invoice`, requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data.data.filename);
+                CreatePDFDoc(docs, "Invoice", senderDoc, logo, data.data.filename, data.data.invoice_no);
+            })
+            .catch((error) => console.error(error.message));
     };
 
     const handleMakeQuote = () => {
@@ -286,7 +336,6 @@ const InvoiceForms = () => {
         } else {
             senderDoc = sender.data;
         };
-
         let docs = serializeDocument();
         CreatePDFDoc(docs, "Quote", senderDoc, logo);
     };

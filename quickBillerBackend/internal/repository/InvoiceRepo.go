@@ -32,6 +32,14 @@ func (r *GORMRepo) GetInvoicesByUserID(userID string) ([]*models.Invoice, error)
 	return invoices, nil
 }
 
+func (r *GORMRepo) GetLatestInvoiceName(userID string) (string, error) {
+	var invoice *models.Invoice
+	if err := r.DB.Where("user_id = ?", userID).Order("created_at DESC").First(&invoice).Error; err != nil {
+		return "", err
+	}
+	return invoice.Filename, nil
+}
+
 func (r *GORMRepo) DeleteInvoiceByID(id int) error {
 	invoice := &models.Invoice{}
 	if err := r.DB.Where("id = ?", id).First(&invoice).Error; err != nil {

@@ -1,12 +1,14 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { useOutletContext } from 'react-router-dom';
+import * as jwt_decode from 'jwt-decode';
+import { useState } from 'react';
 
 
-
-export const CreatePDFDoc = async (data, docType, sender, logo) => {
+export const CreatePDFDoc = async (data, docType, sender, logo, fn, invoice_nr) => {
 
     const invoiceTerm = 14;
-
+    console.log(fn, invoice_nr);
     function sumArray(arr) {
         let sum = 0;
         for (let i = 0; i < arr.length; i++) {
@@ -166,7 +168,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo) => {
     const paddedLenOfDocs = lenOfDocs.padStart(2, "0");
 
     pdf.setFont("Helvetica", 'bold');
-    pdf.text(`Invoice number: ${yearAsString}${paddedMonthAsString}${paddedLenOfDocs}`, x, y, 'left');
+    pdf.text(`Invoice number: ${invoice_nr}`, x, y, 'left');
 
     y += mediumOffset;
 
@@ -239,7 +241,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo) => {
     // pdf.text(x, pageHeight - 40, thankingMsgLine);
     pdf.text(x, pageHeight - 18, lines);
 
-    pdf.save('invoice.pdf');
+    pdf.save(fn);
 
     // const pdfDataUri = pdf.output('datauristring');
 

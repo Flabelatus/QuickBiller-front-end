@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -21,27 +22,41 @@ func CheckQuarter() string {
 	}
 	return quarter
 }
-
 func GenerateNewDocName(invoiceName, clientName string) (string, error) {
-	count, err := strconv.Atoi(invoiceName[len(invoiceName)-2:])
-	if err != nil {
-		return "", err
-	}
-
-	yearInInvoice, err := strconv.Atoi(invoiceName[3:7])
-	if err != nil {
-		return "", err
-	}
 
 	currentYear := time.Now().Year()
-	if currentYear > yearInInvoice && count > 1 {
-		count = 0
+	currentMonth := time.Now().Month()
+
+	var count int
+	var yearInInvoice int
+
+	if invoiceName != "" {
+
+		invoiceNameFragments := strings.Split(invoiceName, "_")
+		invoiceNumber := invoiceNameFragments[1]
+		var err error
+
+		count, err = strconv.Atoi(invoiceNumber[6:])
+		if err != nil {
+			return "", err
+		}
+
+		yearInInvoice, err = strconv.Atoi(invoiceNumber[:4])
+		if err != nil {
+			return "", err
+		}
+
+		if currentYear > yearInInvoice && count > 1 {
+			count = 0
+		}
 	}
 
-	zeroPaddedCount := fmt.Sprintf("%02d", count+1)
-	zeroPaddedMonth := fmt.Sprintf("%02d", int(time.Now().Month()))
+	count++ // Increment count
+
+	zeroPaddedCount := fmt.Sprintf("%02d", count)
+	zeroPaddedMonth := fmt.Sprintf("%02d", int(currentMonth))
 	q := CheckQuarter()
-	fullName := fmt.Sprintf("%s_%s%s%s_%s", q, strconv.Itoa(currentYear), zeroPaddedMonth, zeroPaddedCount, clientName)
+	fullName := fmt.Sprintf("%s_%d%s%s_%s", q, currentYear, zeroPaddedMonth, zeroPaddedCount, clientName)
 
 	fmt.Println(fullName)
 	return fullName, nil

@@ -31,6 +31,7 @@ func (app *application) routes() http.Handler {
 		mux.Patch("/sender_data", app.ModifySender)
 		mux.Post("/upload", app.UploadImage)
 		mux.Get("/logo/{user_id}", app.GetLogoByUserID)
+		mux.Post("/create_invoice", app.ProcessInvoiceCreation)
 	})
 
 	mux.Route("/admin", func(mux chi.Router) {
