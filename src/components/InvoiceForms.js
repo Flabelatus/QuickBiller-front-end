@@ -213,7 +213,6 @@ const InvoiceForms = () => {
         if (company.company_name !== undefined && jobs.length !== 0) {
             jobs.map((job) => {
                 if (job.jobItem !== "") {
-                    // inserNewCompany(company.company_name);
                     setIsSubmitted(true);
                 } else {
                     let msg = `Form Incomplete\nJob data incomplete`
@@ -355,8 +354,37 @@ const InvoiceForms = () => {
         } else {
             senderDoc = sender.data;
         };
-        let docs = serializeDocument();
-        CreatePDFDoc(docs, "Quote", senderDoc, logo);
+
+        const preppedData = prepareData();
+
+        // Invoice number calculations
+        const totalCosts = preppedData.totalCosts;
+        const subTotal = preppedData.subTotal
+        const totalInclVAT = preppedData.totalInclVAT;
+        let docs = preppedData.docs;
+
+        let quotePayload = {
+            user_id: jwt_decode.jwtDecode(jwtToken).sub,
+            total_inclusive: totalInclVAT,
+            total_exclusive: subTotal,
+            costs: totalCosts,
+            client_name: company.company_name,
+            vat_percent: vatPercentage
+        };
+
+        // send Api call
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+            body: JSON.stringify(quotePayload)
+        };
+        fetch(`http://localhost:8082/logged_in/create_quote`, requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                CreatePDFDoc(docs, "Quote", senderDoc, logo, data.data.filename, data.data.quote_no);
+                inserNewCompany(docs.company.company_name);
+            })
+            .catch((error) => console.error(error.message))
     };
 
     return (
@@ -469,6 +497,7 @@ const InvoiceForms = () => {
                 {jwtToken !== "" &&
                     <div>
                         <h1 className="mb-5" style={{ color: '#061868', fontWeight: 700 }}>Document Data</h1>
+                        <h3 className="mb-3" style={{ color: '#e56259' }}>Client List</h3>
                         <div >
                             <select
                                 className="btn btn-light mb-2"
@@ -476,7 +505,7 @@ const InvoiceForms = () => {
                                 onChange={handleSelectChange}
                                 value={selectedOption}
                             >
-                                <option value="">Select an option</option>
+                                <option value="">Select Your Client</option>
                                 {companyList.map((opt) => (
                                     <option key={opt.ID} value={opt.ID}>{opt.company_name}</option>
                                 ))}
@@ -629,11 +658,11 @@ const InvoiceForms = () => {
                                 <div className="row">
                                     <div className="col-md-12 col-sm-12 mt-4">
                                         {jobs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Job field</p>}
-                                        <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddJob}>
+                                        <a className="btn btn-submit-light-small" style={{ width: 80 }} onClick={handleAddJob}>
                                             +
                                         </a>
                                         {jobs.length > 0 && (
-                                            <a className="btn btn-submit-light-small ms-2" style={{ width: 45 }} onClick={() => handleRemoveJob(jobs.length - 1)}>
+                                            <a className="btn btn-submit-dark-small ms-2" style={{ width: 80 }} onClick={() => handleRemoveJob(jobs.length - 1)}>
                                                 -
                                             </a>
                                         )}
@@ -712,11 +741,11 @@ const InvoiceForms = () => {
                                 <div className="col-md-12 col-sm-12">
                                     {costs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Cost field</p>}
 
-                                    <a className="btn btn-submit-light-small" style={{ width: 45 }} onClick={handleAddCost}>
+                                    <a className="btn btn-submit-light-small" style={{ width: 80 }} onClick={handleAddCost}>
                                         +
                                     </a>
                                     {costs.length > 0 && (
-                                        <a className="btn btn-submit-light-small ms-2" style={{ width: 45 }} onClick={() => handleRemoveCost(costs.length - 1)}>
+                                        <a className="btn btn-submit-dark-small ms-2" style={{ width: 80 }} onClick={() => handleRemoveCost(costs.length - 1)}>
                                             -
                                         </a>
                                     )}
@@ -741,10 +770,10 @@ const InvoiceForms = () => {
 
                 {/* buttons */}
                 {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ fontSize: 20, width: 150 }}>Submit</button>}
-                {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleMakeInvoice} style={{ width: 250 }}>Download Invoice</button>}
-                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleMakeQuote} style={{ width: 250 }}>Download Quote</button>}
-                {isSubmitted && <button className="btn btn-secondary mt-5 ms-4" style={{ fontSize: 20, width: 150 }} onClick={handleRefreshPage}>Refresh</button>}
-                {!isSubmitted && <button className="btn btn-secondary mt-5 ms-4" name="clearFormButton" style={{ fontSize: 20, width: 150 }} onClick={handleClearForm}>Clear Forms</button>}
+                {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleMakeInvoice} style={{ width: 250, fontSize: 20, }}>Download Invoice</button>}
+                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleMakeQuote} style={{ width: 250, fontSize: 20 }}>Download Quote</button>}
+                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" style={{ width: 150, borderRadius: 25, fontSize: 20, backgroundColor: "#999" }} onClick={handleRefreshPage}>Refresh</button>}
+                {!isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" name="clearFormButton" style={{ fontSize: 20, width: 150, borderRadius: 25, backgroundColor: "#999" }} onClick={handleClearForm}>Clear Forms</button>}
             </form >
         </div >
     );

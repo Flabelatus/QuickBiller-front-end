@@ -32,6 +32,14 @@ func (r *GORMRepo) GetQuotesByUserID(userID string) ([]*models.Quote, error) {
 	return quotes, nil
 }
 
+func (r *GORMRepo) GetLatestQuoteName(userID string) (string, error) {
+	var quote *models.Quote
+	if err := r.DB.Where("user_id = ?", userID).Order("created_at DESC").First(&quote).Error; err != nil {
+		return "", err
+	}
+	return quote.Filename, nil
+}
+
 func (r *GORMRepo) DeleteQuoteByID(id int) error {
 	quote := &models.Quote{}
 	if err := r.DB.Where("id = ?", id).First(&quote).Error; err != nil {

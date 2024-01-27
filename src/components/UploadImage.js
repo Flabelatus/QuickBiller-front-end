@@ -93,7 +93,7 @@ export const UploadImage = () => {
                     onChange={handleFileChange}
                 />
                 {selectedFile && <button className="btn btn-submit-dark-small mt-4" onClick={handleUpload}>Submit</button>}
-                {selectedFile && <button className="btn btn-secondary mt-4 ms-3" style={{ fontSize: 18 }} onClick={resetFileInput}>Cancel</button>}
+                {selectedFile && <button className="btn btn-submit-dark-small mt-4 ms-3" style={{ fontSize: 18, backgroundColor: "#999" }} onClick={resetFileInput}>Cancel</button>}
 
                 {uploaded ? <p className="mt-2">Logo successfully uploaded!</p> : ""}
             </div>

@@ -1,3 +1,27 @@
+h1 {
+  font-family: 'Gill Sans', sans-serif;
+}
+
+p {
+  font-family: 'Gill Sans', sans-serif;
+}
+
+h3 {
+  font-family: 'Gill Sans', sans-serif;
+}
+
+h5 {
+  font-family: 'Gill Sans', sans-serif;
+}
+
+a {
+  font-family: 'Gill Sans', sans-serif;
+}
+
+label {
+  font-family: 'Gill Sans', sans-serif;
+}
+
 .App {
   text-align: center;
 }
@@ -22,6 +46,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  margin-bottom: 30px;
 }
 
 .App-link {
@@ -43,6 +68,9 @@
   color: #ffffff;
   font-size: 18px;
   width: 150px;
+  border-radius: 25px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
 }
 
 .btn-submit-light-small:hover {
@@ -76,6 +104,9 @@
   background-color: #e56259;
   font-size: 18px;
   width: 150px;
+  border-radius: 25px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
 }
 
 .btn-submit-dark-small:hover {
@@ -93,6 +124,8 @@
   color: #ffffff;
   font-size: 30px;
   width: 250px;
+  border-radius: 30px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .btn-submit-light-large:hover {
@@ -105,6 +138,7 @@
   background-color: #e56259;
   font-size: 30px;
   width: 250px;
+  border-radius: 30px;
 }
 
 .btn-submit-dark-large:hover {
@@ -187,23 +221,33 @@
 .input-text-transition {
   transition: transform 0.2s ease-in-out;
 }
+
 /* Define the custom styles for the file input */
 .custom-file-input {
-  display: none; /* Hide the default input element */
-  font-size: 16px; /* Set font size for the label text */
-  cursor: pointer; /* Change cursor to pointer when hovering */
+  display: none;
+  /* Hide the default input element */
+  font-size: 16px;
+  /* Set font size for the label text */
+  cursor: pointer;
+  /* Change cursor to pointer when hovering */
 }
 
 /* Style the label to make it look like a button */
-.custom-file-input + label {
-  background-color: #007bff; /* Set background color */
-  color: #fff; /* Set text color */
-  padding: 10px 15px; /* Add padding to make it visually appealing */
-  border-radius: 5px; /* Add rounded corners */
-  cursor: pointer; /* Change cursor to pointer when hovering */
+.custom-file-input+label {
+  background-color: #007bff;
+  /* Set background color */
+  color: #fff;
+  /* Set text color */
+  padding: 10px 15px;
+  /* Add padding to make it visually appealing */
+  border-radius: 5px;
+  /* Add rounded corners */
+  cursor: pointer;
+  /* Change cursor to pointer when hovering */
 }
 
 /* Style the label when hovering over it */
-.custom-file-input + label:hover {
-  background-color: #0056b3; /* Change background color on hover */
+.custom-file-input+label:hover {
+  background-color: #0056b3;
+  /* Change background color on hover */
 }
