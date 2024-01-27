@@ -25,11 +25,11 @@ const Home = () => {
                 <h5 style={{ textAlign: 'center', color: "black", fontFamily: 'Gill Sans' }}>Simplify Your Billing Process</h5>
                 <Link
                     className='btn btn-submit-light-large text-center mt-5 mb-2 px-4'
-                    
-                    onClick={toggelOpen} style={{ width: 'fit-content', backgroundColor: open ? "#06186880" : "#061868" }}>
-                    {open ? "Follow the Steps" : "Create your Document"}
+
+                    onClick={toggelOpen} style={{ width: 'fit-content', backgroundColor: open && "#888" }}>
+                    {open ? "Complete the Form" : "Create a New Document"}
                 </Link>
-                <h5 className="text-center mt-2 mb-5" style={{color: "#666"}}>{open ? "Follow the steps and fill in the form" : "Create an invoice or price quote document in matter of seconds"}</h5>
+                <h5 className="text-center mt-2 mb-5" style={{ color: "#666" }}>{open ? "Follow the steps below and complete in the form" : "Create an invoice or price quote document in matter of seconds"}</h5>
                 <div className='App mb-4' style={{ maxHeight: open ? 'max-content' : '0px', overflow: 'hidden', transition: 'max-height 0.4s ease' }}>
                     {open &&
                         <div className='mt-2 py-3 row justify-content-center'>
@@ -43,12 +43,12 @@ const Home = () => {
                     <div className="App" style={{ backgroundColor: "#d2d6db" }}>
                         <div className='mt-2 px-5 py-5 row justify-content-center'>
                             <h1 style={{ fontSize: 40, fontWeight: 600, fontFamily: "revert", color: "#061868", fontFamily: 'Gill Sans' }}>Streamline Invoicing</h1>
-                            <h5 className=' mt-5 px-5 me-5 ms-5' style={{ color: "#061868", fontFamily: 'Gill Sans'}}>
-                            Create an account to seamlessly include your company information in every invoice, saving you time
-                        </h5>
-                        <Link to="/register" className='btn btn-submit-dark-large text-center mt-4 mb-4' ><label>Join</label></Link>
+                            <h5 className=' mt-5 px-5 me-5 ms-5' style={{ color: "#061868", fontFamily: 'Gill Sans' }}>
+                                Create an account to seamlessly include your company information in every invoice, saving you time
+                            </h5>
+                            <Link to="/register" className='btn btn-submit-dark-large text-center mt-4 mb-4' ><label>Join</label></Link>
+                        </div>
                     </div>
-                </div>
                 </div >
             };
         </>

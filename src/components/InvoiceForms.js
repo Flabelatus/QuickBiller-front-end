@@ -770,9 +770,9 @@ const InvoiceForms = () => {
 
                 {/* buttons */}
                 {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ fontSize: 20, width: 150 }}>Submit</button>}
-                {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleMakeInvoice} style={{ width: 250, fontSize: 20, }}>Download Invoice</button>}
-                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleMakeQuote} style={{ width: 250, fontSize: 20 }}>Download Quote</button>}
-                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" style={{ width: 150, borderRadius: 25, fontSize: 20, backgroundColor: "#999" }} onClick={handleRefreshPage}>Refresh</button>}
+                {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleMakeInvoice} style={{ width: 250, fontSize: 20, }}>Download as Invoice</button>}
+                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleMakeQuote} style={{ width: 250, fontSize: 20 }}>Download as Quote</button>}
+                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4 px-5" style={{ width: 'fit-content', borderRadius: 25, fontSize: 20, backgroundColor: "#999" }} onClick={handleRefreshPage}>Make a New Document</button>}
                 {!isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" name="clearFormButton" style={{ fontSize: 20, width: 150, borderRadius: 25, backgroundColor: "#999" }} onClick={handleClearForm}>Clear Forms</button>}
             </form >
         </div >

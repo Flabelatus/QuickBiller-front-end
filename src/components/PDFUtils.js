@@ -5,10 +5,24 @@ import * as jwt_decode from 'jwt-decode';
 import { useState } from 'react';
 
 
-export const CreatePDFDoc = async (data, docType, sender, logo, fn, invoice_nr) => {
+export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
 
-    const invoiceTerm = 14;
-    console.log(fn, invoice_nr);
+    let invoiceTerm = 14;
+    let prefix = "Invoice";
+    let subject = 'Invoice for services';
+    let message = `We kindly ask you to proceed with the payment within ${invoiceTerm} days after you have received the invoice to the following account number of ${sender.iban} under the name of ${sender.contact_name}.`;
+    let validity = "Due date: ";
+    let amountToPay = "Amount to Pay"
+
+    if (docType === "Quote") {
+        message = "Thank you very much for your interest in our service. Should you have any questions, please do not hesitate to contact us!"
+        subject = "Quote for a service"
+        validity = "Valid until: "
+        invoiceTerm = 30;
+        prefix = "Quote";
+        amountToPay = "Total"
+    };
+
     function sumArray(arr) {
         let sum = 0;
         for (let i = 0; i < arr.length; i++) {
@@ -53,9 +67,9 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, invoice_nr) 
 
     pdf.setProperties({
         title: docType,
-        subject: 'Invoice for services',
+        subject: subject,
         author: 'Your Name',
-        keywords: 'invoice, services',
+        keywords: `${docType}, services`,
     });
 
     const pageWidth = pdf.internal.pageSize.getWidth();
@@ -154,21 +168,14 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, invoice_nr) 
     const dueDate = new Date(currentDate.getTime() + invoiceTerm * 24 * 60 * 60 * 1000);
 
     pdf.setFontSize(12);
-    pdf.text(`Invoice date: `, x + 110, y, 'left');
+    pdf.text(`${docType} date: `, x + 110, y, 'left');
     pdf.text(currentDate.toLocaleDateString(), pageWidth - 30, y, 'right');
     y += smallOffset;
-    pdf.text(`Due date: `, x + 110, y, 'left');
+    pdf.text(`${validity}`, x + 110, y, 'left');
     pdf.text(dueDate.toLocaleDateString(), pageWidth - 30, y, 'right');
 
-    const yearAsString = currentDate.getFullYear().toString();
-    const month = currentDate.getMonth() + 1; // Returns a number (0-11) for the month
-    const monthAsString = month.toString();
-    const paddedMonthAsString = monthAsString.padStart(2, "0");
-    const lenOfDocs = String(3);
-    const paddedLenOfDocs = lenOfDocs.padStart(2, "0");
-
     pdf.setFont("Helvetica", 'bold');
-    pdf.text(`Invoice number: ${invoice_nr}`, x, y, 'left');
+    pdf.text(`${docType} number: ${doc_nr}`, x, y, 'left');
 
     y += mediumOffset;
 
@@ -225,23 +232,20 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, invoice_nr) 
 
     pdf.setFontSize(12);
     pdf.setFont("Helvetica", 'bold');
-    pdf.text(`Amount to Pay`, pageWidth - 80, y, 'left');
+    pdf.text(`${amountToPay}`, pageWidth - 80, y, 'left');
     pdf.text(`${currencyFormat}${parseFloat(totalInclVAT).toFixed(2)}`, pageWidth - 43, y, 'left');
     y += 15;
 
-    let message = `We kindly ask you to proceed with the payment within ${invoiceTerm} days after you have received the invoice to the following account number of ${sender.iban} under the name of ${sender.contact_name}`
-    let thankingMsg = `Thank you for your business! Should you have any questions do not hesitate to contact us.`
-
     const maxWidth = 210; // Maximum width for the text block
     const lines = pdf.splitTextToSize(message, maxWidth);
-    const thankingMsgLine = pdf.splitTextToSize(thankingMsg, maxWidth);
 
     pdf.setFont("Helvetica", "normal");
     pdf.setFontSize(11);
-    // pdf.text(x, pageHeight - 40, thankingMsgLine);
-    pdf.text(x, pageHeight - 18, lines);
+    pdf.text(x, pageHeight - 30, lines);
 
-    pdf.save(fn);
+    let saveFileName = `${prefix}_${fn}`
+    pdf.save(saveFileName);
+
     // const pdfDataUri = pdf.output('datauristring');
 
     // const iframe = document.createElement('iframe');
