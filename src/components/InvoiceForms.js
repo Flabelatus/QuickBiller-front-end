@@ -303,16 +303,21 @@ const InvoiceForms = () => {
             leanVAT: leanVAT,
             totalInclVAT: totalInclVAT,
             docs: docs
+        };
+    }
+
+    function generateShortUniqueId(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
         }
+
+        return result;
     }
 
     const handleMakeInvoice = () => {
-        let senderDoc;
-        if (jwtToken === "") {
-            senderDoc = sender;
-        } else {
-            senderDoc = sender.data;
-        };
 
         const preppedData = prepareData();
 
@@ -322,38 +327,40 @@ const InvoiceForms = () => {
         const totalInclVAT = preppedData.totalInclVAT;
         let docs = preppedData.docs;
 
-        let invoicePayload = {
-            user_id: jwt_decode.jwtDecode(jwtToken).sub,
-            total_inclusive: totalInclVAT,
-            total_exclusive: subTotal,
-            costs: totalCosts,
-            client_name: company.company_name,
-            vat_percent: vatPercentage
-        };
+        let senderDoc = {};
+        if (jwtToken === "") {
+            senderDoc = sender;
+            CreatePDFDoc(docs, "Invoice", senderDoc, logo, "", generateShortUniqueId(10));
 
-        // send Api call
-        const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
-            body: JSON.stringify(invoicePayload)
+        } else {
+            senderDoc = sender.data;
+
+            let invoicePayload = {
+                user_id: jwt_decode.jwtDecode(jwtToken).sub,
+                total_inclusive: totalInclVAT,
+                total_exclusive: subTotal,
+                costs: totalCosts,
+                client_name: company.company_name,
+                vat_percent: vatPercentage
+            };
+
+            // send Api call
+            const requestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+                body: JSON.stringify(invoicePayload)
+            };
+            fetch(`http://localhost:8082/logged_in/create_invoice`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    CreatePDFDoc(docs, "Invoice", senderDoc, logo, data.data.filename, data.data.invoice_no);
+                    inserNewCompany(docs.company.company_name);
+                })
+                .catch((error) => console.error(error.message))
         };
-        fetch(`http://localhost:8082/logged_in/create_invoice`, requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                CreatePDFDoc(docs, "Invoice", senderDoc, logo, data.data.filename, data.data.invoice_no);
-                inserNewCompany(docs.company.company_name);
-            })
-            .catch((error) => console.error(error.message))
     };
 
     const handleMakeQuote = () => {
-        let senderDoc;
-        if (jwtToken === "") {
-            senderDoc = sender;
-        } else {
-            senderDoc = sender.data;
-        };
-
         const preppedData = prepareData();
 
         // Invoice number calculations
@@ -362,28 +369,37 @@ const InvoiceForms = () => {
         const totalInclVAT = preppedData.totalInclVAT;
         let docs = preppedData.docs;
 
-        let quotePayload = {
-            user_id: jwt_decode.jwtDecode(jwtToken).sub,
-            total_inclusive: totalInclVAT,
-            total_exclusive: subTotal,
-            costs: totalCosts,
-            client_name: company.company_name,
-            vat_percent: vatPercentage
-        };
+        let senderDoc = {};
 
-        // send Api call
-        const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
-            body: JSON.stringify(quotePayload)
+        if (jwtToken === "") {
+            senderDoc = sender;
+            CreatePDFDoc(docs, "Quote", senderDoc, logo, "", generateShortUniqueId(10));
+        } else {
+            senderDoc = sender.data;
+
+            let quotePayload = {
+                user_id: jwt_decode.jwtDecode(jwtToken).sub,
+                total_inclusive: totalInclVAT,
+                total_exclusive: subTotal,
+                costs: totalCosts,
+                client_name: company.company_name,
+                vat_percent: vatPercentage
+            };
+
+            // send Api call
+            const requestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
+                body: JSON.stringify(quotePayload)
+            };
+            fetch(`http://localhost:8082/logged_in/create_quote`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    CreatePDFDoc(docs, "Quote", senderDoc, logo, data.data.filename, data.data.quote_no);
+                    inserNewCompany(docs.company.company_name);
+                })
+                .catch((error) => console.error(error.message))
         };
-        fetch(`http://localhost:8082/logged_in/create_quote`, requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                CreatePDFDoc(docs, "Quote", senderDoc, logo, data.data.filename, data.data.quote_no);
-                inserNewCompany(docs.company.company_name);
-            })
-            .catch((error) => console.error(error.message))
     };
 
     return (
