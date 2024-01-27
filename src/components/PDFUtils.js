@@ -242,7 +242,6 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, invoice_nr) 
     pdf.text(x, pageHeight - 18, lines);
 
     pdf.save(fn);
-
     // const pdfDataUri = pdf.output('datauristring');
 
     // const iframe = document.createElement('iframe');

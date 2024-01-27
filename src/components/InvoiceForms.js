@@ -17,7 +17,6 @@ const InvoiceForms = () => {
     const [costs, setCosts] = useState([]);
     const [selectedOption, setSelectedOption] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [refresh, setRefresh] = useState(false);
 
     const [jobType, setJobType] = useState('Service');
     const [jobTariefTitle, setJobTariefTitle] = useState('');
@@ -26,7 +25,7 @@ const InvoiceForms = () => {
     const [inEU, setInEU] = useState(true);
     const [isZeroVat, setIsZeroVat] = useState(false);
     const [inCountry, setInCountry] = useState(true);
-    const [vatPercentage, setVatPercentage] = useState(vatDefault);
+    const [vatPercentage, setVatPercentage] = useState(21);
     const [discount, setDiscount] = useState(0);
 
     const [user, setUser] = useState(0);
@@ -118,7 +117,7 @@ const InvoiceForms = () => {
                 })
         };
 
-    }, [refresh, jwtToken, toggle]);
+    }, [jwtToken, toggle]);
 
     useEffect(() => {
         if (jobType !== "Service") {
@@ -132,14 +131,7 @@ const InvoiceForms = () => {
     }, [company, jobs, costs, jobType])
 
     const handleRefreshPage = () => {
-        if (!refresh) {
-            setRefresh(true);
-        } else {
-            setRefresh(false);
-        }
-        setIsSubmitted(false);
-        setSelectedOption("");
-        handleClearForm();
+        window.location.reload();
     };
 
     const handleClearForm = () => {
@@ -221,7 +213,7 @@ const InvoiceForms = () => {
         if (company.company_name !== undefined && jobs.length !== 0) {
             jobs.map((job) => {
                 if (job.jobItem !== "") {
-                    inserNewCompany(company.company_name);
+                    // inserNewCompany(company.company_name);
                     setIsSubmitted(true);
                 } else {
                     let msg = `Form Incomplete\nJob data incomplete`
@@ -250,9 +242,9 @@ const InvoiceForms = () => {
     };
 
     const inserNewCompany = (name) => {
-        if (jwtToken !== "") {
-            const exists = companyList.some(item => item.company_name === name);
+        const exists = companyList.some(item => item.company_name === name);
 
+        if (jwtToken !== "") {
             let payload = {
                 company_name: company.company_name,
                 contact_name: company.contact_name,
@@ -285,6 +277,37 @@ const InvoiceForms = () => {
         return sum;
     };
 
+    const prepareData = () => {
+        let docs = serializeDocument();
+        const updatedJobs = docs.jobs.map((job) => ({
+            ...job,
+            totalAmount: job.hourRate * job.numberOfHours,
+        }));
+        const updatedCosts = docs.costs.map((c) => ({
+            ...c,
+            numberOfCosts: "N/A",
+            totalAmout: parseFloat(c.costs)
+        }));
+        const preppedJobs = updatedJobs.map((job) => Object.values(job));
+        const preppedCosts = updatedCosts.map((cost) => Object.values(cost));
+
+        // Invoice number calculations
+        const totalJobs = sumArray(preppedJobs.map((job) => job[job.length - 1]));
+        const totalCosts = sumArray(preppedCosts.map((c) => c[c.length - 1]));
+        const subTotal = totalJobs + totalCosts
+        const leanVAT = totalJobs * vatPercentage / 100;
+        const totalInclVAT = subTotal + leanVAT;
+
+        return {
+            totalJobs: totalJobs,
+            totalCosts: totalCosts,
+            subTotal: subTotal,
+            leanVAT: leanVAT,
+            totalInclVAT: totalInclVAT,
+            docs: docs
+        }
+    }
+
     const handleMakeInvoice = () => {
         let senderDoc;
         if (jwtToken === "") {
@@ -292,30 +315,14 @@ const InvoiceForms = () => {
         } else {
             senderDoc = sender.data;
         };
-        // Api call to the handler of the invoice name
-        // receieve the new name and add it in the doc creation
-        let docs = serializeDocument();
 
-        const updatedJobs = docs.jobs.map((job) => ({
-            ...job,
-            totalAmount: job.hourRate * job.numberOfHours,
-        }));
-
-        const updatedCosts = docs.costs.map((c) => ({
-            ...c,
-            numberOfCosts: "N/A",
-            totalAmout: parseFloat(c.costs)
-        }));
-
-        const jobs = updatedJobs.map((job) => Object.values(job));
-        const costs = updatedCosts.map((cost) => Object.values(cost));
+        const preppedData = prepareData();
 
         // Invoice number calculations
-        const totalJobs = sumArray(jobs.map((job) => job[job.length - 1]));
-        const totalCosts = sumArray(costs.map((c) => c[c.length - 1]));
-        const subTotal = totalJobs + totalCosts
-        const leanVAT = totalJobs * parseInt(company.vat_percent) / 100;
-        const totalInclVAT = subTotal + leanVAT;
+        const totalCosts = preppedData.totalCosts;
+        const subTotal = preppedData.subTotal
+        const totalInclVAT = preppedData.totalInclVAT;
+        let docs = preppedData.docs;
 
         let invoicePayload = {
             user_id: jwt_decode.jwtDecode(jwtToken).sub,
@@ -323,8 +330,9 @@ const InvoiceForms = () => {
             total_exclusive: subTotal,
             costs: totalCosts,
             client_name: company.company_name,
-            vat_percent: parseInt(company.vat_percent)
-        }
+            vat_percent: vatPercentage
+        };
+
         // send Api call
         const requestOptions = {
             method: "POST",
@@ -334,10 +342,10 @@ const InvoiceForms = () => {
         fetch(`http://localhost:8082/logged_in/create_invoice`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data.data.filename);
                 CreatePDFDoc(docs, "Invoice", senderDoc, logo, data.data.filename, data.data.invoice_no);
+                inserNewCompany(docs.company.company_name);
             })
-            .catch((error) => console.error(error.message));
+            .catch((error) => console.error(error.message))
     };
 
     const handleMakeQuote = () => {
@@ -668,7 +676,7 @@ const InvoiceForms = () => {
                                     className="ms-4"
                                     type="text"
                                     style={{ width: 40, fontWeight: 400, color: "#00000090", border: "2px solid #ccc", borderRadius: 4 }}
-                                    value={company.vat_percent}
+                                    value={vatPercentage}
                                     onChange={(e) => setVatPercentage(e.target.value)}
                                 ></input>
                                 <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>
