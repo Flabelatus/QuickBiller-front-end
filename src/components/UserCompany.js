@@ -281,7 +281,7 @@ const UserCompany = () => {
                                     <button className="btn btn-submit-light-small mt-5" onClick={handleSwitchModifyingMode}>Modify</button>
 
                                     <UploadImage />
-                                    {logo && logo.filename !== undefined && <img className="mt-3 mb-3" src={require(`./../uploads/${logo.filename}`)} style={{ height: 80 }}></img>}
+                                    {logo && logo.filename !== undefined && <img className="mt-5 mb-3" src={require(`./../uploads/${logo.filename}`)} style={{ height: 80 }}></img>}
 
                                 </div>
                             </div>

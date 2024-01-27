@@ -118,7 +118,18 @@ const InvoiceForms = () => {
                 })
         };
 
-    }, [refresh, jwtToken, company, jobs, costs, jobType, toggle]);
+    }, [refresh, jwtToken, toggle]);
+
+    useEffect(() => {
+        if (jobType !== "Service") {
+            setJobNumberOfHoursTitle("Amount");
+            setJobTariefTitle("Price");
+        } else {
+            setJobNumberOfHoursTitle("Number of Hours");
+            setJobTariefTitle("Hour rate");
+        }
+
+    }, [company, jobs, costs, jobType])
 
     const handleRefreshPage = () => {
         if (!refresh) {

@@ -52,9 +52,9 @@ export const UploadImage = () => {
                 body: formData
             }).then((response) => response.json()).then((data) => {
                 setUploaded(true);
-                setLoading(false);
                 setSelectedFile(false);
-            }).catch(error => console.error(error.message))
+            }).catch(error => console.error(error.message)).finally(() => setLoading(false))
+
         } else {
             alert('No file selected');
         };
