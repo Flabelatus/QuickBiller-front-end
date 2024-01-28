@@ -14,7 +14,7 @@ func (app *application) GetCompanyDataListByUserID(w http.ResponseWriter, r *htt
 	clientList, err := app.Repository.GetClientsByUserID(userID)
 	if err != nil {
 		app.errorJSON(w, err)
-		return
+
 	}
 
 	response := JSONResponse{

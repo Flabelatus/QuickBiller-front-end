@@ -70,7 +70,7 @@ func (app *application) ProcessInvoiceCreation(w http.ResponseWriter, r *http.Re
 	userID := payload.UserID
 	latestInvoiceName, err := app.Repository.GetLatestInvoiceName(userID)
 	if err != nil {
-		app.errorJSON(w, err)
+		// app.errorJSON(w, err)
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			latestInvoiceName = ""
 		}
