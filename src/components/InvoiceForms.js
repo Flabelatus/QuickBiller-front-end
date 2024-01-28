@@ -404,11 +404,11 @@ const InvoiceForms = () => {
 
     return (
         <div className="justify-content-center">
-            {jwtToken !== "" && <hr className="mt-5 mb-5" style={{ color: "#061868", width: "100vw", margin: "0 auto" }} />}
+            {jwtToken !== "" && <hr className="mt-5 mb-5" style={{ color: "#000", width: "80vw", margin: "0 auto" }} />}
             <form onSubmit={handleSubmit} className="mb-5">
                 {/* sender data */}
                 {jwtToken === "" &&
-                    <div className="row mt- justify-content-center container-fluid py-5" style={{ backgroundColor: "#e5625930" }}>
+                    <div className="row mt- justify-content-center container-fluid py-5" style={{ backgroundColor: "#aaaaff30" }}>
                         <div className="row justify-content-center" style={{ width: 'fit-content' }}>
                             <h3 className="mb-5" style={{ color: '#061868' }}>Your Company Information</h3>
                             <div className="col-md-4">

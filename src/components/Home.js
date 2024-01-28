@@ -22,7 +22,7 @@ const Home = () => {
         <>
             <div className="row justify-content-center" style={{ backgroundColor: "#ffffff" }}>
                 <h1 style={{ color: '#e56259', fontFamily: 'revert', fontSize: 70, fontWeight: 700, textAlign: 'center', fontFamily: 'Gill Sans' }}>QuickBiller</h1>
-                <h5 style={{ textAlign: 'center', color: "black", fontFamily: 'Gill Sans' }}>Simplify Your Billing Process</h5>
+                <h5 className="mb-5" style={{ textAlign: 'center', color: "black", fontFamily: 'Gill Sans' }}>Simplify Your Billing Process with an Intuitive and Easy to Use Invoicing Tool</h5>
                 <Link
                     className='btn btn-submit-light-large text-center mt-5 mb-2 px-4'
 
