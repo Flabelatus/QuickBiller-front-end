@@ -34,6 +34,8 @@ const InvoiceForms = () => {
     const [toggle, setToggle] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const [inserted, setInserted] = useState(false);
+
     const handleOptionChange = (event) => {
         setJobType(event.target.value);
     };
@@ -150,7 +152,7 @@ const InvoiceForms = () => {
             setJobTariefTitle("Hour rate");
         }
 
-    }, [company, jobs, costs, jobType])
+    }, [company, jobs, costs, jobType, inserted])
 
     const handleRefreshPage = () => {
         window.location.reload();
@@ -377,7 +379,10 @@ const InvoiceForms = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     CreatePDFDoc(docs, "Invoice", senderDoc, logo, data.data.filename, data.data.invoice_no);
-                    inserNewCompany(docs.company.company_name);
+                    if (!inserted) {
+                        inserNewCompany(docs.company.company_name);
+                        setInserted(true);
+                    };
                 })
                 .catch((error) => console.error(error.message))
         };
@@ -419,7 +424,10 @@ const InvoiceForms = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     CreatePDFDoc(docs, "Quote", senderDoc, logo, data.data.filename, data.data.quote_no);
-                    inserNewCompany(docs.company.company_name);
+                    if (!inserted) {
+                        inserNewCompany(docs.company.company_name);
+                        setInserted(true);
+                    };
                 })
                 .catch((error) => console.error(error.message))
         };
