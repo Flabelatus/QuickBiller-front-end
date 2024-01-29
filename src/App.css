@@ -86,7 +86,7 @@ label {
 .btn-submit-light-small-2 {
   background-color: #ffffff;
   color: #3e3e3e;
-  font-size: 18px;
+  font-size: 16px;
   width: 150px;
   border: #8a8a8a solid 1px;
 }
@@ -94,7 +94,7 @@ label {
 .btn-submit-light-small-2:hover {
   background-color: #9d9d9d;
   color: #3e3e3e;
-  font-size: 18px;
+  font-size: 16px;
   width: 150px;
   border: #8a8a8a solid 1px;
 }
@@ -102,7 +102,7 @@ label {
 .btn-submit-dark-small {
   color: #ffffff;
   background-color: #e56259;
-  font-size: 18px;
+  font-size: 16px;
   width: 150px;
   border-radius: 25px;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -250,4 +250,56 @@ label {
 .custom-file-input+label:hover {
   background-color: #0056b3;
   /* Change background color on hover */
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent black overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal */
+.modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* Drop shadow */
+  padding: 20px;
+  max-width: 50%;
+  /* Adjust width as needed */
+  max-height: 50%;
+  /* Adjust height as needed */
+  overflow-y: auto;
+  /* Enable vertical scrolling if content exceeds modal height */
+}
+
+/* Modal Content */
+.modal-content {
+  color: #000;
+  /* Add styles for modal content as needed */
+}
+
+/* Close Button */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Close Button Hover Effect */
+.modal-close:hover {
+  color: #555;
 }

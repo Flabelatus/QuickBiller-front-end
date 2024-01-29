@@ -55,10 +55,10 @@ const Login = () => {
     return (
         <div className=" mt-5">
             <div className="row justify-content-center">
-                <div className="col-md-6 mx-auto">
-                    <h1 className="text-center mt-4">Log in</h1>
+                <div className="col-md-4 mx-auto container">
+                    <h1 className="text-center mt-5 mb-5">Sign in to QuickBiller</h1>
 
-                    <form onSubmit={handleSubmit} className="mt-4 mb-4" style={{ marginLeft: '30%' }}>
+                    <form onSubmit={handleSubmit} className="mt-4 mb-4 text-center" style={{ marginLeft: '' }}>
                         <Input
                             title="Email"
                             autoComplete="email"
@@ -75,16 +75,17 @@ const Login = () => {
                             name="password"
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        <button type="submit" className="btn btn-submit-dark-small mt-2">Submit</button>
+                        <button type="submit" className="btn btn-submit-dark-small mt-4" style={{width: 250}}>Sign In</button>
                     </form>
-                    <div className="row justify-content-center">
-                        <a href="#!" style={{ textAlign: 'center' }}>Change your password</a>
-                    </div>
-                    <h4 className="mt-5 text-center">Or</h4>
-                    <h5 className="text-center">Sign in using</h5>
+
+                    <h4 className="mt-5 text-center d-flex px-5"><hr style={{ width: '50%' }}></hr><span className="ms-4 me-4">Or</span><hr style={{ width: '50%' }}></hr></h4>
+                    {/* <h5 className="text-center">Sign in using</h5> */}
                     <div className="text-center mt-3 mb-4">
                         <button className="btn btn-light text-center me-2" style={{ backgroundColor: '#FFFFFF00' }}><img src={google} style={{ height: 35 }}></img></button>
                         <button className="btn btn-light text-center" style={{ backgroundColor: '#FFFFFF00' }}><img src={fb} style={{ height: 35 }}></img></button>
+                    </div>
+                    <div className="row justify-content-center mb-5">
+                        <a href="#!" style={{ textAlign: 'center' }}>Change your password</a>
                     </div>
                 </div>
             </div>

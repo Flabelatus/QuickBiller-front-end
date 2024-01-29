@@ -3,6 +3,7 @@ import Input from "./Inputs";
 import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 import { CreatePDFDoc } from "./PDFUtils";
+import Modal from "./Modal";
 
 const InvoiceForms = () => {
     const vatDefault = 21;
@@ -31,6 +32,7 @@ const InvoiceForms = () => {
     const [companyList, setCompanyList] = useState([]);
 
     const [toggle, setToggle] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOptionChange = (event) => {
         setJobType(event.target.value);
@@ -82,6 +84,16 @@ const InvoiceForms = () => {
             });
     };
 
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+
+
     useEffect(() => {
         if (jobType !== "Service") {
             setJobNumberOfHoursTitle("Amount");
@@ -105,7 +117,18 @@ const InvoiceForms = () => {
                     getComapnyDataList(data.ID);
                     fetch(`http://localhost:8082/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                         .then((resp) => resp.json())
-                        .then((dat) => setSender(dat))
+                        .then((dat) => {
+                            if (dat.data.company_name !== "") {
+                                setSender(dat);
+                                console.log(dat.data)
+                            } else {
+                                const timer = setTimeout(() => {
+                                    setIsModalOpen(true);
+                                }, 5000);
+
+                                return () => clearTimeout(timer);
+                            }
+                        })
                         .catch((err) => console.error(err.message))
 
                     fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
@@ -116,7 +139,7 @@ const InvoiceForms = () => {
                 })
         };
 
-    }, [jwtToken, toggle]);
+    }, [jwtToken, toggle, isModalOpen]);
 
     useEffect(() => {
         if (jobType !== "Service") {
@@ -404,8 +427,10 @@ const InvoiceForms = () => {
 
     return (
         <div className="justify-content-center">
+
             {jwtToken !== "" && <hr className="mt-5 mb-5" style={{ color: "#000", width: "80vw", margin: "0 auto" }} />}
             <form onSubmit={handleSubmit} className="mb-5">
+
                 {/* sender data */}
                 {jwtToken === "" &&
                     <div className="row mt- justify-content-center container-fluid py-5" style={{ backgroundColor: "#aaaaff30" }}>
@@ -614,11 +639,11 @@ const InvoiceForms = () => {
                     </div>
                 </div>
 
-                <div className="mt-3 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #ddd', borderRadius: 16 }}>
+                <div className="mt-2 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #ddd', borderRadius: 16 }}>
                     {/* jobs */}
-                    <div className="mt-3 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #fff', borderRadius: 16 }}>
+                    <div className="container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #fff', borderRadius: 16 }}>
                         <div className="row justify-content-center">
-                            <div className="mb-4 radio-container">
+                            <div className="mb-5 radio-container mt-4">
                                 <label className="me-5 radio-label" style={{ fontSize: 20 }}>
                                     <input
                                         type="radio"
@@ -688,7 +713,7 @@ const InvoiceForms = () => {
                     </div>
                     <hr />
                     {/* checkboxes */}
-                    <div className=" mt-5 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #fff', borderRadius: 16 }}>
+                    <div className=" mt-4 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #fff', borderRadius: 16 }}>
                         <div className="row justify-content-center"  >
                             <h3 className="mb-4" style={{ color: '#e56259' }}>VAT Information</h3>
                             <div className="col">
@@ -698,7 +723,7 @@ const InvoiceForms = () => {
                                     type="checkbox"
                                     onChange={(e) => setIsZeroVat(e.target.checked)}
                                 ></input>
-                                <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>VAT Free</label>
+                                <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>VAT Free</label>
 
                                 <input
                                     className="form-check-input checkbox-custom ms-4"
@@ -706,7 +731,7 @@ const InvoiceForms = () => {
                                     defaultChecked={true}
                                     onChange={(e) => setInEU(e.target.checked)}
                                 ></input>
-                                <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within EU</label>
+                                <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within EU</label>
 
                                 <input
                                     className="form-check-input checkbox-custom ms-4"
@@ -714,7 +739,7 @@ const InvoiceForms = () => {
                                     defaultChecked={true}
                                     onChange={(e) => setInCountry(e.target.checked)}
                                 ></input>
-                                <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within Country</label>
+                                <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within Country</label>
 
                                 <input
                                     className="ms-4"
@@ -723,18 +748,18 @@ const InvoiceForms = () => {
                                     value={vatPercentage}
                                     onChange={(e) => setVatPercentage(e.target.value)}
                                 ></input>
-                                <label style={{ fontSize: 20, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>
+                                <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>
                             </div>
                         </div>
                     </div>
                     <hr />
                     {/* costs */}
-                    <div className="mt-5 container-fluid py-4 px-5 justify-content-center" style={{ width: 'fit-content', borderRadius: 16, boxShadow: '1px 1px 10px #fff' }}>
+                    <div className="mt-4 container-fluid py-4 px-5 justify-content-center" style={{ width: 'fit-content', borderRadius: 16, boxShadow: '1px 1px 10px #fff' }}>
                         <div className="col-md-8" style={{ width: 'fit-content' }}>
                             <h3 className="mb-4" style={{ color: '#e56259' }}>Add Costs Items</h3>
                             {costs.map((cost, index) => (
                                 <div key={index} className="row">
-                                    <div className="col-md-6 col-sm-12 mb-2">
+                                    <div className="col-md-6 col-sm-12">
                                         <Input
                                             title={`Item ${index + 1}`}
                                             type="text"
@@ -742,7 +767,7 @@ const InvoiceForms = () => {
                                             onChange={(e) => handleCostInputChange(index, "info", e.target.value)}
                                         />
                                     </div>
-                                    <div className="col-md-6 col-sm-12 mb-2">
+                                    <div className="col-md-6 col-sm-12">
                                         <Input
                                             title={`Cost ${index + 1}`}
                                             type="number"
@@ -784,11 +809,11 @@ const InvoiceForms = () => {
                 </div>
 
                 {/* buttons */}
-                {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ fontSize: 20, width: 150 }}>Submit</button>}
-                {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleMakeInvoice} style={{ width: 250, fontSize: 20, }}>Download as Invoice</button>}
-                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleMakeQuote} style={{ width: 250, fontSize: 20 }}>Download as Quote</button>}
-                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4 px-5" style={{ width: 'fit-content', borderRadius: 25, fontSize: 20, backgroundColor: "#999" }} onClick={handleRefreshPage}>Make a New Document</button>}
-                {!isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" name="clearFormButton" style={{ fontSize: 20, width: 150, borderRadius: 25, backgroundColor: "#999" }} onClick={handleClearForm}>Clear Forms</button>}
+                {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ width: 150 }}>Submit</button>}
+                {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleMakeInvoice} style={{ width: 250 }}>Download as Invoice</button>}
+                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleMakeQuote} style={{ width: 250 }}>Download as Quote</button>}
+                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4 px-5" style={{ width: 'fit-content', borderRadius: 25, backgroundColor: "#999" }} onClick={handleRefreshPage}>Make a New Document</button>}
+                {!isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" name="clearFormButton" style={{ width: 150, borderRadius: 25, backgroundColor: "#999" }} onClick={handleClearForm}>Clear Forms</button>}
             </form >
         </div >
     );
