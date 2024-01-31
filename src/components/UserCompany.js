@@ -17,7 +17,7 @@ const UserCompany = () => {
     const [imageData, setImageData] = useState(null);
     const [imageName, setImageName] = useState(null);
     const [imageSrc, setImageSrc] = useState(null);
-
+    
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,42 +27,36 @@ const UserCompany = () => {
         }
         const requestOptions = {
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + jwtToken
-            }
+            headers: { "Authorization": "Bearer " + jwtToken, "Content-Type": "application/json" },
         }
-        const fetchData = async () => {
-            try {
-                const senderResponse = await fetch(`http://localhost:8082/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions);
-                const senderData = await senderResponse.json();
-                setSender(senderData.data);
-
-                const logoResponse = await fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions);
-                const logoData = await logoResponse.json();
-                setLogo(logoData.data);
-                setImageName(logoData.data.filename);
-            } catch (error) {
-                console.error('Error fetching data:', error.message);
-            }
-        };
-
         if (!editmode) {
-            fetchData();
+            fetch(`http://localhost:8082/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    setSender(data.data);
+                    fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                        .then((resp) => resp.json())
+                        .then((d) => {
+                            setLogo(d.data);
+                            setImageName(d.data.filename)
+                        })
+                        .catch((err) => console.log(err.message))
+                })
+                .catch((error) => {
+                    console.error(error.message);
+                })
         }
-    }, [jwtToken, editmode, submitted, modifying, imageData]); // imageData included here
+
+    }, [jwtToken, editmode, submitted, modifying, imageData]);
 
     useEffect(() => {
         const loadImage = async (filename) => {
-            if (!filename) return; // Make sure filename is truthy before attempting to load the image
             const imageUrl = await fetchImage(filename);
             setImageSrc(imageUrl);
             setIsLoading(false);
         };
-
         loadImage(imageName);
-    }, [imageName, imageData]); // imageName and imageData included here
-
+    }, [imageData, imageName]);
 
     const fetchImage = async (filename) => {
         try {
