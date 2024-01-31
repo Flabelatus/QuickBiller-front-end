@@ -33,6 +33,7 @@ func (app *application) routes() http.Handler {
 		mux.Get("/logo/{user_id}", app.GetLogoByUserID)
 		mux.Post("/create_invoice", app.ProcessInvoiceCreation)
 		mux.Post("/create_quote", app.ProcessQuoteCreation)
+		mux.Get("/image/{image_name}", app.ServeStaticImage)
 	})
 
 	mux.Route("/admin", func(mux chi.Router) {

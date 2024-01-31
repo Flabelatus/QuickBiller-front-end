@@ -20,7 +20,7 @@ func (app *application) UploadImage(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	filename := userID + filepath.Ext(handler.Filename)
-	filepath := "./../src/uploads/" + filename
+	filepath := "./static/" + filename
 	newFile, err := os.Create(filepath)
 	if err != nil {
 		app.errorJSON(w, err)
@@ -42,6 +42,32 @@ func (app *application) UploadImage(w http.ResponseWriter, r *http.Request) {
 	}
 	response := JSONResponse{Data: imageID, Message: "image successfully uploaded"}
 	_ = app.writeJSON(w, http.StatusCreated, response)
+}
+
+func (app *application) ServeStaticImage(w http.ResponseWriter, r *http.Request) {
+	imageName := chi.URLParam(r, "image_name")
+	logo, err := app.Repository.GetLogoByImageName(imageName)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	filename := logo.Filename
+	staticDir := "./static"
+	filePath := filepath.Join(staticDir, filename)
+	http.ServeFile(w, r, filePath)
+}
+
+func (app *application) GetLogoByImageName(w http.ResponseWriter, r *http.Request) {
+	imageName := chi.URLParam(r, "image_name")
+	image, err := app.Repository.GetLogoByImageName(imageName)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	resp := JSONResponse{Data: image}
+	_ = app.writeJSON(w, http.StatusOK, resp)
 }
 
 func (app *application) GetLogoByUserID(w http.ResponseWriter, r *http.Request) {

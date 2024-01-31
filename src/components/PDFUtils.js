@@ -85,19 +85,14 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
     let largeOffset = 20;
 
     // logo
-    try {
-        var imagePath = require(`./../uploads/${logo.filename}`);
-
-    } catch (error) {
-        console.log(error);
-    };
-
+    let imgData = logo;
+    console.log(imgData);
     let imgX = 0;
     let imgY = 0;
 
     try {
-        const imgData = await fetchAndConvertToBase64(imagePath); // Convert image path to base64
-        const imageSize = await getImageSize(imagePath);
+
+        const imageSize = await getImageSize(imgData);
         imgX = imageSize.width;
         imgY = imageSize.height;
 
@@ -292,7 +287,7 @@ async function fetchAndConvertToBase64(imagePath) {
     }
 };
 
-function getImageSize(imagePath) {
+function getImageSize(imgData) {
     return new Promise((resolve, reject) => {
         const img = new Image();
 
@@ -306,6 +301,6 @@ function getImageSize(imagePath) {
             reject(new Error('Failed to load image.'));
         };
 
-        img.src = imagePath;
+        img = imgData;
     });
 }

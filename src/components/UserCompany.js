@@ -13,7 +13,11 @@ const UserCompany = () => {
     const [submitted, setSubmitted] = useState(false);
     const [modifying, setModifying] = useState(false);
 
-    const [logo, setLogo] = useState({});
+    const [logo, setLogo] = useState({})
+    const [imageData, setImageData] = useState(null);
+    const [imageName, setImageName] = useState(null);
+    const [imageSrc, setImageSrc] = useState(null);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,28 +27,67 @@ const UserCompany = () => {
         }
         const requestOptions = {
             method: "GET",
-            headers: { "Authorization": "Bearer " + jwtToken, "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwtToken
+            }
         }
+        const fetchData = async () => {
+            try {
+                const senderResponse = await fetch(`http://localhost:8082/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions);
+                const senderData = await senderResponse.json();
+                setSender(senderData.data);
+
+                const logoResponse = await fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions);
+                const logoData = await logoResponse.json();
+                setLogo(logoData.data);
+                setImageName(logoData.data.filename);
+            } catch (error) {
+                console.error('Error fetching data:', error.message);
+            }
+        };
+
         if (!editmode) {
-            fetch(`http://localhost:8082/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
-                .then((response) => response.json())
-                .then((data) => {
-                    setSender(data.data);
-                    setIsLoading(false);
-                    fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
-                        .then((resp) => resp.json())
-                        .then((data) => {
-                            setLogo(data.data);
-                        })
-                        .catch((err) => console.log(err.message))
-                })
-                .catch((error) => {
-                    console.error(error.message);
-                })
-
+            fetchData();
         }
+    }, [jwtToken, editmode, submitted, modifying, imageData]); // imageData included here
 
-    }, [editmode, submitted, modifying]);
+    useEffect(() => {
+        const loadImage = async (filename) => {
+            if (!filename) return; // Make sure filename is truthy before attempting to load the image
+            const imageUrl = await fetchImage(filename);
+            setImageSrc(imageUrl);
+            setIsLoading(false);
+        };
+
+        loadImage(imageName);
+    }, [imageName, imageData]); // imageName and imageData included here
+
+
+    const fetchImage = async (filename) => {
+        try {
+            const response = await fetch(`http://localhost:8082/logged_in/image/${filename}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + jwtToken
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('failed to fetch image');
+            }
+
+            const blob = await response.blob();
+            const imageDataUrl = URL.createObjectURL(blob);
+
+            return imageDataUrl; // Return the URL of the fetched image
+        } catch (error) {
+            console.error('Error fetching image:', error.message);
+            return null; // Return null or handle the error as needed
+        }
+    };
+
 
     const handleSwitchEditmode = () => {
         setEditmode(true);
@@ -60,13 +103,6 @@ const UserCompany = () => {
             ...senderData,
             [field]: value
         }));
-    };
-
-    const handleClearForm = () => {
-        if (jwtToken === "") {
-            navigate("/login");
-        };
-        setSender({});
     };
 
     const handleSubmit = (e) => {
@@ -277,11 +313,11 @@ const UserCompany = () => {
                                     <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>IBAN: <span className="ms-2">{sender.iban}</span></lable>
                                     <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>VAT No: <span className="ms-2">{sender.vat_no}</span></lable>
                                     <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>CoC No: <span className="ms-2">{sender.coc_no}</span></lable>
-                                    
+
                                     <button className="btn btn-submit-light-small mt-5" onClick={handleSwitchModifyingMode}>Modify</button>
 
-                                    <UploadImage />
-                                    {logo && logo.filename !== undefined && <img className="mt-5 mb-3" src={require(`./../uploads/${logo.filename}`)} style={{ height: 80 }}></img>}
+                                    <UploadImage setImageData={setImageData} setImageName={setImageName} />
+                                    <img className="mt-5 mb-3" src={imageSrc} style={{ height: 80 }}></img>
 
                                 </div>
                             </div>

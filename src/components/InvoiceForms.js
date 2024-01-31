@@ -11,7 +11,7 @@ const InvoiceForms = () => {
 
     const [company, setCompany] = useState({ vat_percent: vatDefault });
     const [sender, setSender] = useState({});
-    const [logo, setLogo] = useState({});
+    const [logo, setLogo] = useState(null);
 
     const [jobs, setJobs] = useState([]);
     const [costs, setCosts] = useState([]);
@@ -94,8 +94,6 @@ const InvoiceForms = () => {
         setIsModalOpen(false);
     };
 
-
-
     useEffect(() => {
         if (jobType !== "Service") {
             setJobNumberOfHoursTitle("Amount");
@@ -122,7 +120,6 @@ const InvoiceForms = () => {
                         .then((dat) => {
                             if (dat.data.company_name !== "") {
                                 setSender(dat);
-                                console.log(dat.data)
                             } else {
                                 const timer = setTimeout(() => {
                                     setIsModalOpen(true);
@@ -133,8 +130,8 @@ const InvoiceForms = () => {
                         })
                         .catch((err) => console.error(err.message))
 
-                    fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
-                        .then(r => r.json()).then(dat => setLogo(dat.data)).catch(err => console.error(err.message))
+                    fetch(`http://localhost:8082/logged_in/image/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                        .then(r => r.blob()).then(dat => setLogo(URL.createObjectURL(dat))).catch(err => console.error(err.message))
                 })
                 .catch((error) => {
                     console.error(error.message);
@@ -390,7 +387,6 @@ const InvoiceForms = () => {
 
     const handleMakeQuote = () => {
         const preppedData = prepareData();
-
         // Invoice number calculations
         const totalCosts = preppedData.totalCosts;
         const subTotal = preppedData.subTotal

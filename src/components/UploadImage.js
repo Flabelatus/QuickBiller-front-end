@@ -3,25 +3,15 @@ import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 import Loader from 'react-spinners/SyncLoader'
 
-
-
-export const UploadImage = () => {
+export const UploadImage = ({ setImageData, setImageName }) => {
     const { jwtToken } = useOutletContext();
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploaded, setUploaded] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [canceled, setCanceled] = useState(false);
 
-    const toggleCancel = () => {
-        if (canceled) {
-            setCanceled(!canceled);
-        } else {
-            setCanceled(true);
-        };
-    }
     useEffect(() => {
 
-    }, [uploaded, canceled, selectedFile]);
+    }, [uploaded, selectedFile]);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -51,7 +41,17 @@ export const UploadImage = () => {
                 headers: { "Authorization": "Bearer " + jwtToken },
                 body: formData
             }).then((response) => response.json()).then((data) => {
-                setUploaded(true);
+                setImageName(data.data.filename);
+                const requestOptionsImage = {
+                    method: "GET",
+                    headers: { "Authorization": "Bearer " + jwtToken, "Content-Type": "application/json" },
+                }
+                fetch(`http://localhost:8082/logged_in/image/${data.data.filename}`, requestOptionsImage)
+                    .then((r) => r.blob())
+                    .then((image) => {
+                        setImageData(URL.createObjectURL(image));
+                        setUploaded(true);
+                    });
                 setSelectedFile(false);
             }).catch(error => console.error(error.message)).finally(() => setLoading(false))
 
@@ -96,6 +96,7 @@ export const UploadImage = () => {
                 {selectedFile && <button className="btn btn-submit-dark-small mt-4 ms-3" style={{ fontSize: 18, backgroundColor: "#999" }} onClick={resetFileInput}>Cancel</button>}
 
                 {uploaded ? <p className="mt-2">Logo successfully uploaded!</p> : ""}
+                
             </div>
         );
     }
