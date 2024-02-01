@@ -269,7 +269,8 @@ const InvoiceForms = () => {
             company: company,
             discount: discount,
             sender: sender,
-            discount: discount
+            discount: discount,
+            job_type: jobType
         };
         return invoicePayload;
     };

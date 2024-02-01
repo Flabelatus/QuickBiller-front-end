@@ -19,6 +19,14 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
         amountToPay = "Total"
     };
 
+    let rateHeader = "Hour Rate";
+    let amountHeader = "Number of Hours";
+
+    if (data.job_type !== "Service") {
+        rateHeader = "Item Price";
+        amountHeader = "Amount of Items";
+    }
+
     function sumArray(arr) {
         let sum = 0;
         for (let i = 0; i < arr.length; i++) {
@@ -42,7 +50,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
     let currencyFormat = "€ "
 
     const docTable = {
-        header: ['Description', 'Hour Rate', "Number of Hours", "Total"],
+        header: ['Description', rateHeader, amountHeader, "Total"],
     };
 
     const jobs = updatedJobs.map((job) => Object.values(job));
@@ -61,7 +69,6 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
     const leanVAT = subTotalAfterDiscount * parseInt(data.vat_percent) / 100;
     const totalInclVAT = subTotalAfterDiscount + leanVAT + totalCosts;
 
-    // TODO: Make the second column of the costs table set to N/A
     const table = [
         ...jobs,
         ...costs
@@ -275,30 +282,6 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
     // newWindow.document.close();
 };
 
-// Function to fetch the image and convert it to base64
-async function fetchAndConvertToBase64(imagePath) {
-    try {
-        const response = await fetch(imagePath);
-        if (!response.ok) {
-            console.error('Failed to fetch the image.');
-            return null;
-        }
-
-        const blob = await response.blob();
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-
-        return new Promise((resolve) => {
-            reader.onloadend = () => {
-                resolve(reader.result);
-            };
-        });
-    } catch (error) {
-        console.error('Error loading the image:', error);
-        return null;
-    }
-};
-
 function getImageSize(imgData) {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -314,6 +297,6 @@ function getImageSize(imgData) {
             alert('Failed to load image.');
         };
 
-        img.src = imgData; // Assign the image data to the src property
+        img.src = imgData;
     });
 }
