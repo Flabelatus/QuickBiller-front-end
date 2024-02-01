@@ -74,7 +74,6 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
 
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    console.log(pageWidth);
 
     // Set up the initial position for content
     let y = 20;
@@ -85,14 +84,14 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
     let largeOffset = 20;
 
     // logo
-    let imgData = logo;
-    console.log(imgData);
+    let imageData = logo;
+    // console.log(logo);
     let imgX = 0;
     let imgY = 0;
 
     try {
 
-        const imageSize = await getImageSize(imgData);
+        const imageSize = await getImageSize(imageData);
         imgX = imageSize.width;
         imgY = imageSize.height;
 
@@ -102,15 +101,14 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
         const newLogoHeight = imgY * (fixedSize / imgX); // Use the same scale for height
 
         // Add the image (logo) to the PDF with the calculated dimensions
-        if (imgData) {
-            pdf.addImage(imgData, 'JPEG', x, 30, newLogoWidth, newLogoHeight);
+        if (logo) {
+            pdf.addImage(imageData, 'JPEG', x, 30, newLogoWidth, newLogoHeight);
             y += mediumOffset + newLogoHeight; // Adjust the y position accordingly
         };
 
-        // ... continue with the rest of your code ...
     } catch (error) {
-        console.error(error.message);
-    }
+        throw error;
+    };
 
     // Add a title
     pdf.setFontSize(45);
@@ -122,6 +120,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
     // Add recipient details
     pdf.setFont("Helvetica", 'bold');
     pdf.setFontSize(12);
+    console.log(data.company.company_name);
     pdf.text(data.company.company_name, x, y, 'left');
     y += mediumOffset;
     pdf.setFont("Helvetica", 'normal');
@@ -301,6 +300,6 @@ function getImageSize(imgData) {
             reject(new Error('Failed to load image.'));
         };
 
-        img = imgData;
+        img.src = imgData; // Assign the image data to the src property
     });
 }

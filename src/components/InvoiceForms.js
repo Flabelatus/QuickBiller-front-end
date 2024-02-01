@@ -11,7 +11,7 @@ const InvoiceForms = () => {
 
     const [company, setCompany] = useState({ vat_percent: vatDefault });
     const [sender, setSender] = useState({});
-    const [logo, setLogo] = useState(null);
+    let [logo, setLogo] = useState(null);
 
     const [jobs, setJobs] = useState([]);
     const [costs, setCosts] = useState([]);
@@ -129,9 +129,21 @@ const InvoiceForms = () => {
                             }
                         })
                         .catch((err) => console.error(err.message))
-
-                    fetch(`http://localhost:8082/logged_in/image/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
-                        .then(r => r.blob()).then(dat => setLogo(URL.createObjectURL(dat))).catch(err => console.error(err.message))
+                    fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            fetch(`http://localhost:8082/logged_in/image/${data.data.filename}`, requestOptions)
+                                .then(r => r.blob())
+                                .then(blob => {
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                        setLogo(reader.result);
+                                    };
+                                    reader.readAsDataURL(blob); // Convert blob to base64
+                                })
+                                .catch(err => console.error(err.message))
+                        })
+                        .catch((e) => console.error(e.message))
                 })
                 .catch((error) => {
                     console.error(error.message);
@@ -419,6 +431,7 @@ const InvoiceForms = () => {
             fetch(`http://localhost:8082/logged_in/create_quote`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
+                    console.log(logo);
                     CreatePDFDoc(docs, "Quote", senderDoc, logo, data.data.filename, data.data.quote_no);
                     if (!inserted) {
                         inserNewCompany(docs.company.company_name);
