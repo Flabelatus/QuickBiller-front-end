@@ -298,6 +298,7 @@ function getImageSize(imgData) {
 
         img.onerror = () => {
             reject(new Error('Failed to load image.'));
+            alert('Failed to load image.');
         };
 
         img.src = imgData; // Assign the image data to the src property
