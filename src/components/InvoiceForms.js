@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Input from "./Inputs";
 import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
@@ -8,6 +8,7 @@ import Modal from "./Modal";
 const InvoiceForms = () => {
     const vatDefault = 21;
     const { jwtToken } = useOutletContext();
+    const inputRef = useRef(null);
 
     const [company, setCompany] = useState({ vat_percent: vatDefault });
     const [sender, setSender] = useState({});
@@ -449,6 +450,23 @@ const InvoiceForms = () => {
         };
     };
 
+    const handleDataValidationFunc = (e, handlerFunc, index, inputTitle, msg) => {
+        const inputValue = e.target.value;
+        const numericValue = parseFloat(inputValue);
+
+        if (inputValue.trim() !== '' && !Number.isNaN(numericValue)) {
+            handlerFunc(index, inputTitle, numericValue);
+        } else {
+            if (inputValue.trim() !== '') {
+                alert(msg);
+            }
+            if (inputRef.current) {
+                inputRef.current.focus();
+                inputRef.current.value = '';
+            };
+        };
+    }
+
     return (
         <div className="justify-content-center">
 
@@ -704,17 +722,33 @@ const InvoiceForms = () => {
                                         <div className="col-md-4 col-sm-12 mb-2">
                                             <Input
                                                 title={jobTariefTitle}
-                                                type="number"
+                                                type="text"
                                                 value={job.hourRate}
-                                                onChange={(e) => handleJobInputChange(index, "hourRate", e.target.value)}
+                                                onChange={(e) => {
+                                                    handleDataValidationFunc(
+                                                        e,
+                                                        handleJobInputChange,
+                                                        index,
+                                                        "hourRate",
+                                                        "Please enter a valid number in the price field"
+                                                    );
+                                                }}
                                             />
                                         </div>
                                         <div className="col-md-4 col-sm-12 mb-2">
                                             <Input
                                                 title={jobNumberOfHoursTitle}
-                                                type="number"
+                                                type="text"
                                                 value={job.numberOfHours}
-                                                onChange={(e) => handleJobInputChange(index, "numberOfHours", e.target.value)}
+                                                onChange={(e) => {
+                                                    handleDataValidationFunc(
+                                                        e,
+                                                        handleJobInputChange,
+                                                        index,
+                                                        "numberOfHours",
+                                                        "Please enter a valid number in the amount field"
+                                                    );
+                                                }}
                                             />
                                         </div>
                                     </div>
@@ -794,10 +828,17 @@ const InvoiceForms = () => {
                                     <div className="col-md-6 col-sm-12">
                                         <Input
                                             title={`Cost ${index + 1}`}
-                                            type="number"
+                                            type="text"
                                             value={cost.costs}
-                                            onChange={(e) => handleCostInputChange(index, "costs", e.target.value)}
-                                        />
+                                            onChange={(e) => {
+                                                handleDataValidationFunc(
+                                                    e,
+                                                    handleCostInputChange,
+                                                    index,
+                                                    "costs",
+                                                    "Please enter a valid number in the costs field"
+                                                );
+                                            }} />
                                     </div>
                                 </div>
                             ))}
