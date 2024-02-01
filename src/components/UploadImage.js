@@ -61,7 +61,6 @@ export const UploadImage = ({ setImageData, setImageName }) => {
     };
 
     const resetFileInput = () => {
-        // Set the selectedFile state to null to reset the input
         setSelectedFile(null);
         const fileInput = document.getElementById('file-input');
         if (fileInput) {

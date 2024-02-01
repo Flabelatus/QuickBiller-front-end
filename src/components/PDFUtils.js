@@ -1,9 +1,5 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { useOutletContext } from 'react-router-dom';
-import * as jwt_decode from 'jwt-decode';
-import { useState } from 'react';
-
 
 export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
 
@@ -38,6 +34,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
 
     const updatedCosts = data.costs.map((c) => ({
         ...c,
+        costs: "N/A",
         numberOfCosts: "N/A",
         totalAmout: parseFloat(c.costs)
     }));
@@ -54,10 +51,17 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
     // Invoice number calculations
     const totalJobs = sumArray(jobs.map((job) => job[job.length - 1]));
     const totalCosts = sumArray(costs.map((c) => c[c.length - 1]));
-    const subTotal = totalJobs + totalCosts
-    const leanVAT = totalJobs * parseInt(data.vat_percent) / 100;
-    const totalInclVAT = subTotal + leanVAT;
+    const discount = (parseInt(data.discount) * totalJobs) / 100;
 
+    let subTotalAfterDiscount = totalJobs;
+    if (discount > 0) {
+        subTotalAfterDiscount = totalJobs - discount;
+    };
+
+    const leanVAT = subTotalAfterDiscount * parseInt(data.vat_percent) / 100;
+    const totalInclVAT = subTotalAfterDiscount + leanVAT + totalCosts;
+
+    // TODO: Make the second column of the costs table set to N/A
     const table = [
         ...jobs,
         ...costs
@@ -208,10 +212,19 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
     pdf.setFontSize(11);
     pdf.setFont("Helvetica", 'normal');
 
-    pdf.text("Subtotal", pageWidth - 80, y, 'left');
-    pdf.text(`${currencyFormat}${parseFloat(subTotal).toFixed(2)}`, pageWidth - 43, y, 'left');
+    if (discount > 0) {
+        pdf.text(`Discount %${data.discount}`, pageWidth - 80, y, 'left');
+        pdf.text(`-${currencyFormat}${discount}`, pageWidth - 43, y, 'left');
+        y += 6;
+        pdf.text("Subtotal", pageWidth - 80, y, 'left');
+        pdf.text(`${currencyFormat}${parseFloat(subTotalAfterDiscount).toFixed(2)}`, pageWidth - 43, y, 'left');
+        y += 6;
+    } else {
+        pdf.text("Subtotal", pageWidth - 80, y, 'left');
+        pdf.text(`${currencyFormat}${parseFloat(subTotalAfterDiscount).toFixed(2)}`, pageWidth - 43, y, 'left');
+        y += 6;
+    };
 
-    y += 6;
     pdf.text(`VAT %${data.vat_percent}`, pageWidth - 80, y, 'left');
     pdf.text(`${currencyFormat}${parseFloat(leanVAT).toFixed(2)}`, pageWidth - 43, y, 'left');
 

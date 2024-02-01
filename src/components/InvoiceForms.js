@@ -11,7 +11,7 @@ const InvoiceForms = () => {
 
     const [company, setCompany] = useState({ vat_percent: vatDefault });
     const [sender, setSender] = useState({});
-    let [logo, setLogo] = useState(null);
+    const [logo, setLogo] = useState(null);
 
     const [jobs, setJobs] = useState([]);
     const [costs, setCosts] = useState([]);
@@ -269,6 +269,7 @@ const InvoiceForms = () => {
             company: company,
             discount: discount,
             sender: sender,
+            discount: discount
         };
         return invoicePayload;
     };
@@ -336,7 +337,7 @@ const InvoiceForms = () => {
             subTotal: subTotal,
             leanVAT: leanVAT,
             totalInclVAT: totalInclVAT,
-            docs: docs
+            docs: docs,
         };
     }
 
@@ -356,8 +357,13 @@ const InvoiceForms = () => {
         const preppedData = prepareData();
 
         // Invoice number calculations
-        const totalCosts = preppedData.totalCosts;
-        const subTotal = preppedData.subTotal
+        let discountAmount = 0;
+        if (preppedData.docs.discount !== 0) {
+            discountAmount = (preppedData.docs.discount * preppedData.totalJobs) / 100;
+        };
+
+        const totalCosts = preppedData.totalCosts
+        const subTotal = preppedData.subTotal - discountAmount;
         const totalInclVAT = preppedData.totalInclVAT;
         let docs = preppedData.docs;
 
@@ -375,7 +381,7 @@ const InvoiceForms = () => {
                 total_exclusive: subTotal,
                 costs: totalCosts,
                 client_name: company.company_name,
-                vat_percent: vatPercentage
+                vat_percent: vatPercentage,
             };
 
             // send Api call
