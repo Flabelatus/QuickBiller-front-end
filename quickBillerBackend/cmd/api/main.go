@@ -42,9 +42,9 @@ func main() {
 		"host=localhost port=5432 user=quickBiller password=paswoord dbname=database sslmode=disable timezone=UTC connect_timeout=5",
 		"Postgres connection string",
 	)
-	flag.StringVar(&app.JWTSecret, "jwt-secret", "verysecret", "signing secret")
+	flag.StringVar(&app.JWTSecret, "jwt-secret", "quickBiller-eb5d5e9f-86ac-4766-93e2-d760cbb86e7d", "signing secret")
 	flag.StringVar(&app.JWTIssuer, "jwt-issuer", "quickBiller.com", "signing issuer")
-	flag.StringVar(&app.JWTAudience, "jwt-audience", "wooquickBillerdpassport.com", "signing audience")
+	flag.StringVar(&app.JWTAudience, "jwt-audience", "quickBiller.com", "signing audience")
 	flag.StringVar(&app.CookieDomain, "cookie-domain", "localhost", "cookie domain")
 	flag.StringVar(&app.Domain, "domain", "quickBiller.com", "domain")
 	flag.Parse()
