@@ -96,7 +96,6 @@ const InvoiceForms = () => {
     };
 
     useEffect(() => {
-        console.log(process.env.REACT_APP_BACKEND);
         if (jobType !== "Service") {
             setJobNumberOfHoursTitle("Amount");
             setJobTariefTitle("Price");
