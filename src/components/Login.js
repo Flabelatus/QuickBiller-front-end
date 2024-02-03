@@ -37,7 +37,7 @@ const Login = () => {
             body: JSON.stringify(payload),
         }
 
-        fetch(`${process.env.BACKEND}/login`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/login`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 if (data.access_token) {

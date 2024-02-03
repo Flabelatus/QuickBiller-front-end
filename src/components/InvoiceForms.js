@@ -58,7 +58,7 @@ const InvoiceForms = () => {
             }
         };
 
-        fetch(`${process.env.BACKEND}/logged_in/client_list/${user_id}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/client_list/${user_id}`, requestOptions)
             .then(response => response.json())
             .then((data) => {
                 setCompanyList(data.data);
@@ -77,7 +77,7 @@ const InvoiceForms = () => {
             }
         };
 
-        fetch(`${process.env.BACKEND}/logged_in/client/${selectedOption}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/client/${selectedOption}`, requestOptions)
             .then((resp) => resp.json())
             .then((data) => {
                 setCompany(data.data);
@@ -96,6 +96,7 @@ const InvoiceForms = () => {
     };
 
     useEffect(() => {
+        console.log(process.env.REACT_APP_BACKEND);
         if (jobType !== "Service") {
             setJobNumberOfHoursTitle("Amount");
             setJobTariefTitle("Price");
@@ -111,12 +112,12 @@ const InvoiceForms = () => {
                 credentials: "include"
             };
 
-            fetch(`${process.env.BACKEND}/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+            fetch(`${process.env.REACT_APP_BACKEND}/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
                     setUser(data);
                     getComapnyDataList(data.ID);
-                    fetch(`${process.env.BACKEND}/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                    fetch(`${process.env.REACT_APP_BACKEND}/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                         .then((resp) => resp.json())
                         .then((dat) => {
                             if (dat.data.company_name !== "") {
@@ -130,10 +131,10 @@ const InvoiceForms = () => {
                             }
                         })
                         .catch((err) => console.error(err.message))
-                    fetch(`${process.env.BACKEND}/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                    fetch(`${process.env.REACT_APP_BACKEND}/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                         .then((response) => response.json())
                         .then((data) => {
-                            fetch(`${process.env.BACKEND}/logged_in/image/${data.data.filename}`, requestOptions)
+                            fetch(`${process.env.REACT_APP_BACKEND}/logged_in/image/${data.data.filename}`, requestOptions)
                                 .then(r => r.blob())
                                 .then(blob => {
                                     const reader = new FileReader();
@@ -298,7 +299,7 @@ const InvoiceForms = () => {
                     body: JSON.stringify(payload)
                 };
 
-                fetch(`${process.env.BACKEND}/logged_in/add_client`, requestOpts)
+                fetch(`${process.env.REACT_APP_BACKEND}/logged_in/add_client`, requestOpts)
                     .catch((error) => console.error(error.message))
             };
         };
@@ -392,7 +393,7 @@ const InvoiceForms = () => {
                 headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
                 body: JSON.stringify(invoicePayload)
             };
-            fetch(`${process.env.BACKEND}/logged_in/create_invoice`, requestOptions)
+            fetch(`${process.env.REACT_APP_BACKEND}/logged_in/create_invoice`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
                     CreatePDFDoc(docs, "Invoice", senderDoc, logo, data.data.filename, data.data.invoice_no);
@@ -436,7 +437,7 @@ const InvoiceForms = () => {
                 headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken },
                 body: JSON.stringify(quotePayload)
             };
-            fetch(`${process.env.BACKEND}/logged_in/create_quote`, requestOptions)
+            fetch(`${process.env.REACT_APP_BACKEND}/logged_in/create_quote`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
                     console.log(logo);
