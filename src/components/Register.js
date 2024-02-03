@@ -39,7 +39,7 @@ const Register = () => {
                 },
                 body: JSON.stringify(payload)
             }
-            fetch(`http://localhost:8082/register`, requestOptions)
+            fetch(`${process.env.BACKEND}/register`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
                     if (!data.error) {

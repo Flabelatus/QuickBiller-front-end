@@ -36,7 +36,7 @@ export const UploadImage = ({ setImageData, setImageName }) => {
 
             const formData = new FormData();
             formData.append('image', selectedFile);
-            fetch(`http://localhost:8082/logged_in/upload?uID=${userID}`, {
+            fetch(`${process.env.BACKEND}/logged_in/upload?uID=${userID}`, {
                 method: "POST",
                 headers: { "Authorization": "Bearer " + jwtToken },
                 body: formData
@@ -46,7 +46,7 @@ export const UploadImage = ({ setImageData, setImageName }) => {
                     method: "GET",
                     headers: { "Authorization": "Bearer " + jwtToken, "Content-Type": "application/json" },
                 }
-                fetch(`http://localhost:8082/logged_in/image/${data.data.filename}`, requestOptionsImage)
+                fetch(`${process.env.BACKEND}/logged_in/image/${data.data.filename}`, requestOptionsImage)
                     .then((r) => r.blob())
                     .then((image) => {
                         setImageData(URL.createObjectURL(image));

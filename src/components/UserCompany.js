@@ -30,11 +30,11 @@ const UserCompany = () => {
             headers: { "Authorization": "Bearer " + jwtToken, "Content-Type": "application/json" },
         }
         if (!editmode) {
-            fetch(`http://localhost:8082/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+            fetch(`${process.env.BACKEND}/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
                     setSender(data.data);
-                    fetch(`http://localhost:8082/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                    fetch(`${process.env.BACKEND}/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                         .then((resp) => resp.json())
                         .then((d) => {
                             setLogo(d.data);
@@ -60,7 +60,7 @@ const UserCompany = () => {
 
     const fetchImage = async (filename) => {
         try {
-            const response = await fetch(`http://localhost:8082/logged_in/image/${filename}`, {
+            const response = await fetch(`${process.env.BACKEND}/logged_in/image/${filename}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -131,7 +131,7 @@ const UserCompany = () => {
             body: JSON.stringify(payload)
         };
 
-        fetch(`http://localhost:8082/logged_in/sender_data`, requestOptions)
+        fetch(`${process.env.BACKEND}/logged_in/sender_data`, requestOptions)
             .then((response) => response.json())
             .then(data => console.log(data))
             .catch(error => console.error(error.message))
@@ -152,7 +152,7 @@ const UserCompany = () => {
             body: JSON.stringify(payload)
         };
 
-        fetch(`http://localhost:8082/logged_in/sender_data`, requestOptions)
+        fetch(`${process.env.BACKEND}/logged_in/sender_data`, requestOptions)
             .then((response) => response.json())
             .then(data => console.log(data))
             .catch(error => console.error(error.message))

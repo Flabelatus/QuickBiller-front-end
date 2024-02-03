@@ -37,7 +37,7 @@ const Login = () => {
             body: JSON.stringify(payload),
         }
 
-        fetch(`http://localhost:8082/login`, requestOptions)
+        fetch(`${process.env.BACKEND}/login`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 if (data.access_token) {

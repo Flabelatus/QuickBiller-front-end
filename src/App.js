@@ -31,7 +31,7 @@ function App() {
           credentials: "include",
         }
 
-        fetch(`http://localhost:8082/refresh`, requestOptions)
+        fetch(`${process.env.BACKEND}/refresh`, requestOptions)
           .then((response) => response.json())
           .then((data) => {
             if (data.access_token) {
@@ -57,7 +57,7 @@ function App() {
         credentials: "include",
       };
 
-      fetch(`http://localhost:8082/refresh`, requestOptions)
+      fetch(`${process.env.BACKEND}/refresh`, requestOptions)
         .then((response) => response.json())
         .then((data) => {
           if (data.access_token) {
