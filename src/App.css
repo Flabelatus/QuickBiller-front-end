@@ -303,3 +303,12 @@ label {
 .modal-close:hover {
   color: #555;
 }
+
+.invoice {
+  border: solid 1px #ddd;
+  border-radius: 16px;
+}
+
+.invoice:hover {
+  background-color: #ddd;
+}

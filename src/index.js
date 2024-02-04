@@ -8,6 +8,8 @@ import Home from './components/Home';
 import Register from './components/Register'
 import Login from './components/Login';
 import UserCompany from './components/UserCompany';
+import ContactForm from './components/Contact';
+import HistoryDocs from './components/History';
 
 const router = createBrowserRouter([
   {
@@ -18,7 +20,9 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "/register", element: <Register /> },
       { path: "/login", element: <Login /> },
-      { path: "/user_company", element: <UserCompany /> }
+      { path: "/user_company", element: <UserCompany /> },
+      { path: "/contact", element: <ContactForm /> },
+      { path: "/history", element: <HistoryDocs /> },
     ]
   }
 ]);
