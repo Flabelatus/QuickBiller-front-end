@@ -259,7 +259,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
 
     let saveFileName = `${prefix}_${fn}`
     pdf.save(saveFileName);
-
+    
     // const pdfDataUri = pdf.output('datauristring');
 
     // const iframe = document.createElement('iframe');

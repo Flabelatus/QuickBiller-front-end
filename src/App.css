@@ -83,6 +83,49 @@ label {
   color: #fbfffd;
 }
 
+
+.btn-submit-light-xsmall {
+  background-color: #061868;
+  color: #ffffff;
+  font-size: 14px;
+  width: fit-content;
+  border-radius: 25px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+}
+
+.btn-submit-light-xsmall:hover {
+  background-color: #06186880;
+  color: #fbfffd;
+}
+
+.btn-submit-light-xsmall::selection {
+  background-color: #06186880;
+  color: #fbfffd;
+}
+
+
+.btn-submit-dark-xsmall {
+  background-color: #e56259;
+  color: #ffffff;
+  font-size: 14px;
+  width: fit-content;
+  border-radius: 25px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+}
+
+.btn-submit-dark-xsmall:hover {
+  background-color: #a8554f;
+  color: #fbfffd;
+}
+
+.btn-submit-dark-xsmall::selection {
+  background-color: #a8554f;
+  color: #fbfffd;
+}
+
+
 .btn-submit-light-small-2 {
   background-color: #ffffff;
   color: #3e3e3e;
