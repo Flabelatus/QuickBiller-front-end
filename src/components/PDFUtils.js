@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
+export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr, authToken) => {
 
     let invoiceTerm = 14;
     let prefix = "Invoice";
@@ -257,9 +257,32 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr) => {
     pdf.setFontSize(11);
     pdf.text(x, pageHeight - 30, lines);
 
-    let saveFileName = `${prefix}_${fn}`
+    const saveFileName = `${prefix}_${fn}`
+    const pdfBlob = pdf.output('blob');
+
+    const formData = new FormData();
+    formData.append('pdfFile', pdfBlob, saveFileName);
+
+    try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND}/logged_in/invoice/upload?f=${encodeURIComponent(saveFileName)}`, {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + authToken
+            },
+            body: formData
+        })
+
+        if (!response.ok) {
+            throw new Error("error uploading the pdf to the server, if this error keeps happening try to contact the support");
+        };
+
+        console.log('pdf uploaded successfully');
+    } catch (error) {
+        console.error(error.message);
+    };
+
     pdf.save(saveFileName);
-    
+
     // const pdfDataUri = pdf.output('datauristring');
 
     // const iframe = document.createElement('iframe');

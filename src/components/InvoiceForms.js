@@ -354,6 +354,22 @@ const InvoiceForms = () => {
         return result;
     }
 
+    const UploadPDF = (invoiceFileName) => {
+        const requestOptions = {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwtToken
+            }
+        };
+    
+        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/invoice/upload?f=${encodeURIComponent(invoiceFileName)}`, requestOptions).then((response) => response.arrayBuffer.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => console.error(error.message));
+    };
+
     const handleMakeInvoice = () => {
 
         const preppedData = prepareData();
@@ -372,7 +388,7 @@ const InvoiceForms = () => {
         let senderDoc = {};
         if (jwtToken === "") {
             senderDoc = sender;
-            CreatePDFDoc(docs, "Invoice", senderDoc, logo, "", generateShortUniqueId(10));
+            CreatePDFDoc(docs, "Invoice", senderDoc, logo, "", generateShortUniqueId(10), jwtToken);
 
         } else {
             senderDoc = sender.data;
@@ -395,7 +411,7 @@ const InvoiceForms = () => {
             fetch(`${process.env.REACT_APP_BACKEND}/logged_in/create_invoice`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
-                    CreatePDFDoc(docs, "Invoice", senderDoc, logo, data.data.filename, data.data.invoice_no);
+                    CreatePDFDoc(docs, "Invoice", senderDoc, logo, data.data.filename, data.data.invoice_no, jwtToken);
                     if (!inserted) {
                         inserNewCompany(docs.company.company_name);
                         setInserted(true);
@@ -417,7 +433,7 @@ const InvoiceForms = () => {
 
         if (jwtToken === "") {
             senderDoc = sender;
-            CreatePDFDoc(docs, "Quote", senderDoc, logo, "", generateShortUniqueId(10));
+            CreatePDFDoc(docs, "Quote", senderDoc, logo, "", generateShortUniqueId(10), jwtToken);
         } else {
             senderDoc = sender.data;
 
@@ -440,7 +456,7 @@ const InvoiceForms = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     console.log(logo);
-                    CreatePDFDoc(docs, "Quote", senderDoc, logo, data.data.filename, data.data.quote_no);
+                    CreatePDFDoc(docs, "Quote", senderDoc, logo, data.data.filename, data.data.quote_no, jwtToken);
                     if (!inserted) {
                         inserNewCompany(docs.company.company_name);
                         setInserted(true);

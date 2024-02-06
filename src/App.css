@@ -152,6 +152,35 @@ label {
 
 }
 
+
+.btn-submit-light-xsmall-2 {
+  background-color: #ffffff;
+  color: #3e3e3e;
+  font-size: 14px;
+  border-radius: 25px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  width: fit-content;
+  border: #8a8a8a solid 1px;
+}
+
+.btn-submit-light-xsmall-2:hover {
+  background-color: #9d9d9d;
+  color: #2a2a2a;
+  font-size: 14px;
+  width: fit-content;
+  border: #8a8a8a solid 1px;
+}
+
+.btn-submit-dark-small {
+  color: #ffffff;
+  background-color: #e56259;
+  font-size: 16px;
+  width: 150px;
+  border-radius: 25px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+}
+
 .btn-submit-dark-small:hover {
   background-color: #a8554f;
   color: #ffffff;
