@@ -64,7 +64,6 @@ const HistoryDocs = () => {
             .then(() => toggleStatus()).catch(error => console.error(error.message));
     };
 
-    // Function to handle the download request
     const handleDownload = async (invoiceFileName) => {
         const requestOptions = {
             method: "GET",
@@ -109,7 +108,7 @@ const HistoryDocs = () => {
                 <div className="col">
                     <h1 className="mb-5 mt-5">Overview</h1>
                     <h2 className="mb-5 mt-5">Invoices</h2>
-                    <Search />
+                    <Search setInvoices={setInvoices} toggleStatus={toggleStatus}/>
                     <div className="mb-4 mt-4" style={{ overflowY: 'auto', height: 500, border: '1px solid #ccc', borderRadius: 16, width: '100%' }}>
                         {Array.isArray(invoices) && invoices.map((invoice, index) => (
                             <div className="mt-4 mb-4 px-5" key={invoice.ID}>

@@ -74,7 +74,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr, auth
         ...costs
     ];
 
-    const pdf = new jsPDF();
+    const pdf = new jsPDF('p', 'mm', 'a4', true);
 
     pdf.setProperties({
         title: docType,
@@ -113,7 +113,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr, auth
 
         // Add the image (logo) to the PDF with the calculated dimensions
         if (logo) {
-            pdf.addImage(imageData, 'JPEG', x, 30, newLogoWidth, newLogoHeight);
+            pdf.addImage(imageData, 'JPEG', x, 30, newLogoWidth, newLogoHeight, 'FAST');
             y += mediumOffset + newLogoHeight; // Adjust the y position accordingly
         };
 
