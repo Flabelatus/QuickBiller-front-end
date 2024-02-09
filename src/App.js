@@ -41,7 +41,7 @@ function App() {
           .catch(error => {
             console.error(error.message);
           })
-      }, 600000);
+      }, 800000);
       setTickInterval(i);
     } else {
 

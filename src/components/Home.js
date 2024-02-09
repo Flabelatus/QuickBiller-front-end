@@ -1,6 +1,7 @@
 import { Link, useOutletContext } from "react-router-dom";
 import InvoiceForms from "./InvoiceForms";
 import { useEffect, useState } from "react";
+import LandingPageImage from './../images/landing.jpg'
 
 
 const Home = () => {
@@ -20,14 +21,18 @@ const Home = () => {
 
     return (
         <>
-            <div className="row justify-content-center" style={{ backgroundColor: "#ffffff" }}>
+            <div className="row justify-content-center" style={{ backgroundColor: "#fff" }}>
                 <h1 style={{ color: '#e56259', fontFamily: 'revert', fontSize: 70, fontWeight: 700, textAlign: 'center', fontFamily: 'Gill Sans' }}>QuickBiller</h1>
                 <h5 className="mb-5" style={{ textAlign: 'center', color: "black", fontFamily: 'Gill Sans' }}>Simplify Your Billing Process with an Intuitive and Easy to Use Invoicing Tool</h5>
+                <div className="row justify-content-center">
+                    <img className="mt-4 mb-4" src={LandingPageImage} style={{ width: '40%' }}></img>
+
+                </div>
                 <Link
                     className='btn btn-submit-light-large text-center mt-5 mb-2 px-4'
 
                     onClick={toggelOpen} style={{ width: 'fit-content', backgroundColor: open && "#888" }}>
-                    {open ? "Complete the Form" : "Create a New Document"}
+                    {open ? "Complete the Form" : "Create a Document"}
                 </Link>
                 <h5 className="text-center mt-2 mb-5" style={{ color: "#666" }}>{open ? "Follow the steps below and complete in the form" : "Create an invoice or price quote document in matter of seconds"}</h5>
                 <div className='App mb-4' style={{ maxHeight: open ? 'max-content' : '0px', overflow: 'hidden', transition: 'max-height 0.4s ease' }}>

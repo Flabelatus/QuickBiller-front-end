@@ -10,6 +10,14 @@ const HistoryDocs = () => {
     const [status, setStatus] = useState(false);
     const navigate = useNavigate();
 
+    function sumArray(arr) {
+        let sum = 0;
+        for (let i = 0; i < arr.length; i++) {
+            sum += arr[i];
+        }
+        return sum;
+    };
+
     const toggleStatus = () => {
         if (!status) {
             setStatus(true);
@@ -128,7 +136,7 @@ const HistoryDocs = () => {
                                     <label className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 500, fontSize: 14, color: '#888' }}>{invoice.sent ? `SENT` : `NOT SENT`}</label>
                                     {!invoice.sent && <button onClick={() => handleConfirmSent(invoice.ID)} className="btn btn-submit-light-xsmall ms-2 me-2">Confirm Sent</button>}
                                     {!invoice.sent && <button onClick={() => handleDeleteInvoice(invoice.filename, invoice.ID)} className="btn btn-submit-dark-xsmall">Delete</button>}
-                                    <button onClick={() => handleDownload(invoice.filename)} className="btn btn-submit-light-xsmall-2 ms-2">Downlaod</button>
+                                    <button onClick={() => handleDownload(invoice.filename)} className="btn btn-submit-light-xsmall-2 ms-2">Download</button>
                                     <hr />
                                 </div>
                             </div>
