@@ -1,8 +1,9 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Input from "./Inputs";
 import google from '.././images/google.png'
 import fb from '.././images/fb.png'
 import { useNavigate, useOutletContext } from "react-router-dom";
+import * as jwt_decode from 'jwt-decode';
 
 
 const Login = () => {
@@ -41,8 +42,24 @@ const Login = () => {
             .then((response) => response.json())
             .then((data) => {
                 if (data.access_token) {
-                    setJwtToken(data.access_token);
-                    navigate("/");
+                    
+                    let userID = jwt_decode.jwtDecode(data.access_token).sub;
+                    fetch(`${process.env.REACT_APP_BACKEND}/logged_in/confirmation/user/${userID}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + data.access_token
+                        }
+                    }).then((resp) => resp.json()).then((confirmation) => {
+                        if (confirmation.data === true) {
+                            setJwtToken(data.access_token);
+                            navigate("/");
+                        } else {
+                            setJwtToken("");
+                            navigate("/email-verification");
+                        };
+                    }).catch((err) => console.error(err.message))
+
                 } else {
                     showAlert(data.message, "alert-danger", 3000);
                 }
@@ -75,8 +92,11 @@ const Login = () => {
                             name="password"
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        <button type="submit" className="btn btn-submit-dark-small mt-4" style={{width: 250}}>Sign In</button>
+                        <button type="submit" className="btn btn-submit-dark-small mt-4" style={{ width: 250 }}>Sign In</button>
                     </form>
+                    <div className="row justify-content-center mb-5">
+                        <a href="/password-reset" style={{ textAlign: 'center' }}>Forgot your password?</a>
+                    </div>
 
                     <h4 className="mt-5 text-center d-flex px-5"><hr style={{ width: '50%' }}></hr><span className="ms-4 me-4">Or</span><hr style={{ width: '50%' }}></hr></h4>
                     {/* <h5 className="text-center">Sign in using</h5> */}
@@ -84,9 +104,7 @@ const Login = () => {
                         <button className="btn btn-light text-center me-2" style={{ backgroundColor: '#FFFFFF00' }}><img src={google} style={{ height: 35 }}></img></button>
                         <button className="btn btn-light text-center" style={{ backgroundColor: '#FFFFFF00' }}><img src={fb} style={{ height: 35 }}></img></button>
                     </div>
-                    <div className="row justify-content-center mb-5">
-                        <a href="#!" style={{ textAlign: 'center' }}>Change your password</a>
-                    </div>
+
                 </div>
             </div>
         </div>

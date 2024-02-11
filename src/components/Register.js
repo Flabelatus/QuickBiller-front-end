@@ -43,7 +43,7 @@ const Register = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     if (!data.error) {
-                        navigate("/login");
+                        navigate("/email-verification");
                     } else {
                         showAlert(data.message, "alert-danger", 3000);
                     }
