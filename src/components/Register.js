@@ -43,7 +43,8 @@ const Register = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     if (!data.error) {
-                        navigate("/email-verification");
+                        console.log(data.data);
+                        navigate(`/email-verification?uid=${data.data}`);
                     } else {
                         showAlert(data.message, "alert-danger", 3000);
                     }
