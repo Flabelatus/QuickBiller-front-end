@@ -12,7 +12,7 @@ import ContactForm from './components/Contact';
 import HistoryDocs from './components/History';
 import { ConfirmationPage } from './components/ConfirmationPage';
 import { UserVerifyPage } from './components/EmailVerify';
-import { PasswordResetRequest, UpdatePassword } from './components/UpdatePassword';
+import { ForgotPassword, PasswordResetRequest, UpdatePassword } from './components/UpdatePassword';
 
 const router = createBrowserRouter([
   {
@@ -28,10 +28,11 @@ const router = createBrowserRouter([
       { path: "/contact", element: <ContactForm /> },
       { path: "/history", element: <HistoryDocs /> },
       { path: "/update-password", element: <UpdatePassword /> },
-      {path : "/password-reset-request", element: <PasswordResetRequest />},
+      { path: "/password-reset-request", element: <PasswordResetRequest /> },
     ],
   },
   { path: "/confirmation", element: <ConfirmationPage /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/email-verification", element: <UserVerifyPage /> },
 ]);
 

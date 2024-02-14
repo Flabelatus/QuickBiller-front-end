@@ -2,7 +2,7 @@ import { useState } from "react";
 import Input from "./Inputs";
 import google from '.././images/google.png'
 import fb from '.././images/fb.png'
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 
 
@@ -94,7 +94,7 @@ const Login = () => {
                         <button type="submit" className="btn btn-submit-dark-small mt-4" style={{ width: 250 }}>Sign In</button>
                     </form>
                     <div className="row justify-content-center mb-5">
-                        <a href="/password-reset" style={{ textAlign: 'center' }}>Forgot your password?</a>
+                        <Link to="/forgot-password" style={{ textAlign: 'center' }}>Forgot your password?</Link>
                     </div>
 
                     <h4 className="mt-5 text-center d-flex px-5"><hr style={{ width: '50%' }}></hr><span className="ms-4 me-4">Or</span><hr style={{ width: '50%' }}></hr></h4>

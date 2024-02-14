@@ -115,7 +115,7 @@ export const UpdatePassword = () => {
 
 export const PasswordResetRequest = () => {
     const [isSent, setIsSent] = useState(false);
-
+    const navigate = useNavigate();
     useEffect(() => {
 
     }, [isSent]);
@@ -128,9 +128,42 @@ export const PasswordResetRequest = () => {
     return (
         <div className="row justify-content-center text-center mt-5" style={{ height: 300 }}>
             <div className="col-md-5 container px-4 py-4">
+                <button className="btn btn-light mb-5 px-4" style={{ color: 'black', fontSize: 20, width: 'fit-content', border: '1px solid #ccc', borderRadius: 25, fontWeight: 350 }} onClick={() => navigate(-1)}>Back</button>
+
                 {!isSent && <h5 className="px-5 py-5">If you want to proceed with reseting your password, you would need to try through the link via email</h5>}
                 {!isSent && <a onClick={handleSendLink} className="btn btn-submit-light-small px-4" style={{ height: 'fit-content', width: 'fit-content' }}> Send the password reset link</a>}
-                {isSent && <h5 className="px-5 py-5 container" style={{backgroundColor: "#e56259", color: "white"}}>The link to reset your password is sent to your email <br />Please check your email and proceed from there</h5>}
+                {isSent && <h5 className="px-5 py-5 container" style={{ backgroundColor: "#e56259", color: "white" }}>The link to reset your password is sent to your email <br />Please check your email and proceed from there</h5>}
+            </div>
+
+        </div>
+    );
+};
+
+export const ForgotPassword = () => {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+    };
+
+    return (
+        <div className="row justify-content-center text-center mt-5" style={{ height: 300 }}>
+
+            <div className="col-md-5 container px-4 py-4">
+                <button className="btn btn-light mb-5 px-4" style={{ color: 'black', fontSize: 20, width: 'fit-content', border: '1px solid #ccc', borderRadius: 25, fontWeight: 350 }} onClick={() => navigate("/login")}>Back</button>
+                <form onSubmit={handleSubmit}>
+                    <Input
+                        title="Enter your email address"
+                        value={email}
+                        name='email'
+                        type='email'
+                        id='email'
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <button className="btn btn-submit-dark-small px-4 mt-4" style={{ width: 'fit-content' }}>Send the password reset link</button>
+                </form>
             </div>
 
         </div>
