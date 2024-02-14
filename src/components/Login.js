@@ -44,14 +44,13 @@ const Login = () => {
                 if (data.access_token) {
                     
                     let userID = jwt_decode.jwtDecode(data.access_token).sub;
-                    fetch(`${process.env.REACT_APP_BACKEND}/logged_in/confirmation/user/${userID}`, {
+                    fetch(`${process.env.REACT_APP_BACKEND}/confirmation/user/${userID}`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
-                            "Authorization": "Bearer " + data.access_token
                         }
                     }).then((resp) => resp.json()).then((confirmation) => {
-                        if (confirmation.data === true) {
+                        if (confirmation.data.confirmed === true) {
                             setJwtToken(data.access_token);
                             navigate("/");
                         } else {

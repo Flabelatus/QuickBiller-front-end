@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { useOutletContext } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faS, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 export const Search = ({ setInvoices, toggleStatus }) => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -31,17 +33,17 @@ export const Search = ({ setInvoices, toggleStatus }) => {
     return (
         <>
             <header className='search-bar'>
-                <form className='' onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', width: '35%' }}>
+                <form className='' onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', width: '45%' }}>
                     <input
                         className='form-control'
-                        style={{ border: '1px solid #ccc', borderRadius: 10 }}
+                        style={{ border: '0px solid #ccc', borderRadius: 8, backgroundColor: "#F5F5F5", color: '#666', height: 40 }}
                         id='search'
                         type='text'
-                        placeholder='Search...'
+                        placeholder='Search for client names or invoice number'
                         value={searchTerm}
                         onChange={(event) => setSearchTerm(event.target.value)}
                     />
-                    <input className='btn btn-submit-light-small ms-4' type='submit' value='Search'></input>
+                    <button className='btn btn-submit-light-small ms-4 px-4' type='submit' value='Search' style={{ width: 'fit-content' }}><FontAwesomeIcon icon={faSearch} /></button>
                 </form>
             </header>
         </>

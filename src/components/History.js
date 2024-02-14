@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 import { Search } from "./SearchBar";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 const HistoryDocs = () => {
 
@@ -115,7 +117,7 @@ const HistoryDocs = () => {
             <div className="row justify-content-center">
                 <div className="col">
                     <h1 className="mb-5 mt-5">Overview</h1>
-                    <h2 className="mb-5 mt-5">Invoices</h2>
+                    <h2 className="mb-5 mt-5" style={{color: "#888"}}>Invoices</h2>
                     <Search setInvoices={setInvoices} toggleStatus={toggleStatus}/>
                     <div className="mb-4 mt-4" style={{ overflowY: 'auto', height: 500, border: '1px solid #ccc', borderRadius: 16, width: '100%' }}>
                         {Array.isArray(invoices) && invoices.map((invoice, index) => (
@@ -135,8 +137,8 @@ const HistoryDocs = () => {
                                     <label className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 500, fontSize: 18 }}>€ {parseFloat(invoice.total_inclusive).toFixed(2)}</label>
                                     <label className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 500, fontSize: 14, color: '#888' }}>{invoice.sent ? `SENT` : `NOT SENT`}</label>
                                     {!invoice.sent && <button onClick={() => handleConfirmSent(invoice.ID)} className="btn btn-submit-light-xsmall ms-2 me-2">Confirm Sent</button>}
-                                    {!invoice.sent && <button onClick={() => handleDeleteInvoice(invoice.filename, invoice.ID)} className="btn btn-submit-dark-xsmall">Delete</button>}
-                                    <button onClick={() => handleDownload(invoice.filename)} className="btn btn-submit-light-xsmall-2 ms-2">Download</button>
+                                    {!invoice.sent && <button onClick={() => handleDeleteInvoice(invoice.filename, invoice.ID)} className="btn btn-submit-dark-xsmall px-4"><FontAwesomeIcon icon={faTrash}/></button>}
+                                    <button onClick={() => handleDownload(invoice.filename)} className="btn btn-submit-light-xsmall-2 ms-2 px-4"><FontAwesomeIcon icon={faDownload} /></button>
                                     <hr />
                                 </div>
                             </div>

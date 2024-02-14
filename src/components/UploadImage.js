@@ -79,7 +79,7 @@ export const UploadImage = ({ setImageData, setImageName }) => {
         )
     } else {
         return (
-            <div className="mt-5 px-5   " st>
+            <div className="mt-5 px-4 " st>
                 <p className=" mb-4 mt-5" style={{ color: '#061868', fontSize: 18, fontWeight: 600 }}>
                     Upload your new logo
                 </p>
@@ -92,7 +92,7 @@ export const UploadImage = ({ setImageData, setImageName }) => {
                     onChange={handleFileChange}
                 />
                 {selectedFile && <button className="btn btn-submit-dark-small mt-4" onClick={handleUpload}>Submit</button>}
-                {selectedFile && <button className="btn btn-submit-dark-small mt-4 ms-3" style={{ fontSize: 18, backgroundColor: "#999" }} onClick={resetFileInput}>Cancel</button>}
+                {selectedFile && <button className="btn btn-submit-dark-small mt-4" style={{ fontSize: 18, backgroundColor: "#999" }} onClick={resetFileInput}>Cancel</button>}
 
                 {uploaded ? <p className="mt-2">Logo successfully uploaded!</p> : ""}
                 

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 import Loader from 'react-spinners/SyncLoader'
 import Input from "./Inputs";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { UploadImage } from "./UploadImage";
 
 const UserCompany = () => {
@@ -12,13 +14,21 @@ const UserCompany = () => {
     const { jwtToken } = useOutletContext();
     const [submitted, setSubmitted] = useState(false);
     const [modifying, setModifying] = useState(false);
-
+    const [user, setUser] = useState("");
     const [logo, setLogo] = useState({})
     const [imageData, setImageData] = useState(null);
     const [imageName, setImageName] = useState(null);
     const [imageSrc, setImageSrc] = useState(null);
-    
+
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const loadImage = async (filename) => {
+            const imageUrl = await fetchImage(filename);
+            setImageSrc(imageUrl);
+        };
+        loadImage(imageName);
+    }, [imageData, imageName]);
 
     useEffect(() => {
         if (jwtToken === "") {
@@ -29,6 +39,18 @@ const UserCompany = () => {
             method: "GET",
             headers: { "Authorization": "Bearer " + jwtToken, "Content-Type": "application/json" },
         }
+
+        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwtToken
+            }
+        }).then((response) => response.json()).then((data) => {
+            setUser(data);
+
+        }).catch(error => console.error(error.message))
+
         if (!editmode) {
             fetch(`${process.env.REACT_APP_BACKEND}/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                 .then((response) => response.json())
@@ -38,7 +60,8 @@ const UserCompany = () => {
                         .then((resp) => resp.json())
                         .then((d) => {
                             setLogo(d.data);
-                            setImageName(d.data.filename)
+                            setImageName(d.data.filename);
+                            setIsLoading(false);
                         })
                         .catch((err) => console.log(err.message))
                 })
@@ -49,15 +72,6 @@ const UserCompany = () => {
 
     }, [jwtToken, editmode, submitted, modifying, imageData]);
 
-    useEffect(() => {
-        const loadImage = async (filename) => {
-            const imageUrl = await fetchImage(filename);
-            setImageSrc(imageUrl);
-            setIsLoading(false);
-        };
-        loadImage(imageName);
-    }, [imageData, imageName]);
-
     const fetchImage = async (filename) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/logged_in/image/${filename}`, {
@@ -67,10 +81,6 @@ const UserCompany = () => {
                     "Authorization": "Bearer " + jwtToken
                 }
             });
-
-            if (!response.ok) {
-                throw new Error('failed to fetch image');
-            }
 
             const blob = await response.blob();
             const imageDataUrl = URL.createObjectURL(blob);
@@ -294,26 +304,42 @@ const UserCompany = () => {
                                 <button className="btn btn-submit-light-small mt-5" style={{ width: 'fit-content' }} onClick={handleSwitchEditmode}>Enter Your Company Information</button>
                             </div>
                             :
-                            <div className="row justify-content-center mt-4 mb-5">
-                                <div className="px-4 py-4" style={{ backgroundColor: "#FFF", borderRadius: 8, border: "1px solid #eee" }}>
-                                    <lable className="mt-2" style={{ fontWeight: 700, fontSize: 22, display: 'flex', color: "#e56259" }}><span>{sender.company_name}</span></lable>
-                                    <br />
-                                    <lable className="mt-2" style={{ fontWeight: 700, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.contact_name}</span></lable>
-                                    <br />
-                                    <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.email}</span></lable>
-                                    <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.street}, {sender.postcode}</span></lable>
-                                    <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.city}, {sender.country}</span></lable>
-                                    <br />
-                                    <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>IBAN: <span className="ms-2">{sender.iban}</span></lable>
-                                    <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>VAT No: <span className="ms-2">{sender.vat_no}</span></lable>
-                                    <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>CoC No: <span className="ms-2">{sender.coc_no}</span></lable>
+                            <div className="row justify-content-center container py-4 px-4 mt-4 mb-5" style={{ backgroundColor: '#F5F5F5' }}>
+                                <div className="col-md-6">
+                                    <div className="px-4 py-5" style={{ backgroundColor: "#FFF", borderRadius: 16, border: "0px solid #eee" }}>
+                                        <h2 className="mb-4" style={{ color: "#888" }}>Company Information</h2>
+                                        <lable className="mt-2" style={{ fontWeight: 700, fontSize: 22, display: 'flex', color: "#e56259" }}><span>{sender.company_name}</span></lable>
+                                        <br />
+                                        <lable className="mt-2" style={{ fontWeight: 700, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.contact_name}</span></lable>
+                                        <br />
+                                        <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.email}</span></lable>
+                                        <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.street}, {sender.postcode}</span></lable>
+                                        <lable className="mt-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}><span className="ms-2">{sender.city}, {sender.country}</span></lable>
+                                        <br />
+                                        <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>IBAN: <span className="ms-2">{sender.iban}</span></lable>
+                                        <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>VAT No: <span className="ms-2">{sender.vat_no}</span></lable>
+                                        <lable className="mt-2 ms-2" style={{ fontWeight: 400, fontSize: 18, display: 'flex', color: "#061868" }}>CoC No: <span className="ms-2">{sender.coc_no}</span></lable>
+                                        <button className="btn btn-submit-light-small mt-5" onClick={handleSwitchModifyingMode}><FontAwesomeIcon icon={faEdit} className="me-2" />Modify</button>
 
-                                    <button className="btn btn-submit-light-small mt-5" onClick={handleSwitchModifyingMode}>Modify</button>
-
-                                    <UploadImage setImageData={setImageData} setImageName={setImageName} />
-                                    <img className="mt-5 mb-3" src={imageSrc} style={{ height: 80 }}></img>
-
+                                    </div>
                                 </div>
+                                <div className="col-md-6">
+
+                                    <div className="px-3 py-3 mb-4 py-5" style={{ backgroundColor: "#FFF", borderRadius: 16, border: "0px solid #eee" }}>
+                                        <h2 className="mb-4" style={{ color: "#888" }}>Personal Information</h2>
+                                        <h5 className="mt-4 mb-4 text-left">{user.username}</h5>
+                                        <h5 className="mt-4 mb-4 text-left">{user.email}</h5>
+                                        <Link to="/password-reset-request" className="mt-2 btn btn-submit-light-small ms-5 px-4" style={{ width: "fit-content" }} >Change my Password</Link>
+
+                                    </div>
+                                    <div className="px-3 py-3" style={{ backgroundColor: "#FFF", borderRadius: 16, border: "0px solid #eee" }}>
+                                        <UploadImage setImageData={setImageData} setImageName={setImageName} />
+                                        <div className="px-4 py-4">
+                                            <img className="mt-5 mb-3" src={imageSrc} style={{ height: 80 }}></img>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         }
                     </div>

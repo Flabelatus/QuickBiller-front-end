@@ -4,6 +4,9 @@ import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 import { CreatePDFDoc } from "./PDFUtils";
 import Modal from "./Modal";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+
 
 const InvoiceForms = () => {
     const vatDefault = 21;
@@ -354,22 +357,6 @@ const InvoiceForms = () => {
         return result;
     }
 
-    const UploadPDF = (invoiceFileName) => {
-        const requestOptions = {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + jwtToken
-            }
-        };
-    
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/invoice/upload?f=${encodeURIComponent(invoiceFileName)}`, requestOptions).then((response) => response.arrayBuffer.json())
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => console.error(error.message));
-    };
-
     const handleMakeInvoice = () => {
 
         const preppedData = prepareData();
@@ -486,12 +473,12 @@ const InvoiceForms = () => {
     return (
         <div className="justify-content-center">
 
-            {jwtToken !== "" && <hr className="mt-5 mb-5" style={{ color: "#000", width: "80vw", margin: "0 auto" }} />}
+            {jwtToken !== "" && <hr className="mt-5 mb-5" style={{ color: "#000", width: "60vw", margin: "0 auto", border: 'solid 1px #ccc' }} />}
             <form onSubmit={handleSubmit} className="mb-5">
 
                 {/* sender data */}
                 {jwtToken === "" &&
-                    <div className="row mt- justify-content-center container-fluid py-5" style={{ backgroundColor: "#aaaaff30" }}>
+                    <div className="row mt- justify-content-center container-fluid py-5" style={{ backgroundColor: "#ffbbbb" }}>
                         <div className="row justify-content-center" style={{ width: 'fit-content' }}>
                             <h3 className="mb-5" style={{ color: '#061868' }}>Your Company Information</h3>
                             <div className="col-md-4">
@@ -773,11 +760,11 @@ const InvoiceForms = () => {
                                     <div className="col-md-12 col-sm-12 mt-4">
                                         {jobs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Job field</p>}
                                         <a className="btn btn-submit-light-small" style={{ width: 80 }} onClick={handleAddJob}>
-                                            +
+                                            <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
                                         </a>
                                         {jobs.length > 0 && (
                                             <a className="btn btn-submit-dark-small ms-2" style={{ width: 80 }} onClick={() => handleRemoveJob(jobs.length - 1)}>
-                                                -
+                                                <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
                                             </a>
                                         )}
                                     </div>
@@ -863,11 +850,11 @@ const InvoiceForms = () => {
                                     {costs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Cost field</p>}
 
                                     <a className="btn btn-submit-light-small" style={{ width: 80 }} onClick={handleAddCost}>
-                                        +
+                                        <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
                                     </a>
                                     {costs.length > 0 && (
                                         <a className="btn btn-submit-dark-small ms-2" style={{ width: 80 }} onClick={() => handleRemoveCost(costs.length - 1)}>
-                                            -
+                                            <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
                                         </a>
                                     )}
                                 </div>
