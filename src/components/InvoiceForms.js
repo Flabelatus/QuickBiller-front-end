@@ -386,7 +386,7 @@ const InvoiceForms = () => {
                 total_exclusive: subTotal,
                 costs: totalCosts,
                 client_name: company.company_name,
-                vat_percent: vatPercentage,
+                vat_percent: Number(vatPercentage),
             };
 
             // send Api call
@@ -423,14 +423,13 @@ const InvoiceForms = () => {
             CreatePDFDoc(docs, "Quote", senderDoc, logo, "", generateShortUniqueId(10), jwtToken);
         } else {
             senderDoc = sender.data;
-
             let quotePayload = {
                 user_id: jwt_decode.jwtDecode(jwtToken).sub,
                 total_inclusive: totalInclVAT,
                 total_exclusive: subTotal,
                 costs: totalCosts,
                 client_name: company.company_name,
-                vat_percent: vatPercentage
+                vat_percent: Number(vatPercentage)
             };
 
             // send Api call
@@ -442,7 +441,6 @@ const InvoiceForms = () => {
             fetch(`${process.env.REACT_APP_BACKEND}/logged_in/create_quote`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(logo);
                     CreatePDFDoc(docs, "Quote", senderDoc, logo, data.data.filename, data.data.quote_no, jwtToken);
                     if (!inserted) {
                         inserNewCompany(docs.company.company_name);
