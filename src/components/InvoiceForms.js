@@ -472,7 +472,7 @@ const InvoiceForms = () => {
         <div className="justify-content-center">
 
             {jwtToken !== "" && <hr className="mt-5 mb-5" style={{ color: "#000", width: "60vw", margin: "0 auto", border: 'solid 1px #ccc' }} />}
-            <form onSubmit={handleSubmit} className="mb-5">
+            <form onSubmit={handleSubmit} className="">
 
                 {/* sender data */}
                 {jwtToken === "" &&
@@ -579,7 +579,7 @@ const InvoiceForms = () => {
                 {/* company data selection */}
                 {jwtToken !== "" &&
                     <div>
-                        <h1 className="mb-5" style={{ color: '#061868', fontWeight: 700 }}>Document Data</h1>
+                        <h1 className="mb-5" style={{ color: '#061868', fontWeight: 600 }}>Document Form</h1>
                         <h3 className="mb-3" style={{ color: '#e56259' }}>Client List</h3>
                         <div >
                             <select
@@ -757,11 +757,11 @@ const InvoiceForms = () => {
                                 <div className="row">
                                     <div className="col-md-12 col-sm-12 mt-4">
                                         {jobs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Job field</p>}
-                                        <a className="btn btn-submit-light-small" style={{ width: 80 }} onClick={handleAddJob}>
+                                        <a className="btn btn-submit-light-xsmall px-4" style={{ width: 'fit-content', height: 'fit-content' }} onClick={handleAddJob}>
                                             <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
                                         </a>
                                         {jobs.length > 0 && (
-                                            <a className="btn btn-submit-dark-small ms-2" style={{ width: 80 }} onClick={() => handleRemoveJob(jobs.length - 1)}>
+                                            <a className="btn btn-submit-dark-xsmall ms-2 px-4" style={{ width: 'fit-content', height: 'fit-content' }} onClick={() => handleRemoveJob(jobs.length - 1)}>
                                                 <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
                                             </a>
                                         )}
@@ -847,11 +847,11 @@ const InvoiceForms = () => {
                                 <div className="col-md-12 col-sm-12">
                                     {costs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Cost field</p>}
 
-                                    <a className="btn btn-submit-light-small" style={{ width: 80 }} onClick={handleAddCost}>
+                                    <a className="btn btn-submit-light-xsmall px-4" style={{ width: 'fit-content' }} onClick={handleAddCost}>
                                         <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
                                     </a>
                                     {costs.length > 0 && (
-                                        <a className="btn btn-submit-dark-small ms-2" style={{ width: 80 }} onClick={() => handleRemoveCost(costs.length - 1)}>
+                                        <a className="btn btn-submit-dark-xsmall ms-2 px-4" style={{ width: 'fit-content' }} onClick={() => handleRemoveCost(costs.length - 1)}>
                                             <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
                                         </a>
                                     )}

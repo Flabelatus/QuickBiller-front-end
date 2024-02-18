@@ -3,7 +3,7 @@ import GithubImage from "./../images/github.png"
 const Footer = () => {
     return (
         <>
-            <div className="row mt-5" id="footer">
+            <div className="row mt-3" id="footer">
                 <footer className="text-center container-fluid py-5 mt-5" style={{ backgroundColor: "#282c34  " }}>
                     <hr />
                     <div className="row">
