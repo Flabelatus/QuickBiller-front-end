@@ -3,115 +3,130 @@ import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 import Input from "./Inputs";
 
-export const UpdatePasswordAuth = () => {
-    const [userId, setUserId] = useState("");
-    const [password, setPassword] = useState("");
-    const [newPassword, setRepeatPassword] = useState("");
-    const [update, setUpdate] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
-    const { jwtToken, setAlertMessage, setAlertClassName } = useOutletContext();
-    const navigate = useNavigate();
+// export const UpdatePasswordAuth = () => {
+//     const [userId, setUserId] = useState("");
+//     const [password, setPassword] = useState("");
+//     const [newPassword, setRepeatPassword] = useState("");
+//     const [update, setUpdate] = useState(false);
+//     const [isSuccess, setIsSuccess] = useState(false);
+//     const [isExpired, setIsExpired] = useState(false);
+//     const { jwtToken, setAlertMessage, setAlertClassName } = useOutletContext();
+//     const navigate = useNavigate();
 
-    const toggleUpdate = () => {
-        if (!update) {
-            setUpdate(true);
-        } else {
-            setUpdate(false);
-        };
-    };
+//     const toggleUpdate = () => {
+//         if (!update) {
+//             setUpdate(true);
+//         } else {
+//             setUpdate(false);
+//         };
+//     };
 
-    const showAlert = (message, className, timeout = 5000) => {
-        setAlertMessage(message);
-        setAlertClassName(className);
+//     const showAlert = (message, className, timeout = 5000) => {
+//         setAlertMessage(message);
+//         setAlertClassName(className);
 
-        setTimeout(() => {
-            setAlertMessage("");
-            setAlertClassName("");
-        }, timeout);
-    };
+//         setTimeout(() => {
+//             setAlertMessage("");
+//             setAlertClassName("");
+//         }, timeout);
+//     };
 
-    useEffect(() => {
+//     useEffect(() => {
 
-        const queryParams = new URLSearchParams(window.location.search);
-        const paramValue = queryParams.get('uid');
-        setUserId(paramValue);
+//         const queryParams = new URLSearchParams(window.location.search);
+//         const paramValue = queryParams.get('uid');
+//         setUserId(paramValue);
 
-    }, [update, isSuccess]);
+//         // fetch passwordToken via user id
+//         fetch(
+//             `${process.env.REACT_APP_BACKEND}/user/password_reset/${paramValue}`,
+//             {
+//                 method: "GET",
+//                 headers: {
+//                     "Content-Type": "application/json"
+//                 },
+//             }
+//         ).then((response) => response.json()).then((data) => {
+//             console.log(data.data);
+//         }).catch(error => console.error(error.message))
+//         // if the token is expired the page renders the expired message
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        var payload = {
-            user_id: userId,
-            new_password: password
-        }
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + jwtToken
-            },
-            body: JSON.stringify(payload)
-        };
+//     }, [update, isSuccess]);
 
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/user/password_reset/${userId}`, requestOptions)
-            .then((response) => response.json()).then((data) => {
-                if (data.error) {
-                    showAlert(data.message, "alert-danger", 3000);
-                } else {
-                    showAlert(data.message, "alert-success", 3000);
-                    setIsSuccess(true);
-                };
-                setPassword("");
-                setRepeatPassword("");
-                document.querySelectorAll('input').forEach(input => {
-                    input.value = '';
-                });
-                toggleUpdate();
-            }).catch((error) => {
-                showAlert(error.message, "alert-danger", 3000);
-                console.error(error.message);
-            })
-    }
-    return (
-        <div className=" mt-5">
-            <div className="row justify-content-center">
-                <div className="col-md-4 mx-auto container">
-                    <h1 className="text-center mt-5 mb-5">{!isSuccess ? "Password Update" : "Password Updated"}</h1>
-                    {!isSuccess ?
-                        <form onSubmit={handleSubmit} className="mt-4 mb-4 text-center" style={{ marginLeft: '' }}>
-                            <Input
-                                title="New Password"
-                                id="password"
-                                type="password"
-                                name="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+//     const handleSubmit = (e) => {
+//         e.preventDefault();
+//         var payload = {
+//             user_id: userId,
+//             new_password: password
+//         }
+//         const requestOptions = {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "Authorization": "Bearer " + jwtToken
+//             },
+//             body: JSON.stringify(payload)
+//         };
 
-                            <Input
-                                title="Repeat New Password"
-                                id="repeat-password"
-                                type="password"
-                                name="repeat-password"
-                                value={newPassword}
-                                onChange={(e) => setRepeatPassword(e.target.value)}
-                            />
-                            <button type="submit" className="btn btn-submit-dark-small mt-4" style={{ width: 250 }}>Update Password</button>
-                        </form>
+//         fetch(`${process.env.REACT_APP_BACKEND}/logged_in/user/password_reset/${userId}`, requestOptions)
+//             .then((response) => response.json()).then((data) => {
+//                 if (data.error) {
+//                     showAlert(data.message, "alert-danger", 3000);
+//                 } else {
+//                     showAlert(data.message, "alert-success", 3000);
+//                     setIsSuccess(true);
+//                 };
+//                 setPassword("");
+//                 setRepeatPassword("");
+//                 document.querySelectorAll('input').forEach(input => {
+//                     input.value = '';
+//                 });
+//                 toggleUpdate();
+//             }).catch((error) => {
+//                 showAlert(error.message, "alert-danger", 3000);
+//                 console.error(error.message);
+//             })
+//     }
+//     return (
+//         <div className=" mt-5">
+//             <div className="row justify-content-center">
+//                 <div className="col-md-4 mx-auto container">
+//                     <h1 className="text-center mt-5 mb-5">{!isSuccess ? "Password Update" : "Password Updated"}</h1>
+//                     {!isSuccess ?
+//                         <form onSubmit={handleSubmit} className="mt-4 mb-4 text-center" style={{ marginLeft: '' }}>
+//                             <Input
+//                                 title="New Password"
+//                                 id="password"
+//                                 type="password"
+//                                 name="password"
+//                                 value={password}
+//                                 onChange={(e) => setPassword(e.target.value)}
+//                             />
 
-                        :
-                        <div className="row justify-content-center">
-                            <p className="text-center px-5">Your password is successfully updated</p>
-                            <Link onClick={() => navigate("-1")} className="btn btn-submit-dark-small mt-4 text-center ms-4 mt-4 mb-4 me-4" style={{ width: 250 }}>Go back</Link>
-                        </div>
+//                             <Input
+//                                 title="Repeat New Password"
+//                                 id="repeat-password"
+//                                 type="password"
+//                                 name="repeat-password"
+//                                 value={newPassword}
+//                                 onChange={(e) => setRepeatPassword(e.target.value)}
+//                             />
+//                             <button type="submit" className="btn btn-submit-dark-small mt-4" style={{ width: 250 }}>Update Password</button>
+//                         </form>
 
-                    }
+//                         :
+//                         <div className="row justify-content-center">
+//                             <p className="text-center px-5">Your password is successfully updated</p>
+//                             <Link onClick={() => navigate("-1")} className="btn btn-submit-dark-small mt-4 text-center ms-4 mt-4 mb-4 me-4" style={{ width: 250 }}>Go back</Link>
+//                         </div>
 
-                </div>
-            </div>
-        </div>
-    );
-};
+//                     }
+
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
 
 export const PasswordResetRequest = () => {
     const [isSent, setIsSent] = useState(false);
@@ -171,7 +186,7 @@ export const ForgotPassword = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [isSent, setIsSent] = useState(false);
-    
+
     useEffect(() => {
 
     }, [isSent]);
@@ -192,14 +207,14 @@ export const ForgotPassword = () => {
             body: JSON.stringify(payload)
         }
         ).then((response) => {
-            
+
             if (response.ok) {
                 setIsSent(true);
             } else {
                 alert(response.message);
             }
         }).catch((error) => console.error(error.message));
-        
+
     };
 
     return (
@@ -230,6 +245,8 @@ export const UpdatePasswordNoAuth = () => {
     const [newPassword, setRepeatPassword] = useState("");
     const [update, setUpdate] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [isExpired, setIsExpired] = useState(false);
+    const [isUsed, setIsUsed] = useState(false);
     const { setAlertMessage, setAlertClassName } = useOutletContext();
     const navigate = useNavigate();
 
@@ -251,11 +268,42 @@ export const UpdatePasswordNoAuth = () => {
         }, timeout);
     };
 
+    function isTokenExpired(expired_at, created_at) {
+        // Convert expired_at minutes to milliseconds
+        var expirationTime = expired_at * 60 * 1000 + created_at; // Convert minutes to milliseconds
+
+        // Get the current time in milliseconds
+        var currentTime = new Date().getTime();
+
+        // Check if the current time is greater than the expiration time
+        return currentTime > expirationTime;
+    }
+
     useEffect(() => {
 
         const queryParams = new URLSearchParams(window.location.search);
         const paramValue = queryParams.get('id');
         setUserId(paramValue);
+
+        fetch(
+            `${process.env.REACT_APP_BACKEND}/user/password_reset/token/${paramValue}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            }
+        ).then((response) => response.json()).then((data) => {
+            if (data.data.token_used) {
+                console.log(data.data);
+                setIsUsed(true);
+                console.log(data.data.token_used, "Something")
+            };
+            if (isTokenExpired(data.data.expired_at, data.data.created_at)) {
+                setIsExpired(true);
+                console.log(isTokenExpired(data.data.expired_at));
+            };
+        }).catch(error => console.error(error.message))
 
     }, [update, isSuccess]);
 
@@ -280,6 +328,17 @@ export const UpdatePasswordNoAuth = () => {
                 } else {
                     showAlert(data.message, "alert-success", 3000);
                     setIsSuccess(true);
+                    // set the token to used
+                    fetch(
+                        `${process.env.REACT_APP_BACKEND}/user/password_reset/token/use/${userId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }
+                    ).then((resp) => resp.json()).then((d) => {
+                        console.log(d.data)
+                    }).catch(err => console.error(err.message))
                 };
                 setPassword("");
                 setRepeatPassword("");
@@ -295,39 +354,64 @@ export const UpdatePasswordNoAuth = () => {
     return (
         <div className=" mt-5">
             <div className="row justify-content-center">
-                <div className="col-md-4 mx-auto container">
-                    <h1 className="text-center mt-5 mb-5">{!isSuccess ? "Password Update" : "Password Updated"}</h1>
-                    {!isSuccess ?
-                        <form onSubmit={handleSubmit} className="mt-4 mb-4 text-center" style={{ marginLeft: '' }}>
-                            <Input
-                                title="New Password"
-                                id="password"
-                                type="password"
-                                name="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                {
+                    !isUsed && !isExpired &&
+                    <div className="col-md-4 mx-auto container">
+                        <h1 className="text-center mt-5 mb-5">{!isSuccess ? "Password Update" : "Password Updated"}</h1>
+                        {!isSuccess &&
+                            <form onSubmit={handleSubmit} className="mt-4 mb-4 text-center" style={{ marginLeft: '' }}>
+                                <Input
+                                    title="New Password"
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
 
-                            <Input
-                                title="Repeat New Password"
-                                id="repeat-password"
-                                type="password"
-                                name="repeat-password"
-                                value={newPassword}
-                                onChange={(e) => setRepeatPassword(e.target.value)}
-                            />
-                            <button type="submit" className="btn btn-submit-dark-small mt-4" style={{ width: 250 }}>Update Password</button>
-                        </form>
+                                <Input
+                                    title="Repeat New Password"
+                                    id="repeat-password"
+                                    type="password"
+                                    name="repeat-password"
+                                    value={newPassword}
+                                    onChange={(e) => setRepeatPassword(e.target.value)}
+                                />
+                                <button type="submit" className="btn btn-submit-dark-small mt-4" style={{ width: 250 }}>Update Password</button>
+                            </form>
+                        }
 
-                        :
+                    </div>
+                }
+                {
+                    isSuccess &&
+                    <div className="col-md-4 mx-auto container" style={{ height: 500 }}>
+                        <h1 className="text-center mt-5 mb-5">{!isSuccess ? "Password Update" : "Password Updated"}</h1>
                         <div className="row justify-content-center">
                             <p className="text-center px-5">Your password is successfully updated</p>
                             <Link onClick={() => navigate("-1")} className="btn btn-submit-dark-small mt-4 text-center ms-4 mt-4 mb-4 me-4" style={{ width: 250 }}>Go back</Link>
                         </div>
+                    </div>
+                }
+                {
+                    isUsed && !isSuccess &&
+                    <div className="col-md-4 mx-auto container" style={{ height: 500 }}>
+                        <h1 className="text-center mt-5 mb-5">{!isSuccess ? "Password Update" : "Password Updated"}</h1>
+                        <div className="row justify-content-center">
+                            <h5 className="text-center px-5">This password reset token is already used</h5>
+                        </div>
+                    </div>
+                }
+                {
+                    isExpired &&
+                    <div className="col-md-4 mx-auto container" style={{ height: 500 }}>
+                        <h1 className="text-center mt-5 mb-5">{!isSuccess ? "Password Update" : "Password Updated"}</h1>
+                        <div className="row justify-content-center">
+                            <h5 className="text-center px-5">This password reset token is expired</h5>
+                        </div>
+                    </div>
+                }
 
-                    }
-
-                </div>
             </div>
         </div>
     );
