@@ -387,6 +387,7 @@ const InvoiceForms = () => {
                 costs: totalCosts,
                 client_name: company.company_name,
                 vat_percent: Number(vatPercentage),
+                discount: Number(discount),
             };
 
             // send Api call
@@ -429,7 +430,8 @@ const InvoiceForms = () => {
                 total_exclusive: subTotal,
                 costs: totalCosts,
                 client_name: company.company_name,
-                vat_percent: Number(vatPercentage)
+                vat_percent: Number(vatPercentage),
+                discount: Number(discount),
             };
 
             // send Api call

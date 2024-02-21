@@ -34,7 +34,7 @@ export const AppBar = () => {
     };
     return (
         <>
-            <div className="App-header row justify-content-center">
+            <div className="App-header row justify-content-center" style={{minWidth: 400}}>
                 <header className='d-flex justify-content-center align-items-center pb-1 mb-1 mt-4'>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <p><Link to="/" className='mt-2 btn btn-light-' style={{ color: '#888', fontSize: 26, fontWeight: 350, }}><i className="fa-solid fa-house"></i><FontAwesomeIcon icon={faHome} /></Link></p>

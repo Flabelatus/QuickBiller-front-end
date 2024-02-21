@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useState } from 'react'
 import { useOutletContext } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faS, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 export const Search = ({ setInvoices, toggleStatus }) => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -33,10 +33,10 @@ export const Search = ({ setInvoices, toggleStatus }) => {
     return (
         <>
             <header className='search-bar'>
-                <form className='' onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', width: '45%' }}>
+                <form className='' onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', width: '45%', minWidth: 250, margin: 10 }}>
                     <input
                         className='form-control'
-                        style={{ border: '0px solid #ccc', borderRadius: 8, backgroundColor: "#F5F5F5", color: '#666', height: 40 }}
+                        style={{ border: '0px solid #ccc', borderRadius: 8, backgroundColor: "white", color: '#666', height: 40 }}
                         id='search'
                         type='text'
                         placeholder='Search for client names or invoice number'
