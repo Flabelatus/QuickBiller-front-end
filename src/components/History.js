@@ -12,14 +12,6 @@ const HistoryDocs = () => {
     const [status, setStatus] = useState(false);
     const navigate = useNavigate();
 
-    function sumArray(arr) {
-        let sum = 0;
-        for (let i = 0; i < arr.length; i++) {
-            sum += arr[i];
-        }
-        return sum;
-    };
-
     const toggleStatus = () => {
         if (!status) {
             setStatus(true);
@@ -111,10 +103,10 @@ const HistoryDocs = () => {
         }
     };
 
-    function getCurrentPeriod() {
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        let currentMonth = currentDate.getMonth() + 1; // Adding 1 because getMonth() returns zero-based index
+    function getCurrentPeriod(date) {
+
+        const currentYear = date.getFullYear();
+        let currentMonth = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based index
         const currentQuarter = Math.ceil(currentMonth / 3);
 
         // Pad the month with a leading zero if it's a single digit
@@ -129,20 +121,27 @@ const HistoryDocs = () => {
         };
     }
 
-    const period = getCurrentPeriod();
+    const currentDate = new Date();
+    const period = getCurrentPeriod(currentDate);
 
     const total = invoices.reduce((total, invoice) => {
-        return total + invoice.total_inclusive;
+        const invocieDate = getCurrentPeriod(new Date(invoice.CreatedAt));
+
+        if (invoice.sent && period.year === invocieDate.year && period.quarter === invocieDate.quarter) {
+            return total + invoice.total_inclusive;
+        }
     }, 0);
 
     const totalExcl = invoices.reduce((total, invoice) => {
-        return total + invoice.total_exclusive;
+        const invocieDate = getCurrentPeriod(new Date(invoice.CreatedAt));
+
+        if (invoice.sent && period.year === invocieDate.year && period.quarter === invocieDate.quarter) {
+            return total + invoice.total_exclusive;
+        }
     }, 0);
 
-    let sumVat = total - totalExcl;
-
     return (
-        <div className="container mt-5 px-5 mb-5" style={{backgroundColor: "#e2605a40"}}>
+        <div className="container mt-5 px-5 mb-5" style={{ backgroundColor: "#e2605a40" }}>
             <div className="row justify-content-center">
                 <div className="col">
                     <h1 className="mb-4 text-center mt-3">Overview</h1>
