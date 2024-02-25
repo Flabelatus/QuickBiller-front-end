@@ -21,7 +21,7 @@ export const AppBar = () => {
             credentials: 'include'
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/logout`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/logout`, requestOptions)
             .then((response) => response.json())
             .catch(error => {
                 console.error(error.message);

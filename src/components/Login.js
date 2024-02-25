@@ -38,13 +38,13 @@ const Login = () => {
             body: JSON.stringify(payload),
         }
 
-        fetch(`${process.env.REACT_APP_BACKEND}/login`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/login`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 if (data.access_token) {
                     
                     let userID = jwt_decode.jwtDecode(data.access_token).sub;
-                    fetch(`${process.env.REACT_APP_BACKEND}/confirmation/user/${userID}`, {
+                    fetch(`${process.env.REACT_APP_BACKEND}/api/confirmation/user/${userID}`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",

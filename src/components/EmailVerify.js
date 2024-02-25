@@ -17,7 +17,7 @@ export const UserVerifyPage = () => {
             headers: { "Content-Type": "application/json" }
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/confirmation/user/${paramValue}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/confirmation/user/${paramValue}`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 if (data.data.confirmed) {

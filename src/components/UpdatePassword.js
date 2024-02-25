@@ -15,7 +15,7 @@ export const PasswordResetRequest = () => {
             navigate("/login");
             return;
         };
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, {
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export const PasswordResetRequest = () => {
             },
             body: JSON.stringify({ user_id: user.ID })
         }
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/user/send_password_email/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/user/send_password_email/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
             .then((response) => response.json()).then((data) => console.log(data)).catch((error) => console.error(error.message))
         setIsSent(true);
     };
@@ -196,7 +196,7 @@ export const UpdatePasswordNoAuth = () => {
             body: JSON.stringify(payload)
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/user/password_reset/${userId}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/user/password_reset/${userId}`, requestOptions)
             .then((response) => response.json()).then((data) => {
                 if (data.error) {
                     showAlert(data.message, "alert-danger", 3000);

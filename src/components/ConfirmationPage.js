@@ -25,7 +25,7 @@ export const ConfirmationPage = () => {
             }
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/confirmation/${userId}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/confirmation/${userId}`, requestOptions)
             .then((response) => response.json())
             .then((resp) => {
                 if (!resp.error) {

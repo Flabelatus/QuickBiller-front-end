@@ -34,7 +34,7 @@ const HistoryDocs = () => {
             }
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/invoices/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/invoices/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 setInvoices(data.data);
@@ -49,7 +49,7 @@ const HistoryDocs = () => {
             method: "GET",
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jwtToken }
         };
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/invoice/confirm/${invoiceId}`, requestOptions).then((resposne) => resposne.json())
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/invoice/confirm/${invoiceId}`, requestOptions).then((resposne) => resposne.json())
             .then(() => { toggleStatus() }).catch(error => console.error(error.message));
     }
 
@@ -62,7 +62,7 @@ const HistoryDocs = () => {
             }
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/delete/invoice?f=${encodeURIComponent(invoiceFileName)}&id=${invoiceId}`, requestOptions).then((response) => response.json())
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/delete/invoice?f=${encodeURIComponent(invoiceFileName)}&id=${invoiceId}`, requestOptions).then((response) => response.json())
             .then(() => toggleStatus()).catch(error => console.error(error.message));
     };
 

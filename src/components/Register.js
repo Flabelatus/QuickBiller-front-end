@@ -39,7 +39,7 @@ const Register = () => {
                 },
                 body: JSON.stringify(payload)
             }
-            fetch(`${process.env.REACT_APP_BACKEND}/register`, requestOptions)
+            fetch(`${process.env.REACT_APP_BACKEND}/api/register`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
                     if (!data.error) {

@@ -264,7 +264,7 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr, auth
     formData.append('pdfFile', pdfBlob, saveFileName);
 
     try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND}/logged_in/invoice/upload?f=${encodeURIComponent(saveFileName)}`, {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/invoice/upload?f=${encodeURIComponent(saveFileName)}`, {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + authToken

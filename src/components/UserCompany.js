@@ -40,7 +40,7 @@ const UserCompany = () => {
             headers: { "Authorization": "Bearer " + jwtToken, "Content-Type": "application/json" },
         }
 
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, {
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/user/${jwt_decode.jwtDecode(jwtToken).sub}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -52,11 +52,11 @@ const UserCompany = () => {
         }).catch(error => console.error(error.message))
 
         if (!editmode) {
-            fetch(`${process.env.REACT_APP_BACKEND}/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+            fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/sender_data/user/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
                     setSender(data.data);
-                    fetch(`${process.env.REACT_APP_BACKEND}/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                    fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/logo/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
                         .then((resp) => resp.json())
                         .then((d) => {
                             setLogo(d.data);
@@ -141,7 +141,7 @@ const UserCompany = () => {
             body: JSON.stringify(payload)
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/sender_data`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/sender_data`, requestOptions)
             .then((response) => response.json())
             .then(data => console.log(data))
             .catch(error => console.error(error.message))
@@ -162,7 +162,7 @@ const UserCompany = () => {
             body: JSON.stringify(payload)
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/sender_data`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/sender_data`, requestOptions)
             .then((response) => response.json())
             .then(data => console.log(data))
             .catch(error => console.error(error.message))

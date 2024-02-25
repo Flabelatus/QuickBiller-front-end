@@ -17,7 +17,7 @@ export const Search = ({ setInvoices, toggleStatus }) => {
             }
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/logged_in/invoice/search?q=${encodeURIComponent(searchPhrase)}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/invoice/search?q=${encodeURIComponent(searchPhrase)}`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 setInvoices(data.data);
