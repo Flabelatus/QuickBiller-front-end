@@ -21,9 +21,9 @@ const Home = () => {
 
     return (
         <>
-            <div className="row justify-content-center" style={{ backgroundColor: "#fff" }}>
-                <h1 style={{ color: '#e56259', fontFamily: 'revert', fontSize: 70, fontWeight: 700, textAlign: 'center', fontFamily: 'Gill Sans' }}>QuickBiller</h1>
-                <h5 className="mb-5" style={{ textAlign: 'center', color: "black", fontFamily: 'Gill Sans' }}>Simplify Your Billing Process with an Intuitive and Easy to Use Invoicing Tool</h5>
+            <div className="row justify-content-center" style={{ backgroundColor: "#fff", width:'fit-content', minWidth: 375 }}>
+                <h1 style={{ color: '#e56259', fontFamily: 'revert', fontSize: 65, fontWeight: 700, textAlign: 'center', fontFamily: 'Gill Sans' }} className="px-5">QuickBiller</h1>
+                <h5 className="mb-5 px-4" style={{ textAlign: 'center', color: "black", fontFamily: 'Gill Sans' }}>Simplify Your Billing Process with an Intuitive and Easy to Use Invoicing Tool</h5>
                 <div className="row justify-content-center">
                     <img className="mt-4 mb-4" src={LandingPageImage} style={{ width: '40%' }}></img>
 
@@ -45,7 +45,7 @@ const Home = () => {
             </div>
             {jwtToken === "" &&
                 <div>
-                    <div className="App" style={{ backgroundColor: "#d2d6db" }}>
+                    <div className="App" style={{ backgroundColor: "#d2d6db", width: 'fit-content'}}>
                         <div className='mt-2 px-5 py-5 row justify-content-center'>
                             <h1 style={{ fontSize: 40, fontWeight: 600, fontFamily: "revert", color: "#061868", fontFamily: 'Gill Sans' }}>Streamline Invoicing</h1>
                             <h5 className=' mt-5 px-5 me-5 ms-5' style={{ color: "#061868", fontFamily: 'Gill Sans' }}>
@@ -55,7 +55,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div >
-            };
+            }
         </>
 
     );

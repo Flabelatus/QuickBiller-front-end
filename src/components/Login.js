@@ -69,7 +69,7 @@ const Login = () => {
     };
 
     return (
-        <div className=" mt-5">
+        <div className="mt-5 px-5">
             <div className="row justify-content-center">
                 <div className="col-md-4 mx-auto container">
                     <h1 className="text-center mt-5 mb-5">Sign in to QuickBiller</h1>

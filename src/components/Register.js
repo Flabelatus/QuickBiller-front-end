@@ -59,17 +59,17 @@ const Register = () => {
     }
 
     return (
-        <div className="container mt-5 px-5 mb-5">
+        <div className="container mt-5 mb-5 " style={{minWidth: 400}}>
             <div className="row justify-content-center">
                 <div className="col">
                     <img
-                        src={Invoice} style={{ width: 500, borderRadius: 16, marginTop: 50 }}>
+                        src={Invoice} style={{ width: 450, minWidth: 150, borderRadius: 16, marginTop: 50 }}>
                     </img>
                 </div>
                 <div className="col">
-                    <h1 className="text-start mt-4 ms-5">Register</h1>
+                    <h1 className="text-start mt-4 ms-4">Register</h1>
 
-                    <form onSubmit={handleSubmit} className="mt-3 mb-4 ms-5" >
+                    <form onSubmit={handleSubmit} className="mt-3 mb-4 ms-4" >
                         <Input
                             title="Username"
                             autoComplete="user-name"

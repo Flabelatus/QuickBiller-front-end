@@ -60,8 +60,8 @@ const UserCompany = () => {
                         .then((resp) => resp.json())
                         .then((d) => {
                             setLogo(d.data);
-                            setImageName(d.data.filename);
                             setIsLoading(false);
+                            setImageName(d.data.filename);
                         })
                         .catch((err) => console.log(err.message))
                 })
@@ -74,7 +74,7 @@ const UserCompany = () => {
 
     const fetchImage = async (filename) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND}/logged_in/image/${filename}`, {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/image/${filename}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -187,7 +187,7 @@ const UserCompany = () => {
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {editmode &&
-                    <div className="container-fluid vh-100 d-flex justify-content-center align-items-center mt-5">
+                    <div className="container-fluid vh-100- d-flex justify-content-center align-items-center mt-5">
                         <form className="form-container" onSubmit={handleSubmit}>
                             <div className="d-flex flex-column align-items-center">
                                 <h3 className="mb-5 text-center" style={{ color: '#061868' }}>
