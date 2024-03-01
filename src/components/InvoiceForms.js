@@ -263,13 +263,20 @@ const InvoiceForms = () => {
     };
 
     const serializeDocument = () => {
+        var vat_percentage;
+        if (!inCountry || !inEU) {
+            vat_percentage = 0;
+        } else {
+            vat_percentage = String(vatPercentage);
+        };
+
         const invoicePayload = {
             jobs: jobs,
             costs: costs,
             vat_free: isZeroVat,
             in_eu: inEU,
             in_country: inCountry,
-            vat_percent: String(vatPercentage),
+            vat_percent: vat_percentage,
             company: company,
             discount: discount,
             sender: sender,
@@ -359,6 +366,13 @@ const InvoiceForms = () => {
 
     const handleMakeInvoice = () => {
 
+        var vat_percentage;
+        if (!inCountry || !inEU) {
+            vat_percentage = 0;
+        } else {
+            vat_percentage = String(vatPercentage);
+        };
+
         const preppedData = prepareData();
 
         // Invoice number calculations
@@ -386,7 +400,7 @@ const InvoiceForms = () => {
                 total_exclusive: subTotal,
                 costs: totalCosts,
                 client_name: company.company_name,
-                vat_percent: Number(vatPercentage),
+                vat_percent: Number(vat_percentage),
                 discount: Number(discount),
             };
 
@@ -410,6 +424,14 @@ const InvoiceForms = () => {
     };
 
     const handleMakeQuote = () => {
+
+        var vat_percentage;
+        if (!inCountry || !inEU) {
+            vat_percentage = 0;
+        } else {
+            vat_percentage = String(vatPercentage);
+        };
+
         const preppedData = prepareData();
         // Invoice number calculations
         const totalCosts = preppedData.totalCosts;
@@ -430,7 +452,7 @@ const InvoiceForms = () => {
                 total_exclusive: subTotal,
                 costs: totalCosts,
                 client_name: company.company_name,
-                vat_percent: Number(vatPercentage),
+                vat_percent: Number(vat_percentage),
                 discount: Number(discount),
             };
 
@@ -471,16 +493,141 @@ const InvoiceForms = () => {
     }
 
     return (
-        <div className="justify-content-center">
+        <div className="App">
+            <div className="justify-content-center">
 
-            {jwtToken !== "" && <hr className="mt-5 mb-5" style={{ color: "#000", width: "60vw", margin: "0 auto", border: 'solid 1px #ccc' }} />}
-            <form onSubmit={handleSubmit} className="">
+                {jwtToken !== "" && <hr className="mt-5 mb-5" style={{ color: "#000", width: "60vw", margin: "0 auto", border: 'solid 1px #ccc' }} />}
+                <form onSubmit={handleSubmit} className="">
 
-                {/* sender data */}
-                {jwtToken === "" &&
-                    <div className="row mt- justify-content-center container-fluid py-5" style={{ backgroundColor: "#ffbbbb" }}>
+                    {/* sender data */}
+                    {jwtToken === "" &&
+                        <div className="row mt- justify-content-center container-fluid py-5" style={{ backgroundColor: "#ffbbbb" }}>
+                            <div className="row justify-content-center" style={{ width: 'fit-content' }}>
+                                <h3 className="mb-5" style={{ color: '#061868' }}>Your Company Information</h3>
+                                <div className="col-md-4">
+                                    <Input
+                                        title="Company Name"
+                                        id="company-name"
+                                        type="text"
+                                        className="me-4"
+                                        name="company-name"
+                                        onChange={(e) => handleSenderChange("company_name", e.target.value)}
+                                        value={sender.company_name}
+                                    />
+                                    <Input
+                                        title="Email Address"
+                                        id="company-email"
+                                        type="email"
+                                        className="me-4"
+                                        name="company-email"
+                                        onChange={(e) => handleSenderChange("email", e.target.value)}
+                                        value={sender.email}
+                                    />
+                                    <Input
+                                        title="Contact Name"
+                                        id="contact-name"
+                                        type="text"
+                                        className="me-4"
+                                        name="contact-name"
+                                        onChange={(e) => handleSenderChange("contact_name", e.target.value)}
+                                        value={sender.contact_name}
+                                    />
+                                    <Input
+                                        title="IBAN"
+                                        id="iban"
+                                        type="text"
+                                        className="me-4"
+                                        name="iban"
+                                        onChange={(e) => handleSenderChange("iban", e.target.value)}
+                                        value={sender.iban}
+                                    />
+                                    <Input
+                                        title="CoC No"
+                                        id="coc"
+                                        type="text"
+                                        className="me-4"
+                                        name="coc"
+                                        onChange={(e) => handleSenderChange("coc_no", e.target.value)}
+                                        value={sender.coc_no}
+                                    />
+                                </div>
+                                <div className="col-md-3 justify-content-end">
+                                    <Input
+                                        title="Street and House No."
+                                        id="street"
+                                        type="text"
+                                        className="me-4"
+                                        name="street"
+                                        onChange={(e) => handleSenderChange("street", e.target.value)}
+                                        value={sender.street}
+                                    />
+                                    <Input
+                                        title="Postcode"
+                                        id="postcode"
+                                        type="text"
+                                        className="me-4"
+                                        name="postcode"
+                                        onChange={(e) => handleSenderChange("postcode", e.target.value)}
+                                        value={sender.postcode}
+                                    />
+                                    <Input
+                                        title="City"
+                                        id="city"
+                                        type="text"
+                                        className="me-4"
+                                        name="city"
+                                        onChange={(e) => handleSenderChange("city", e.target.value)}
+                                        value={sender.city}
+                                    />
+                                    <Input
+                                        title="Country"
+                                        id="country"
+                                        type="text"
+                                        className="me-4"
+                                        name="country"
+                                        onChange={(e) => handleSenderChange("country", e.target.value)}
+                                        value={sender.country}
+                                    />
+                                    <Input
+                                        title="VAT No"
+                                        id="vat"
+                                        type="text"
+                                        className="me-4"
+                                        name="vat"
+                                        onChange={(e) => handleSenderChange("vat_no", e.target.value)}
+                                        value={sender.vat_no}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    {/* company data selection */}
+                    {jwtToken !== "" &&
+                        <div>
+                            <h1 className="mb-5" style={{ color: '#061868', fontWeight: 600 }}>Document Form</h1>
+                            <h3 className="mb-3" style={{ color: '#e56259' }}>Client List</h3>
+                            <div >
+                                <select
+                                    className="btn btn-light mb-2"
+                                    style={{ width: 'fit-content', fontSize: 20, border: "1px solid #ccc", height: 50 }}
+                                    onChange={handleSelectChange}
+                                    value={selectedOption}
+                                >
+                                    <option value="">Select Your Client</option>
+                                    {companyList.map((opt) => (
+                                        <option key={opt.ID} value={opt.ID}>{opt.company_name}</option>
+                                    ))}
+                                </select>
+
+                            </div>
+                            <a className="btn btn-submit-dark-small mt-3" style={{ fontSize: 20, width: 150 }} onClick={populateData}>Select</a>
+                        </div>
+                    }
+
+                    {/* company info */}
+                    <div className="row mt-5 justify-content-center container-fluid py-4">
                         <div className="row justify-content-center" style={{ width: 'fit-content' }}>
-                            <h3 className="mb-5" style={{ color: '#061868' }}>Your Company Information</h3>
+                            <h3 className="mb-5" style={{ color: '#e56259' }}>Recipient Company Information</h3>
                             <div className="col-md-4">
                                 <Input
                                     title="Company Name"
@@ -488,8 +635,8 @@ const InvoiceForms = () => {
                                     type="text"
                                     className="me-4"
                                     name="company-name"
-                                    onChange={(e) => handleSenderChange("company_name", e.target.value)}
-                                    value={sender.company_name}
+                                    onChange={(e) => handleCompanyChange("company_name", e.target.value)}
+                                    value={company.company_name}
                                 />
                                 <Input
                                     title="Email Address"
@@ -497,8 +644,8 @@ const InvoiceForms = () => {
                                     type="email"
                                     className="me-4"
                                     name="company-email"
-                                    onChange={(e) => handleSenderChange("email", e.target.value)}
-                                    value={sender.email}
+                                    onChange={(e) => handleCompanyChange("email", e.target.value)}
+                                    value={company.email}
                                 />
                                 <Input
                                     title="Contact Name"
@@ -506,26 +653,17 @@ const InvoiceForms = () => {
                                     type="text"
                                     className="me-4"
                                     name="contact-name"
-                                    onChange={(e) => handleSenderChange("contact_name", e.target.value)}
-                                    value={sender.contact_name}
+                                    onChange={(e) => handleCompanyChange("contact_name", e.target.value)}
+                                    value={company.contact_name}
                                 />
                                 <Input
-                                    title="IBAN"
-                                    id="iban"
+                                    title="Project Specific Info"
+                                    id="project"
                                     type="text"
                                     className="me-4"
-                                    name="iban"
-                                    onChange={(e) => handleSenderChange("iban", e.target.value)}
-                                    value={sender.iban}
-                                />
-                                <Input
-                                    title="CoC No"
-                                    id="coc"
-                                    type="text"
-                                    className="me-4"
-                                    name="coc"
-                                    onChange={(e) => handleSenderChange("coc_no", e.target.value)}
-                                    value={sender.coc_no}
+                                    name="project"
+                                    onChange={(e) => handleCompanyChange("project", e.target.value)}
+                                    value={company.project}
                                 />
                             </div>
                             <div className="col-md-3 justify-content-end">
@@ -535,8 +673,8 @@ const InvoiceForms = () => {
                                     type="text"
                                     className="me-4"
                                     name="street"
-                                    onChange={(e) => handleSenderChange("street", e.target.value)}
-                                    value={sender.street}
+                                    onChange={(e) => handleCompanyChange("street", e.target.value)}
+                                    value={company.street}
                                 />
                                 <Input
                                     title="Postcode"
@@ -544,8 +682,8 @@ const InvoiceForms = () => {
                                     type="text"
                                     className="me-4"
                                     name="postcode"
-                                    onChange={(e) => handleSenderChange("postcode", e.target.value)}
-                                    value={sender.postcode}
+                                    onChange={(e) => handleCompanyChange("postcode", e.target.value)}
+                                    value={company.postcode}
                                 />
                                 <Input
                                     title="City"
@@ -553,8 +691,8 @@ const InvoiceForms = () => {
                                     type="text"
                                     className="me-4"
                                     name="city"
-                                    onChange={(e) => handleSenderChange("city", e.target.value)}
-                                    value={sender.city}
+                                    onChange={(e) => handleCompanyChange("city", e.target.value)}
+                                    value={company.city}
                                 />
                                 <Input
                                     title="Country"
@@ -562,208 +700,176 @@ const InvoiceForms = () => {
                                     type="text"
                                     className="me-4"
                                     name="country"
-                                    onChange={(e) => handleSenderChange("country", e.target.value)}
-                                    value={sender.country}
-                                />
-                                <Input
-                                    title="VAT No"
-                                    id="vat"
-                                    type="text"
-                                    className="me-4"
-                                    name="vat"
-                                    onChange={(e) => handleSenderChange("vat_no", e.target.value)}
-                                    value={sender.vat_no}
+                                    onChange={(e) => handleCompanyChange("country", e.target.value)}
+                                    value={company.country}
                                 />
                             </div>
                         </div>
                     </div>
-                }
-                {/* company data selection */}
-                {jwtToken !== "" &&
-                    <div>
-                        <h1 className="mb-5" style={{ color: '#061868', fontWeight: 600 }}>Document Form</h1>
-                        <h3 className="mb-3" style={{ color: '#e56259' }}>Client List</h3>
-                        <div >
-                            <select
-                                className="btn btn-light mb-2"
-                                style={{ width: 'fit-content', fontSize: 20, border: "1px solid #ccc", height: 50 }}
-                                onChange={handleSelectChange}
-                                value={selectedOption}
-                            >
-                                <option value="">Select Your Client</option>
-                                {companyList.map((opt) => (
-                                    <option key={opt.ID} value={opt.ID}>{opt.company_name}</option>
-                                ))}
-                            </select>
 
-                        </div>
-                        <a className="btn btn-submit-dark-small mt-3" style={{ fontSize: 20, width: 150 }} onClick={populateData}>Select</a>
-                    </div>
-                }
-
-                {/* company info */}
-                <div className="row mt-5 justify-content-center container-fluid py-4">
-                    <div className="row justify-content-center" style={{ width: 'fit-content' }}>
-                        <h3 className="mb-5" style={{ color: '#e56259' }}>Recipient Company Information</h3>
-                        <div className="col-md-4">
-                            <Input
-                                title="Company Name"
-                                id="company-name"
-                                type="text"
-                                className="me-4"
-                                name="company-name"
-                                onChange={(e) => handleCompanyChange("company_name", e.target.value)}
-                                value={company.company_name}
-                            />
-                            <Input
-                                title="Email Address"
-                                id="company-email"
-                                type="email"
-                                className="me-4"
-                                name="company-email"
-                                onChange={(e) => handleCompanyChange("email", e.target.value)}
-                                value={company.email}
-                            />
-                            <Input
-                                title="Contact Name"
-                                id="contact-name"
-                                type="text"
-                                className="me-4"
-                                name="contact-name"
-                                onChange={(e) => handleCompanyChange("contact_name", e.target.value)}
-                                value={company.contact_name}
-                            />
-                            <Input
-                                title="Project Specific Info"
-                                id="project"
-                                type="text"
-                                className="me-4"
-                                name="project"
-                                onChange={(e) => handleCompanyChange("project", e.target.value)}
-                                value={company.project}
-                            />
-                        </div>
-                        <div className="col-md-3 justify-content-end">
-                            <Input
-                                title="Street and House No."
-                                id="street"
-                                type="text"
-                                className="me-4"
-                                name="street"
-                                onChange={(e) => handleCompanyChange("street", e.target.value)}
-                                value={company.street}
-                            />
-                            <Input
-                                title="Postcode"
-                                id="postcode"
-                                type="text"
-                                className="me-4"
-                                name="postcode"
-                                onChange={(e) => handleCompanyChange("postcode", e.target.value)}
-                                value={company.postcode}
-                            />
-                            <Input
-                                title="City"
-                                id="city"
-                                type="text"
-                                className="me-4"
-                                name="city"
-                                onChange={(e) => handleCompanyChange("city", e.target.value)}
-                                value={company.city}
-                            />
-                            <Input
-                                title="Country"
-                                id="country"
-                                type="text"
-                                className="me-4"
-                                name="country"
-                                onChange={(e) => handleCompanyChange("country", e.target.value)}
-                                value={company.country}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mt-2 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #ddd', borderRadius: 16 }}>
-                    {/* jobs */}
-                    <div className="container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #fff', borderRadius: 16 }}>
-                        <div className="row justify-content-center">
-                            <div className="mb-5 radio-container mt-4">
-                                <label className="me-5 radio-label" style={{ fontSize: 20 }}>
-                                    <input
-                                        type="radio"
-                                        className="me-2 form-check-input"
-                                        value="Product"
-                                        checked={jobType === 'Product'}
-                                        onChange={handleOptionChange}
-                                    />
-                                    <span className="radio-text">Product</span>
-                                </label>
-                                <label className="radio-label" style={{ fontSize: 20 }}>
-                                    <input
-                                        type="radio"
-                                        className="me-2 form-check-input"
-                                        value="Service"
-                                        checked={jobType === 'Service'}
-                                        onChange={handleOptionChange}
-                                    />
-                                    <span className="radio-text">Service</span>
-                                </label>
+                    <div className="mt-2 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 20px #eee', borderRadius: 16 }}>
+                        {/* jobs */}
+                        <div className="container-fluid py-4" style={{ width: 'fit-content', backgroundColor: '', boxShadow: '1px 1px 10px #fff', border: '0px solid #ccc', borderRadius: 16 }}>
+                            <div className="row justify-content-center">
+                                <div className="mb-5 radio-container mt-4">
+                                    <label className="me-5 radio-label" style={{ fontSize: 20 }}>
+                                        <input
+                                            type="radio"
+                                            className="me-2 form-check-input"
+                                            value="Product"
+                                            checked={jobType === 'Product'}
+                                            onChange={handleOptionChange}
+                                        />
+                                        <span className="radio-text">Product</span>
+                                    </label>
+                                    <label className="radio-label" style={{ fontSize: 20 }}>
+                                        <input
+                                            type="radio"
+                                            className="me-2 form-check-input"
+                                            value="Service"
+                                            checked={jobType === 'Service'}
+                                            onChange={handleOptionChange}
+                                        />
+                                        <span className="radio-text">Service</span>
+                                    </label>
+                                </div>
+                                <h3 className="mb-4" style={{ color: '#e56259' }}>Add Items</h3>
+                                <div className="col-md-8" style={{ width: 'fit-content' }}>
+                                    {jobs.map((job, index) => (
+                                        <div key={index} className="row">
+                                            <div className="col-md-4 col-sm-12 mb-2">
+                                                <Input
+                                                    title={`${index + 1}. Description`}
+                                                    type="text"
+                                                    value={job.jobItem}
+                                                    onChange={(e) => handleJobInputChange(index, "jobItem", e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="col-md-4 col-sm-12 mb-2">
+                                                <Input
+                                                    title={jobTariefTitle}
+                                                    type="text"
+                                                    value={job.hourRate}
+                                                    onChange={(e) => {
+                                                        handleDataValidationFunc(
+                                                            e,
+                                                            handleJobInputChange,
+                                                            index,
+                                                            "hourRate",
+                                                            "Please enter a valid number in the price field"
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="col-md-4 col-sm-12 mb-2">
+                                                <Input
+                                                    title={jobNumberOfHoursTitle}
+                                                    type="text"
+                                                    value={job.numberOfHours}
+                                                    onChange={(e) => {
+                                                        handleDataValidationFunc(
+                                                            e,
+                                                            handleJobInputChange,
+                                                            index,
+                                                            "numberOfHours",
+                                                            "Please enter a valid number in the amount field"
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <div className="row">
+                                        <div className="col-md-12 col-sm-12 mt-4">
+                                            {jobs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Job field</p>}
+                                            <a className="btn btn-submit-light-xsmall px-4" style={{ width: 'fit-content', height: 'fit-content' }} onClick={handleAddJob}>
+                                                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
+                                            </a>
+                                            {jobs.length > 0 && (
+                                                <a className="btn btn-submit-dark-xsmall ms-2 px-4" style={{ width: 'fit-content', height: 'fit-content' }} onClick={() => handleRemoveJob(jobs.length - 1)}>
+                                                    <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <h3 className="mb-4" style={{ color: '#e56259' }}>Add Job Items</h3>
-                            <div className="col-md-8" style={{ width: 'fit-content' }}>
-                                {jobs.map((job, index) => (
+                        </div>
+                        <hr />
+                        {/* checkboxes */}
+                        <div className=" mt-4 container-fluid py-4" style={{ width: 'fit-content', backgroundColor: '', boxShadow: '1px 1px 10px #fff', border: '0px solid #ccc', borderRadius: 16 }}>
+                            <div className="row justify-content-center"  >
+                                <h3 className="mb-4" style={{ color: '#e56259' }}>VAT Information</h3>
+                                <div className="col" style={{ width: 'fit-content' }}>
+
+                                    <input
+                                        className="form-check-input checkbox-custom "
+                                        type="checkbox"
+                                        defaultChecked={true}
+                                        onChange={(e) => setInEU(e.target.checked)}
+                                    ></input>
+                                    <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within EU</label>
+
+                                    <input
+                                        className="form-check-input checkbox-custom ms-4"
+                                        type="checkbox"
+                                        defaultChecked={true}
+                                        onChange={(e) => setInCountry(e.target.checked)}
+                                    ></input>
+                                    <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within Country</label>
+
+                                    <input
+                                        className="ms-4"
+                                        type="text"
+                                        style={{ width: 40, fontWeight: 400, color: "#00000090", border: "2px solid #ccc", borderRadius: 4 }}
+                                        value={vatPercentage}
+                                        onChange={(e) => setVatPercentage(e.target.value)}
+                                    ></input>
+                                    <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        {/* costs */}
+                        <div className="mt-4 container-fluid py-4 px-5 justify-content-center" style={{ width: 'fit-content' }}>
+                            <div className="col-md-8" style={{ width: 'fit-content', minWidth: 320 }}>
+                                <h3 className="mb-4" style={{ color: '#e56259' }}>Add Costs Items</h3>
+                                {costs.map((cost, index) => (
                                     <div key={index} className="row">
-                                        <div className="col-md-4 col-sm-12 mb-2">
+                                        <div className="col-md-6 col-sm-12">
                                             <Input
-                                                title={`${index + 1}. Description`}
+                                                title={`Item ${index + 1}`}
                                                 type="text"
-                                                value={job.jobItem}
-                                                onChange={(e) => handleJobInputChange(index, "jobItem", e.target.value)}
+                                                value={cost.info}
+                                                onChange={(e) => handleCostInputChange(index, "info", e.target.value)}
                                             />
                                         </div>
-                                        <div className="col-md-4 col-sm-12 mb-2">
+                                        <div className="col-md-6 col-sm-12">
                                             <Input
-                                                title={jobTariefTitle}
+                                                title={`Cost ${index + 1}`}
                                                 type="text"
-                                                value={job.hourRate}
+                                                value={cost.costs}
                                                 onChange={(e) => {
                                                     handleDataValidationFunc(
                                                         e,
-                                                        handleJobInputChange,
+                                                        handleCostInputChange,
                                                         index,
-                                                        "hourRate",
-                                                        "Please enter a valid number in the price field"
+                                                        "costs",
+                                                        "Please enter a valid number in the costs field"
                                                     );
-                                                }}
-                                            />
-                                        </div>
-                                        <div className="col-md-4 col-sm-12 mb-2">
-                                            <Input
-                                                title={jobNumberOfHoursTitle}
-                                                type="text"
-                                                value={job.numberOfHours}
-                                                onChange={(e) => {
-                                                    handleDataValidationFunc(
-                                                        e,
-                                                        handleJobInputChange,
-                                                        index,
-                                                        "numberOfHours",
-                                                        "Please enter a valid number in the amount field"
-                                                    );
-                                                }}
-                                            />
+                                                }} />
                                         </div>
                                     </div>
                                 ))}
-                                <div className="row">
-                                    <div className="col-md-12 col-sm-12 mt-4">
-                                        {jobs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Job field</p>}
-                                        <a className="btn btn-submit-light-xsmall px-4" style={{ width: 'fit-content', height: 'fit-content' }} onClick={handleAddJob}>
+                                <div className="row justify-content-center mt-4">
+                                    <div className="col-md-12 col-sm-12">
+                                        {costs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Cost field</p>}
+
+                                        <a className="btn btn-submit-light-xsmall px-4" style={{ width: 'fit-content' }} onClick={handleAddCost}>
                                             <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
                                         </a>
-                                        {jobs.length > 0 && (
-                                            <a className="btn btn-submit-dark-xsmall ms-2 px-4" style={{ width: 'fit-content', height: 'fit-content' }} onClick={() => handleRemoveJob(jobs.length - 1)}>
+                                        {costs.length > 0 && (
+                                            <a className="btn btn-submit-dark-xsmall ms-2 px-4" style={{ width: 'fit-content' }} onClick={() => handleRemoveCost(costs.length - 1)}>
                                                 <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
                                             </a>
                                         )}
@@ -771,119 +877,31 @@ const InvoiceForms = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <hr />
-                    {/* checkboxes */}
-                    <div className=" mt-4 container-fluid py-4" style={{ width: 'fit-content', boxShadow: '1px 1px 10px #fff', borderRadius: 16 }}>
-                        <div className="row justify-content-center"  >
-                            <h3 className="mb-4" style={{ color: '#e56259' }}>VAT Information</h3>
-                            <div className="col">
-
-                                <input
-                                    className="form-check-input checkbox-custom"
-                                    type="checkbox"
-                                    onChange={(e) => setIsZeroVat(e.target.checked)}
-                                ></input>
-                                <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>VAT Free</label>
-
-                                <input
-                                    className="form-check-input checkbox-custom ms-4"
-                                    type="checkbox"
-                                    defaultChecked={true}
-                                    onChange={(e) => setInEU(e.target.checked)}
-                                ></input>
-                                <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within EU</label>
-
-                                <input
-                                    className="form-check-input checkbox-custom ms-4"
-                                    type="checkbox"
-                                    defaultChecked={true}
-                                    onChange={(e) => setInCountry(e.target.checked)}
-                                ></input>
-                                <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}>Within Country</label>
-
-                                <input
-                                    className="ms-4"
-                                    type="text"
-                                    style={{ width: 40, fontWeight: 400, color: "#00000090", border: "2px solid #ccc", borderRadius: 4 }}
-                                    value={vatPercentage}
-                                    onChange={(e) => setVatPercentage(e.target.value)}
-                                ></input>
-                                <label style={{ fontSize: 16, marginLeft: 10, fontWeight: 400, color: "#00000090" }}> VAT %</label>
+                        <hr />
+                        {/* discount */}
+                        <div className="mt-4 container-fluid py-4 px-5 justify-content-center" style={{ width: 'fit-content' }}>
+                            <div className="row mt-5">
+                                <Input
+                                    title="Discount Percentage"
+                                    type="number"
+                                    name="discount"
+                                    value={0}
+                                    onChange={(e) => setDiscount(e.target.value)}
+                                />
                             </div>
                         </div>
                     </div>
-                    <hr />
-                    {/* costs */}
-                    <div className="mt-4 container-fluid py-4 px-5 justify-content-center" style={{ width: 'fit-content', borderRadius: 16, boxShadow: '1px 1px 10px #fff' }}>
-                        <div className="col-md-8" style={{ width: 'fit-content' }}>
-                            <h3 className="mb-4" style={{ color: '#e56259' }}>Add Costs Items</h3>
-                            {costs.map((cost, index) => (
-                                <div key={index} className="row">
-                                    <div className="col-md-6 col-sm-12">
-                                        <Input
-                                            title={`Item ${index + 1}`}
-                                            type="text"
-                                            value={cost.info}
-                                            onChange={(e) => handleCostInputChange(index, "info", e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-md-6 col-sm-12">
-                                        <Input
-                                            title={`Cost ${index + 1}`}
-                                            type="text"
-                                            value={cost.costs}
-                                            onChange={(e) => {
-                                                handleDataValidationFunc(
-                                                    e,
-                                                    handleCostInputChange,
-                                                    index,
-                                                    "costs",
-                                                    "Please enter a valid number in the costs field"
-                                                );
-                                            }} />
-                                    </div>
-                                </div>
-                            ))}
-                            <div className="row justify-content-center mt-4">
-                                <div className="col-md-12 col-sm-12">
-                                    {costs.length === 0 && <p style={{ color: '#999', fontWeight: 500 }}>Click here to add a Cost field</p>}
 
-                                    <a className="btn btn-submit-light-xsmall px-4" style={{ width: 'fit-content' }} onClick={handleAddCost}>
-                                        <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
-                                    </a>
-                                    {costs.length > 0 && (
-                                        <a className="btn btn-submit-dark-xsmall ms-2 px-4" style={{ width: 'fit-content' }} onClick={() => handleRemoveCost(costs.length - 1)}>
-                                            <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr />
-                    {/* discount */}
-                    <div>
-                        <div className="row mt-5">
-                            <Input
-                                title="Discount"
-                                type="number"
-                                name="discount"
-                                value={0}
-                                onChange={(e) => setDiscount(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                </div>
+                    {/* buttons */}
+                    {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ width: 150 }}>Submit</button>}
+                    {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleMakeInvoice} style={{ width: 250 }}>Download as Invoice</button>}
+                    {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleMakeQuote} style={{ width: 250 }}>Download as Quote</button>}
+                    {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4 px-5" style={{ width: 'fit-content', borderRadius: 25, backgroundColor: "#999" }} onClick={handleRefreshPage}>Make a New Document</button>}
+                    {!isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" name="clearFormButton" style={{ width: 150, borderRadius: 25, backgroundColor: "#999" }} onClick={handleClearForm}>Clear Forms</button>}
+                </form >
+            </div >
+        </div>
 
-                {/* buttons */}
-                {!isSubmitted && <button type="submit" className="btn btn-submit-light-small mt-5" style={{ width: 150 }}>Submit</button>}
-                {isSubmitted && <button className="btn btn-submit-light-small mt-5" onClick={handleMakeInvoice} style={{ width: 250 }}>Download as Invoice</button>}
-                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" onClick={handleMakeQuote} style={{ width: 250 }}>Download as Quote</button>}
-                {isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4 px-5" style={{ width: 'fit-content', borderRadius: 25, backgroundColor: "#999" }} onClick={handleRefreshPage}>Make a New Document</button>}
-                {!isSubmitted && <button className="btn btn-submit-dark-small mt-5 ms-4" name="clearFormButton" style={{ width: 150, borderRadius: 25, backgroundColor: "#999" }} onClick={handleClearForm}>Clear Forms</button>}
-            </form >
-        </div >
     );
 }
 

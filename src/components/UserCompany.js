@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
-import Loader from 'react-spinners/SyncLoader'
+import Loader from 'react-spinners/SyncLoader';
 import Input from "./Inputs";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { UploadImage } from "./UploadImage";
 

@@ -33,7 +33,7 @@ export const Search = ({ setInvoices, toggleStatus }) => {
     return (
         <>
             <header className='search-bar'>
-                <form className='' onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', width: '45%', minWidth: 250, margin: 10 }}>
+                <form className='' onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', width: '45%', minWidth: 300, margin: 10 }}>
                     <input
                         className='form-control'
                         style={{ border: '0px solid #ccc', borderRadius: 8, backgroundColor: "white", color: '#666', height: 40 }}

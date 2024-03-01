@@ -13,6 +13,7 @@ import HistoryDocs from './components/History';
 import { ConfirmationPage } from './components/ConfirmationPage';
 import { UserVerifyPage } from './components/EmailVerify';
 import { ForgotPassword, PasswordResetRequest, UpdatePasswordNoAuth } from './components/UpdatePassword';
+import InvoiceForms from './components/InvoiceForms';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       { path: "/history", element: <HistoryDocs /> },
       { path: "/password-reset", element: <UpdatePasswordNoAuth /> },
       { path: "/password-reset-request", element: <PasswordResetRequest /> },
+      { path: "/create-new-invoice", element: <InvoiceForms /> },
     ],
   },
   { path: "/confirmation", element: <ConfirmationPage /> },

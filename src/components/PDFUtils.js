@@ -27,6 +27,11 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr, auth
         amountHeader = "Amount of Items";
     }
 
+    var projectInfo = " ";
+    if (data.company.project !== undefined) {
+        projectInfo = data.company.project;
+    };
+
     function sumArray(arr) {
         let sum = 0;
         for (let i = 0; i < arr.length; i++) {
@@ -143,7 +148,9 @@ export const CreatePDFDoc = async (data, docType, sender, logo, fn, doc_nr, auth
     pdf.text(data.company.street + ", " + data.company.postcode, x, y, 'left');
     y += smallOffset;
     pdf.text(data.company.city + ", " + data.company.country, x, y, 'left');
-
+    y += mediumOffset;
+    pdf.text(projectInfo, x, y, 'left');
+    
     y = 60;
 
     // Add sender details
