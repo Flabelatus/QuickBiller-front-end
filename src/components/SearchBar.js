@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useOutletContext } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import * as jwt_decode from 'jwt-decode';
 
 export const Search = ({ setInvoices, toggleStatus }) => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -20,7 +21,11 @@ export const Search = ({ setInvoices, toggleStatus }) => {
         fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/invoice/search?q=${encodeURIComponent(searchPhrase)}`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                setInvoices(data.data);
+                if (Array.isArray(data.data) && data.data.length > 0) {
+                    const userId = jwt_decode.jwtDecode(jwtToken).sub;
+                    const userInvoices = data.data.filter(invoice => invoice.user_id === userId);
+                    setInvoices(userInvoices);
+                }
             })
             .catch((error) => error.message);
     };
