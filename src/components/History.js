@@ -79,7 +79,7 @@ const HistoryDocs = () => {
         }
         try {
 
-            const response = await fetch(`${process.env.REACT_APP_BACKEND}/logged_in/invoice/download?f=${encodeURIComponent(invoiceFileName)}`, requestOptions);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/invoice/download?f=${encodeURIComponent(invoiceFileName)}`, requestOptions);
 
             if (!response.ok) {
                 const errorMsg = await response.json();
