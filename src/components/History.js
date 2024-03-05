@@ -129,9 +129,10 @@ const HistoryDocs = () => {
 
     const total = invoices.reduce((total, invoice) => {
         const invocieDate = getCurrentPeriod(new Date(invoice.CreatedAt));
-
+        console.log(invoice.filename);
+        console.log((invoice.vat_percent / 100) * invoice.total_exclusive);
         if (period.year === invocieDate.year && period.quarter === invocieDate.quarter) {
-            return total + invoice.total_inclusive;
+            return total + (invoice.total_inclusive);
         }
     }, 0);
 
@@ -154,16 +155,17 @@ const HistoryDocs = () => {
         )
     } else {
         return (
-            <div className="container mt-5 px-5 mb-5" style={{ backgroundColor: "#e2605a40" }}>
+            <div className="container mt-5 px-5 mb-5" style={{ backgroundColor: "#e2605a20" }}>
                 <div className="row justify-content-center">
                     <div className="col">
-                        <h1 className="mb-4 text-center mt-3">Overview</h1>
+                        {/* <h1 className="mb-4 text-center mt-3">Overview</h1> */}
                         <div className="row justify-content-center mt-3 mb-3" style={{ border: '0px solid #ccc', borderRadius: 16, margin: 10, backgroundColor: 'white' }}>
                             <div className="col-md-3 py-3" style={{ border: '0px solid #ccc', borderRadius: 16, margin: 10 }}>
                                 <h3 className="px-4 analitics" style={{ display: 'inline-flex', alignItems: 'center', color: 'white' }}>
                                     <FontAwesomeIcon className="analitics" icon={faCalendar} />
                                     <span className="analitics" style={{ marginLeft: '0.5rem' }}>Period</span>
-                                </h3><hr />
+                                </h3>
+                                <hr />
                                 <span className="px-4 analitics" style={{ fontWeight: 700 }}>Year: {period.year}</span><br />
                                 <span className="px-4 analitics">Quarter: Q{period.quarter}</span><br />
                                 <span className="px-4 analitics">Month: {period.month}</span>

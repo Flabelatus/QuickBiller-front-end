@@ -323,6 +323,13 @@ const InvoiceForms = () => {
     };
 
     const prepareData = () => {
+        var vat_percentage;
+        if (!inCountry || !inEU) {
+            vat_percentage = 0;
+        } else {
+            vat_percentage = String(vatPercentage);
+        };
+
         let docs = serializeDocument();
         const updatedJobs = docs.jobs.map((job) => ({
             ...job,
@@ -333,6 +340,8 @@ const InvoiceForms = () => {
             numberOfCosts: "N/A",
             totalAmout: parseFloat(c.costs)
         }));
+
+
         const preppedJobs = updatedJobs.map((job) => Object.values(job));
         const preppedCosts = updatedCosts.map((cost) => Object.values(cost));
 
@@ -340,7 +349,7 @@ const InvoiceForms = () => {
         const totalJobs = sumArray(preppedJobs.map((job) => job[job.length - 1]));
         const totalCosts = sumArray(preppedCosts.map((c) => c[c.length - 1]));
         const subTotal = totalJobs + totalCosts
-        const leanVAT = totalJobs * vatPercentage / 100;
+        const leanVAT = totalJobs * (vat_percentage / 100);
         const totalInclVAT = subTotal + leanVAT;
 
         return {
