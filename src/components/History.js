@@ -4,7 +4,7 @@ import * as jwt_decode from 'jwt-decode';
 import { Search } from "./SearchBar";
 import Loader from 'react-spinners/SyncLoader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faDownload, faPaperPlane, faFileInvoice, faCalendar } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faDownload, faPaperPlane, faFileInvoice, faCalendar, faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
 
 const HistoryDocs = () => {
 
@@ -129,8 +129,6 @@ const HistoryDocs = () => {
 
     const total = invoices.reduce((total, invoice) => {
         const invocieDate = getCurrentPeriod(new Date(invoice.CreatedAt));
-        console.log(invoice.filename);
-        console.log((invoice.vat_percent / 100) * invoice.total_exclusive);
         if (period.year === invocieDate.year && period.quarter === invocieDate.quarter) {
             return total + (invoice.total_inclusive);
         }
@@ -193,30 +191,47 @@ const HistoryDocs = () => {
                         <h2 className="mb-3 mt-5" style={{ color: "#888", margin: 10 }}>Invoices</h2>
 
                         <Search setInvoices={setInvoices} toggleStatus={toggleStatus} />
-                        <div className="mb-4 mt-4" style={{ overflowY: 'auto', height: 500, border: '0px solid #ccc', borderRadius: 16, width: '100%', backgroundColor: 'white' }}>
+                        <div className="mb-4 mt-4 px-4" style={{ overflowY: 'auto', height: 500, border: '0px solid #ccc', borderRadius: 16, width: '100%', backgroundColor: 'white' }}>
                             {Array.isArray(invoices) && invoices.map((invoice, index) => (
-                                <div className="mt-4 mb-4 px-5" key={invoice.ID}>
+                                <div className="mt-4 mb-4 px-5 container invoice py-4" key={invoice.ID}>
                                     <h5 className="mb-2">{invoice.filename}</h5>
 
                                     <div>
                                         <label className="ms-4 me-2" style={{ color: '#88f' }}>Invoice Number: {invoice.invoice_no}</label>
                                         <label className="ms-4 me-2" style={{ color: '#666' }}>|</label>
-                                        <label className="ms-4 me-2" style={{ color: '#666' }}>{((dateString) => {
+                                        <label className="ms-4 me-2" style={{ color: '#666' }}>Invoice Date: {((dateString) => {
                                             const dateObject = new Date(dateString);
                                             const year = dateObject.getFullYear();
                                             const month = String(dateObject.getMonth() + 1).padStart(2, '0');
                                             const day = String(dateObject.getDate()).padStart(2, '0');
                                             return `${year}-${month}-${day}`;
                                         })(invoice.CreatedAt)}</label>
-                                        <label className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 500, fontSize: 18 }}>€
-                                            {invoice.discount > 0 ? parseFloat(invoice.total_inclusive * (invoice.discount / 100)).toFixed(2) : invoice.total_inclusive}
+                                        <label className="ms-4 me-2" style={{ color: '#666' }}>
+                                            Client Name: {invoice.client_name}
                                         </label>
+                                        <div className=" mt-4 mb-4">
+                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> Subtotal: €
+                                                {invoice.discount > 0 ? parseFloat(invoice.total_inclusive * (invoice.discount / 100)).toFixed(2) : invoice.total_exclusive}
+                                            </span><br />
+                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> Costs:
+                                                {invoice.costs > 0 ? " €" + parseFloat((invoice.costs)).toFixed(2) : "€ 0.00"}
+                                            </span><br />
+                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> VAT: €
+                                                {invoice.discount > 0 ? parseFloat((invoice.total_inclusive - invoice.total_exclusive) * (invoice.discount / 100)).toFixed(2) : (invoice.total_inclusive - invoice.total_exclusive).toFixed(2)}
+                                            </span>
+                                            <hr style={{ width: '30%' }}></hr>
+                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> Total including VAT: €
+                                                {invoice.discount > 0 ? parseFloat(invoice.total_inclusive * (invoice.discount / 100)).toFixed(2) : invoice.total_inclusive}
+                                            </span><br />
 
-                                        <label className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 500, fontSize: 14, color: '#888' }}>{invoice.sent ? `SENT` : `NOT SENT`}</label>
+                                        </div>
+                                        {invoice.sent ? <label className="me-5 container px-4" style={{ width: 'fit-content', backgroundColor: "#55dd5550" }}><span style={{ fontWeight: 600, color: "#555" }}> Invoice Sent</span> <FontAwesomeIcon className="ms-3" fontSize="25" icon={faCheck} color="#2A2" /></label>
+                                            : <label className="me-5 container px-4" style={{ width: 'fit-content', backgroundColor: "#dd555550" }}><span style={{ fontWeight: 600, color: "#555" }}>Invoice Not Sent</span></label>}
+                                        {/* <label className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 500, fontSize: 14, color: '#888' }}>{invoice.sent ? `SENT` : `NOT SENT`}</label> */}
                                         {!invoice.sent && <button onClick={() => handleConfirmSent(invoice.ID)} className="btn btn-submit-light-xsmall ms-2 me-2">Confirm Sent</button>}
                                         {!invoice.sent && <button onClick={() => handleDeleteInvoice(invoice.filename, invoice.ID)} className="btn btn-submit-dark-xsmall px-4"><FontAwesomeIcon icon={faTrash} /></button>}
                                         <button onClick={() => handleDownload(invoice.filename)} className="btn btn-submit-light-xsmall-2 ms-2 px-4"><FontAwesomeIcon icon={faDownload} /></button>
-                                        <hr />
+                                        {/* <hr /> */}
                                     </div>
                                 </div>
                             ))}

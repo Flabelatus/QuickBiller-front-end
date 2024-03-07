@@ -398,3 +398,12 @@ label {
 hr {
   color: #aaa;
 }
+
+.invoice {
+  background-color: #fff;
+  border: 0px;
+}
+
+.invoice:hover {
+  background-color: #eef;
+}
