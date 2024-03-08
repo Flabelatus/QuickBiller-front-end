@@ -74,7 +74,7 @@ export const ForgotPassword = () => {
         };
 
         fetch(
-            `${process.env.REACT_APP_BACKEND}/send_password_email`, {
+            `${process.env.REACT_APP_BACKEND}/api/send_password_email`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -161,7 +161,7 @@ export const UpdatePasswordNoAuth = () => {
         setUserId(paramValue);
 
         fetch(
-            `${process.env.REACT_APP_BACKEND}/user/password_reset/token/${paramValue}`,
+            `${process.env.REACT_APP_BACKEND}/api/user/password_reset/token/${paramValue}`,
             {
                 method: "GET",
                 headers: {
@@ -205,7 +205,7 @@ export const UpdatePasswordNoAuth = () => {
                     setIsSuccess(true);
                     // set the token to used
                     fetch(
-                        `${process.env.REACT_APP_BACKEND}/user/password_reset/token/use/${userId}`, {
+                        `${process.env.REACT_APP_BACKEND}/api/user/password_reset/token/use/${userId}`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
