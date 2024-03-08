@@ -194,8 +194,7 @@ const HistoryDocs = () => {
                         <div className="mb-4 mt-4 px-4" style={{ overflowY: 'auto', height: 800, border: '0px solid #ccc', borderRadius: 16, width: '100%', backgroundColor: 'white' }}>
                             {Array.isArray(invoices) && invoices.map((invoice, index) => (
                                 <div className="mt-4 mb-4 px-5 container invoice py-4" key={invoice.ID}>
-                                    <h5 className="mb-2 mt-3 badge" style={{ color: "#333", fontWeight: 400, fontSize: 18, backgroundColor: "#7777ee30" }}>{invoice.filename}</h5>
-                                    <hr />
+                                    <h5 className="mb-4 mt-3 px-3 py-3 text-center" style={{ color: "#333", fontWeight: 400, fontSize: 18, backgroundColor: "#7777ee30", maxWidth: "100%", wordWrap: "break-word", borderRadius: 8 }}>{invoice.filename}</h5>
                                     <div>
                                         <label className="ms-4 me-2" style={{ color: '#88f' }}>Invoice Number: {invoice.invoice_no}</label>
                                         <label className="ms-4 me-2" style={{ color: '#666' }}>|</label>
@@ -209,19 +208,21 @@ const HistoryDocs = () => {
                                         <label className="ms-4 me-2" style={{ color: '#666' }}>
                                             Client Name: {invoice.client_name}
                                         </label>
+                                        <hr />
+
                                         <div className=" mt-4 mb-4">
-                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> Subtotal: €
-                                                {invoice.discount > 0 ? parseFloat(invoice.total_inclusive * (invoice.discount / 100)).toFixed(2) : invoice.total_exclusive}
+                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> Subtotal: <span className="ms-3">€
+                                                {invoice.discount > 0 ? parseFloat(invoice.total_inclusive * (invoice.discount / 100)).toFixed(2) : invoice.total_exclusive}</span>
                                             </span><br />
-                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> Costs:
-                                                {invoice.costs > 0 ? " €" + parseFloat((invoice.costs)).toFixed(2) : "€ 0.00"}
+                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> Costs:<span className="ms-5 text-right">
+                                                {invoice.costs > 0 ? " €" + parseFloat((invoice.costs)).toFixed(2) : "€ 0.00"}</span>
                                             </span><br />
-                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> VAT: €
-                                                {invoice.discount > 0 ? parseFloat((invoice.total_inclusive - invoice.total_exclusive) * (invoice.discount / 100)).toFixed(2) : (invoice.total_inclusive - invoice.total_exclusive).toFixed(2)}
+                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> VAT: <span className="ms-5 text-right">€
+                                                {invoice.discount > 0 ? parseFloat((invoice.total_inclusive - invoice.total_exclusive) * (invoice.discount / 100)).toFixed(2) : (invoice.total_inclusive - invoice.total_exclusive).toFixed(2)}</span>
                                             </span>
                                             <hr style={{ width: '30%' }}></hr>
-                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 400, fontSize: 15 }}> Total including VAT: €
-                                                {invoice.discount > 0 ? parseFloat(invoice.total_inclusive * (invoice.discount / 100)).toFixed(2) : invoice.total_inclusive}
+                                            <span className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 600, fontSize: 18 }}> Total: <span className="ms-3 text-right">€
+                                                {invoice.discount > 0 ? parseFloat(invoice.total_inclusive * (invoice.discount / 100)).toFixed(2) : invoice.total_inclusive.toFixed(2)}</span>
                                             </span><br />
 
                                         </div>
