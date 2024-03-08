@@ -4,7 +4,7 @@ import * as jwt_decode from 'jwt-decode';
 import { Search } from "./SearchBar";
 import Loader from 'react-spinners/SyncLoader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faDownload, faPaperPlane, faFileInvoice, faCalendar, faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faDownload, faPaperPlane, faFileInvoice, faCalendar, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const HistoryDocs = () => {
 
@@ -194,8 +194,8 @@ const HistoryDocs = () => {
                         <div className="mb-4 mt-4 px-4" style={{ overflowY: 'auto', height: 500, border: '0px solid #ccc', borderRadius: 16, width: '100%', backgroundColor: 'white' }}>
                             {Array.isArray(invoices) && invoices.map((invoice, index) => (
                                 <div className="mt-4 mb-4 px-5 container invoice py-4" key={invoice.ID}>
-                                    <h5 className="mb-2">{invoice.filename}</h5>
-
+                                    <h5 className="mb-2 mt-3 badge" style={{ color: "#333", fontWeight: 400, fontSize: 18, backgroundColor: "#7777ee30" }}>{invoice.filename}</h5>
+                                    <hr />
                                     <div>
                                         <label className="ms-4 me-2" style={{ color: '#88f' }}>Invoice Number: {invoice.invoice_no}</label>
                                         <label className="ms-4 me-2" style={{ color: '#666' }}>|</label>
@@ -225,8 +225,8 @@ const HistoryDocs = () => {
                                             </span><br />
 
                                         </div>
-                                        {invoice.sent ? <label className="me-5 container px-4" style={{ width: 'fit-content', backgroundColor: "#55dd5550" }}><span style={{ fontWeight: 600, color: "#555" }}> Invoice Sent</span> <FontAwesomeIcon className="ms-3" fontSize="25" icon={faCheck} color="#2A2" /></label>
-                                            : <label className="me-5 container px-4" style={{ width: 'fit-content', backgroundColor: "#dd555550" }}><span style={{ fontWeight: 600, color: "#555" }}>Invoice Not Sent</span></label>}
+                                        {invoice.sent ? <label className="me-5 container- badge px-4 mb-4" style={{ width: 'fit-content', backgroundColor: "#55dd5550", fontSize: 16, border: "1px solid #4a4" }}><span style={{ fontWeight: 400, color: "#333" }}> Invoice Sent</span> <FontAwesomeIcon className="ms-3" fontSize="16" icon={faCheck} color="#2A2" /></label>
+                                            : <label className="me-5 container- badge px-4 mb-4" style={{ width: 'fit-content', backgroundColor: "#dd555530", fontSize: 16, border: "1px solid #a44" }}><span style={{ fontWeight: 400, color: "#333" }}>Invoice Not Sent</span><FontAwesomeIcon className="ms-3" fontSize="16" icon={faXmark} color="#A22" /></label>}
                                         {/* <label className="me-2 ms-4 mt-2" style={{ textAlign: 'right', alignItems: 'start', fontWeight: 500, fontSize: 14, color: '#888' }}>{invoice.sent ? `SENT` : `NOT SENT`}</label> */}
                                         {!invoice.sent && <button onClick={() => handleConfirmSent(invoice.ID)} className="btn btn-submit-light-xsmall ms-2 me-2">Confirm Sent</button>}
                                         {!invoice.sent && <button onClick={() => handleDeleteInvoice(invoice.filename, invoice.ID)} className="btn btn-submit-dark-xsmall px-4"><FontAwesomeIcon icon={faTrash} /></button>}
