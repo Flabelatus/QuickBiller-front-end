@@ -191,7 +191,7 @@ const HistoryDocs = () => {
                         <h2 className="mb-3 mt-5" style={{ color: "#888", margin: 10 }}>Invoices</h2>
 
                         <Search setInvoices={setInvoices} toggleStatus={toggleStatus} />
-                        <div className="mb-4 mt-4 px-4" style={{ overflowY: 'auto', height: 500, border: '0px solid #ccc', borderRadius: 16, width: '100%', backgroundColor: 'white' }}>
+                        <div className="mb-4 mt-4 px-4" style={{ overflowY: 'auto', height: 800, border: '0px solid #ccc', borderRadius: 16, width: '100%', backgroundColor: 'white' }}>
                             {Array.isArray(invoices) && invoices.map((invoice, index) => (
                                 <div className="mt-4 mb-4 px-5 container invoice py-4" key={invoice.ID}>
                                     <h5 className="mb-2 mt-3 badge" style={{ color: "#333", fontWeight: 400, fontSize: 18, backgroundColor: "#7777ee30" }}>{invoice.filename}</h5>
