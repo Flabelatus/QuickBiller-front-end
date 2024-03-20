@@ -75,7 +75,7 @@ function App() {
   return (
     <>
       <AppContext.Provider value={{ jwtToken, setJwtToken, toggleRefresh }}>
-        <div style={{ maxWidth: '100%', minWidth: 500}}>
+        <div style={{ maxWidth: '100%', minWidth: 500 }}>
           <div>
             <AppBar></AppBar>
             <div className='justify-content-center'>

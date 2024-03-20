@@ -7,12 +7,48 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faDownload, faPaperPlane, faFileInvoice, faCalendar, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const HistoryDocs = () => {
-
+    const [selectedQuarter, setSelectedQuarter] = useState(getCurrentQuarter().quarter);
+    const [selectedYear, setSelectedYear] = useState(getCurrentQuarter().year);
+    const [timelineList, setTimelineList] = useState([]);
+    const quarters = [1, 2, 3, 4];
     const { jwtToken } = useOutletContext();
     const [isLoading, setIsLoading] = useState(true);
     const [invoices, setInvoices] = useState([]);
     const [status, setStatus] = useState(false);
+
     const navigate = useNavigate();
+
+    function getCurrentQuarter() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+
+        let quarter;
+        if (month >= 1 && month <= 3) {
+            quarter = 1;
+        } else if (month >= 4 && month <= 6) {
+            quarter = 2;
+        } else if (month >= 7 && month <= 9) {
+            quarter = 3;
+        } else {
+            quarter = 4;
+        }
+
+        return {
+            year: year.toString(),
+            quarter: quarter.toString()
+        };
+    }
+
+    const handleChangeYear = (event) => {
+        setSelectedYear(event.target.value);
+        toggleStatus();
+    }
+
+    const handleChangeQuarter = (event) => {
+        setSelectedQuarter(event.target.value);
+        toggleStatus();
+    }
 
     const toggleStatus = () => {
         if (!status) {
@@ -36,10 +72,16 @@ const HistoryDocs = () => {
             }
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/invoices/${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/invoices_by_number?u=${jwt_decode.jwtDecode(jwtToken).sub}&q=${selectedQuarter}&y=${selectedYear}`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 setInvoices(data.data);
+                fetch(`${process.env.REACT_APP_BACKEND}/api/logged_in/list_years_and_quarters?u=${jwt_decode.jwtDecode(jwtToken).sub}`, requestOptions)
+                    .then((resp) => resp.json())
+                    .then((dat) => {
+                        setTimelineList(dat.data.years);
+                    })
+                    .catch((err) => console.error(err.message))
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -157,16 +199,36 @@ const HistoryDocs = () => {
                 <div className="row justify-content-center">
                     <div className="col">
                         {/* <h1 className="mb-4 text-center mt-3">Overview</h1> */}
+
                         <div className="row justify-content-center mt-3 mb-3" style={{ border: '0px solid #ccc', borderRadius: 16, margin: 10, backgroundColor: 'white' }}>
                             <div className="col-md-3 py-3" style={{ border: '0px solid #ccc', borderRadius: 16, margin: 10 }}>
+
                                 <h3 className="px-4 analitics" style={{ display: 'inline-flex', alignItems: 'center', color: 'white' }}>
                                     <FontAwesomeIcon className="analitics" icon={faCalendar} />
                                     <span className="analitics" style={{ marginLeft: '0.5rem' }}>Period</span>
                                 </h3>
+
                                 <hr />
-                                <span className="px-4 analitics" style={{ fontWeight: 700 }}>Year: {period.year}</span><br />
-                                <span className="px-4 analitics">Quarter: Q{period.quarter}</span><br />
-                                <span className="px-4 analitics">Month: {period.month}</span>
+
+                                <select value={selectedYear} onChange={handleChangeYear} className="me-2 px-3 py-2 mb-2" style={{ border: '0px solid #ccc', borderRadius: 8, color: 'white', backgroundColor: "#061868" }}>
+                                    {timelineList.length > 0 && timelineList.map((year) => (
+                                        <option key={year} value={year}>
+                                            {year}
+                                        </option>
+                                    )
+                                    )}
+                                </select>
+                                <select className="px-3 py-2" value={selectedQuarter} onChange={handleChangeQuarter} style={{ border: '0px solid #ccc', borderRadius: 8, color: 'white', backgroundColor: "#e56259" }}>
+                                    {quarters.length > 0 && quarters.map((quarter) => (
+                                        <option key={quarter} value={quarter}>
+                                            Quarter {quarter}
+                                        </option>
+                                    )
+                                    )}
+                                </select>
+                                {/* <span className="px-4 analitics" style={{ fontWeight: 700 }}>Year: {selectedYear}</span><br />
+                                <span className="px-4 analitics">Quarter: Q{selectedQuarter}</span><br /> */}
+                                {/* <span className="px-4 analitics">Month: {period.month}</span> */}
                             </div>
                             <div className="col-md-5 py-3" style={{ border: '0px solid #ccc', borderRadius: 16, margin: 10 }}>
                                 <h3 className="px-4 analitics" style={{ display: 'inline-flex', alignItems: 'center', color: 'white' }}>
