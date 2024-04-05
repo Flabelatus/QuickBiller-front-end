@@ -171,15 +171,15 @@ const HistoryDocs = () => {
 
     const total = invoices.reduce((total, invoice) => {
         const invocieDate = getCurrentPeriod(new Date(invoice.CreatedAt));
-        if (period.year === invocieDate.year && period.quarter === invocieDate.quarter) {
+        if (Number(selectedYear) === invocieDate.year && Number(selectedQuarter) === invocieDate.quarter) {
             return total + (invoice.total_inclusive);
         }
     }, 0);
 
     const totalExcl = invoices.reduce((total, invoice) => {
         const invocieDate = getCurrentPeriod(new Date(invoice.CreatedAt));
+        if (Number(selectedYear) === invocieDate.year && Number(selectedQuarter) === invocieDate.quarter) {
 
-        if (period.year === invocieDate.year && period.quarter === invocieDate.quarter) {
             return total + invoice.total_exclusive;
         }
     }, 0);

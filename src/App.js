@@ -4,7 +4,7 @@ import { AppBar } from './components/AppBar';
 import Footer from './components/Footer';
 import React, { useCallback, useEffect, useState } from 'react';
 import Alert from './components/Alert'
-
+import { Card, CardBody, Col } from 'reactstrap';
 export const AppContext = React.createContext();
 
 function App() {

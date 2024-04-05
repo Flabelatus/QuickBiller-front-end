@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Input from "./Inputs";
+import Input from "./../components/Inputs";
 import { useOutletContext } from "react-router-dom";
 import * as jwt_decode from 'jwt-decode';
 import { CreatePDFDoc } from "./PDFUtils";
